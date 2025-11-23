@@ -73,6 +73,15 @@ class GoalService {
 
   // Fetch all goals from server
   async fetchGoals(): Promise<Goal[]> {
+    // Check if using mock authentication (development mode)
+    const accessToken = await storageService.getAccessToken();
+    if (accessToken === 'mock-access-token') {
+      // Return sample goals for mock/demo mode
+      const goals = this.getSampleGoals();
+      await this.cacheGoals(goals);
+      return goals;
+    }
+
     const response = await networkService.get<GoalsResponse>(Endpoints.goals);
     const goals = response.goals || [];
 
