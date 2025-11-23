@@ -28,15 +28,6 @@ node_modules/
 npm-debug.log
 yarn-error.log
 
-# fastlane
-**/fastlane/report.xml
-**/fastlane/Preview.html
-**/fastlane/screenshots
-**/fastlane/test_output
-
-# Bundle artifact
-*.jsbundle
-
 # Ruby / CocoaPods
 /ios/Pods/
 /vendor/bundle/
@@ -46,25 +37,8 @@ yarn-error.log
 *.swo
 *~
 
-# Environment files
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.env.*
-
 # Metro
 .metro-health-check*
 
 # testing
 /coverage
-
-# Watchman
-.watchmanconfig
-
-# Buck
-buck-out/
-\.buckd/
-*.keystore
-!debug.keystore
