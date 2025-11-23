@@ -6,6 +6,7 @@
     "skipLibCheck": true,
     "types": ["react-native"],
     "paths": {
+      "@/*": ["src/*"],
       "@components/*": ["src/components/*"],
       "@screens/*": ["src/screens/*"],
       "@navigation/*": ["src/navigation/*"],
@@ -13,7 +14,8 @@
       "@hooks/*": ["src/hooks/*"],
       "@store/*": ["src/store/*"],
       "@theme/*": ["src/theme/*"],
-      "@app-types/*": ["src/types/*"]
+      "@app-types/*": ["src/types/*"],
+      "@contexts/*": ["src/contexts/*"]
     }
   },
   "exclude": [
