@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "ios": "react-native run-ios --workspace ios/greatfeel.xcworkspace --scheme greatfeel",
+    "ios": "cd ios && xcodebuild -workspace greatfeel.xcworkspace -scheme greatfeel -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 15' -derivedDataPath build && xcrun simctl install booted build/Build/Products/Debug-iphonesimulator/greatfeel.app && xcrun simctl launch booted com.greatfeel.app",
+    "ios:build": "cd ios && xcodebuild -workspace greatfeel.xcworkspace -scheme greatfeel -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 15' build",
     "start": "react-native start",
     "pod-install": "cd ios && pod install && cd .."
   },
