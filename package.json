@@ -3,13 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "type-check": "tsc --noEmit",
-    "clean": "cd android && ./gradlew clean && cd .. && cd ios && xcodebuild clean && cd ..",
+    "clean": "cd ios && xcodebuild clean && cd ..",
     "pod-install": "cd ios && pod install && cd ..",
     "reset-cache": "react-native start --reset-cache"
   },
