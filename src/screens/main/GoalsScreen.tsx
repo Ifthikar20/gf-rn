@@ -150,25 +150,27 @@ const styles = StyleSheet.create({
   },
 
   timelineLeft: {
-    width: 80,
+    width: 60,
     alignItems: 'center',
     paddingTop: spacing.xs,
   },
 
   dateText: {
-    fontSize: typography.fontSize.xs,
-    color: colors.text.tertiary,
+    fontSize: 10,
+    color: colors.text.secondary,
     marginBottom: spacing.xs,
     textAlign: 'center',
+    lineHeight: 12,
+    fontWeight: typography.fontWeight.medium,
   },
 
   timelineDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
     backgroundColor: colors.primary.main,
     borderWidth: 2,
-    borderColor: colors.background.primary,
+    borderColor: colors.background.secondary,
     zIndex: 1,
   },
 
@@ -176,7 +178,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 2,
     backgroundColor: colors.border.light,
-    top: 45,
+    top: 38,
     bottom: -20,
   },
 

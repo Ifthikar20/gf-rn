@@ -7,9 +7,10 @@ import {
   LibraryScreen,
   GoalsScreen,
   MeditateScreen,
+  DiscoverScreen,
   ProfileScreen,
 } from '@screens/main';
-import { ArticleDetailScreen, GoalDetailScreen } from '@screens/details';
+import { ArticleDetailScreen, GoalDetailScreen, AudioPlayerScreen } from '@screens/details';
 import { colors, typography } from '@theme/index';
 
 export type HomeStackParamList = {
@@ -31,6 +32,20 @@ export type GoalsStackParamList = {
 export type MeditateStackParamList = {
   MeditateMain: undefined;
   ArticleDetail: { id: string };
+  AudioPlayer: {
+    category: {
+      id: string;
+      title: string;
+      description: string;
+      image: string;
+      audioUrl: string;
+    };
+  };
+};
+
+export type DiscoverStackParamList = {
+  DiscoverMain: undefined;
+  ArticleDetail: { id: string };
 };
 
 export type ProfileStackParamList = {
@@ -41,7 +56,7 @@ export type MainTabParamList = {
   Goals: undefined;
   Library: undefined;
   Meditate: undefined;
-  Profile: undefined;
+  Discover: undefined;
 };
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -49,6 +64,7 @@ const HomeStack = createNativeStackNavigator<HomeStackParamList>();
 const LibraryStack = createNativeStackNavigator<LibraryStackParamList>();
 const GoalsStack = createNativeStackNavigator<GoalsStackParamList>();
 const MeditateStack = createNativeStackNavigator<MeditateStackParamList>();
+const DiscoverStack = createNativeStackNavigator<DiscoverStackParamList>();
 const ProfileStack = createNativeStackNavigator<ProfileStackParamList>();
 
 const HomeStackNavigator = () => (
@@ -113,7 +129,27 @@ const MeditateStackNavigator = () => (
       component={ArticleDetailScreen}
       options={{ title: 'Article' }}
     />
+    <MeditateStack.Screen
+      name="AudioPlayer"
+      component={AudioPlayerScreen}
+      options={{ headerShown: false }}
+    />
   </MeditateStack.Navigator>
+);
+
+const DiscoverStackNavigator = () => (
+  <DiscoverStack.Navigator>
+    <DiscoverStack.Screen
+      name="DiscoverMain"
+      component={DiscoverScreen}
+      options={{ headerShown: false }}
+    />
+    <DiscoverStack.Screen
+      name="ArticleDetail"
+      component={ArticleDetailScreen}
+      options={{ title: 'Article' }}
+    />
+  </DiscoverStack.Navigator>
 );
 
 const ProfileStackNavigator = () => (
@@ -168,11 +204,11 @@ export const MainTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Profile"
-        component={ProfileStackNavigator}
+        name="Discover"
+        component={DiscoverStackNavigator}
         options={{
-          tabBarLabel: 'Profile',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20, color }}>▲</Text>,
+          tabBarLabel: 'Discover',
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20, color }}>◇</Text>,
         }}
       />
     </Tab.Navigator>

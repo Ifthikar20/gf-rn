@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Card } from '@components/common';
-import { colors, spacing, typography } from '@theme/index';
+import { colors, spacing, typography, borderRadius } from '@theme/index';
 import { Goal } from '@app-types/index';
 import { ProgressRing } from './ProgressRing';
 
@@ -11,7 +11,9 @@ interface GoalCardProps {
 }
 
 export const GoalCard: React.FC<GoalCardProps> = ({ goal, onPress }) => {
-  const progress = (goal.current / goal.target) * 100;
+  const progress = goal.target > 0 ? (goal.current / goal.target) * 100 : 0;
+  const isMediaGoal = goal.type === 'video' || goal.type === 'audio';
+  const showProgress = !isMediaGoal && goal.target > 0;
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -26,6 +28,11 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, onPress }) => {
       default:
         return colors.neutral[400];
     }
+  };
+
+  const formatDuration = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    return `${mins} min`;
   };
 
   return (
@@ -54,34 +61,48 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, onPress }) => {
             </View>
           </View>
 
-          <View style={styles.progressContainer}>
-            <ProgressRing
-              progress={progress}
-              size={80}
-              strokeWidth={8}
-              color={goal.color || colors.primary.main}
-            />
-
-            <View style={styles.progressDetails}>
-              <Text style={styles.progressText}>
-                {goal.current} / {goal.target} {goal.unit}
-              </Text>
-              <View style={styles.progressBar}>
-                <View
-                  style={[
-                    styles.progressBarFill,
-                    {
-                      width: `${Math.min(progress, 100)}%`,
-                      backgroundColor: goal.color || colors.primary.main,
-                    },
-                  ]}
-                />
+          {isMediaGoal && goal.thumbnail && (
+            <View style={styles.mediaContainer}>
+              <Image source={{ uri: goal.thumbnail }} style={styles.thumbnail} />
+              <View style={styles.mediaOverlay}>
+                <Text style={styles.mediaType}>{goal.type?.toUpperCase()}</Text>
+                {goal.duration && (
+                  <Text style={styles.mediaDuration}>{formatDuration(goal.duration)}</Text>
+                )}
               </View>
-              <Text style={styles.progressPercentage}>
-                {Math.round(progress)}% complete
-              </Text>
             </View>
-          </View>
+          )}
+
+          {showProgress && (
+            <View style={styles.progressContainer}>
+              <ProgressRing
+                progress={progress}
+                size={80}
+                strokeWidth={8}
+                color={goal.color || colors.primary.main}
+              />
+
+              <View style={styles.progressDetails}>
+                <Text style={styles.progressText}>
+                  {goal.current} / {goal.target} {goal.unit}
+                </Text>
+                <View style={styles.progressBar}>
+                  <View
+                    style={[
+                      styles.progressBarFill,
+                      {
+                        width: `${Math.min(progress, 100)}%`,
+                        backgroundColor: goal.color || colors.primary.main,
+                      },
+                    ]}
+                  />
+                </View>
+                <Text style={styles.progressPercentage}>
+                  {Math.round(progress)}% complete
+                </Text>
+              </View>
+            </View>
+          )}
         </View>
       </Card>
     </TouchableOpacity>
@@ -172,5 +193,41 @@ const styles = StyleSheet.create({
   progressPercentage: {
     fontSize: typography.fontSize.xs,
     color: colors.text.secondary,
+  },
+
+  mediaContainer: {
+    position: 'relative',
+    width: '100%',
+    height: 160,
+    borderRadius: borderRadius.md,
+    overflow: 'hidden',
+  },
+
+  thumbnail: {
+    width: '100%',
+    height: '100%',
+  },
+
+  mediaOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    padding: spacing.sm,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+
+  mediaType: {
+    fontSize: typography.fontSize.xs,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.text.inverse,
+  },
+
+  mediaDuration: {
+    fontSize: typography.fontSize.xs,
+    color: colors.text.inverse,
   },
 });

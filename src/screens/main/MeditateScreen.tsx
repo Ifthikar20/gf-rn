@@ -1,27 +1,93 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, SafeAreaView } from 'react-native';
-import { ArticleCard } from '@components/library';
-import { colors, spacing, typography } from '@theme/index';
-import { mockMeditationContent } from '@services/mockData';
+import { View, Text, StyleSheet, FlatList, SafeAreaView, Image, TouchableOpacity } from 'react-native';
+import { colors, spacing, typography, borderRadius } from '@theme/index';
 
-export const MeditateScreen: React.FC = () => {
+interface MeditationCategory {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  audioUrl: string;
+}
+
+const meditationCategories: MeditationCategory[] = [
+  {
+    id: '1',
+    title: 'Sounds of Nature',
+    description: 'Relaxing natural soundscapes',
+    image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800',
+    audioUrl: 'https://example.com/nature-sounds.mp3',
+  },
+  {
+    id: '2',
+    title: 'Ocean Waves',
+    description: 'Calming ocean sounds',
+    image: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800',
+    audioUrl: 'https://example.com/ocean-waves.mp3',
+  },
+  {
+    id: '3',
+    title: 'Rain Sounds',
+    description: 'Gentle rainfall ambience',
+    image: 'https://images.unsplash.com/photo-1428908728789-d2de25dbd4e2?w=800',
+    audioUrl: 'https://example.com/rain-sounds.mp3',
+  },
+  {
+    id: '4',
+    title: 'Forest Ambience',
+    description: 'Peaceful forest sounds',
+    image: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=800',
+    audioUrl: 'https://example.com/forest-ambience.mp3',
+  },
+  {
+    id: '5',
+    title: 'Guided Meditation',
+    description: 'Voice-guided meditation sessions',
+    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800',
+    audioUrl: 'https://example.com/guided-meditation.mp3',
+  },
+  {
+    id: '6',
+    title: 'Sleep Sounds',
+    description: 'Soothing sounds for better sleep',
+    image: 'https://images.unsplash.com/photo-1511295742362-92c96b1cf484?w=800',
+    audioUrl: 'https://example.com/sleep-sounds.mp3',
+  },
+];
+
+interface MeditateScreenProps {
+  navigation?: any;
+}
+
+export const MeditateScreen: React.FC<MeditateScreenProps> = ({ navigation }) => {
+  const handleCategoryPress = (category: MeditationCategory) => {
+    // Navigate to audio player
+    navigation?.navigate('AudioPlayer', { category });
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.title}>Meditate</Text>
-          <Text style={styles.subtitle}>Find your inner peace</Text>
+          <Text style={styles.subtitle}>Choose your meditation sound</Text>
         </View>
 
         <FlatList
-          data={mockMeditationContent}
+          data={meditationCategories}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <ArticleCard
-              item={item}
-              onPress={() => {}}
-              onBookmarkToggle={() => {}}
-            />
+            <TouchableOpacity
+              style={styles.categoryCard}
+              onPress={() => handleCategoryPress(item)}
+              activeOpacity={0.7}
+            >
+              <Image source={{ uri: item.image }} style={styles.categoryImage} />
+              <View style={styles.categoryOverlay}>
+                <Text style={styles.categoryTitle}>{item.title}</Text>
+                <Text style={styles.categoryDescription}>{item.description}</Text>
+              </View>
+            </TouchableOpacity>
           )}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
@@ -61,5 +127,42 @@ const styles = StyleSheet.create({
 
   listContent: {
     padding: spacing.screenPadding,
+    paddingTop: 0,
+  },
+
+  categoryCard: {
+    width: '100%',
+    height: 180,
+    marginBottom: spacing.md,
+    borderRadius: borderRadius.lg,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+
+  categoryImage: {
+    width: '100%',
+    height: '100%',
+  },
+
+  categoryOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    padding: spacing.md,
+  },
+
+  categoryTitle: {
+    fontSize: typography.fontSize.xl,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.text.inverse,
+    marginBottom: spacing.xs / 2,
+  },
+
+  categoryDescription: {
+    fontSize: typography.fontSize.sm,
+    color: colors.text.inverse,
+    opacity: 0.9,
   },
 });

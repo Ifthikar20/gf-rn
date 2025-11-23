@@ -2,11 +2,14 @@ export type GoalStatus = 'active' | 'completed' | 'paused' | 'archived';
 
 export type GoalFrequency = 'daily' | 'weekly' | 'monthly';
 
+export type GoalType = 'progress' | 'video' | 'audio';
+
 export interface Goal {
   id: string;
   title: string;
   description: string;
   status: GoalStatus;
+  type?: GoalType;
   frequency: GoalFrequency;
   target: number;
   current: number;
@@ -20,6 +23,9 @@ export interface Goal {
   streak: number;
   createdAt: string;
   updatedAt: string;
+  thumbnail?: string;
+  duration?: number;
+  mediaUrl?: string;
 }
 
 export interface GoalProgress {

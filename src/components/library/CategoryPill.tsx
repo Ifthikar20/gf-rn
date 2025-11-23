@@ -34,6 +34,9 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     backgroundColor: colors.background.tertiary,
     marginRight: spacing.sm,
+    minHeight: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   pillSelected: {
