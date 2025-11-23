@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, ScrollView } from 'react-native';
-import { useLibrary, useToggleBookmark } from '@hooks/useLibrary';
+import { View, Text, StyleSheet, FlatList, ScrollView, SafeAreaView } from 'react-native';
 import { ArticleCard, CategoryPill } from '@components/library';
 import { ContentCategory } from '@app-types/index';
 import { colors, spacing, typography } from '@theme/index';
+import { mockLibraryContent } from '@services/mockData';
 
 const categories: ContentCategory[] = [
   'mindfulness',
@@ -19,66 +19,64 @@ const categories: ContentCategory[] = [
 export const LibraryScreen: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<ContentCategory | undefined>();
 
-  const { data: content, isLoading } = useLibrary(
-    selectedCategory ? { category: [selectedCategory] } : undefined
-  );
-  const toggleBookmark = useToggleBookmark();
+  // Filter mock data by category
+  const content = selectedCategory
+    ? mockLibraryContent.filter((item) => item.category === selectedCategory)
+    : mockLibraryContent;
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Library</Text>
-        <Text style={styles.subtitle}>Explore wellness content</Text>
-      </View>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Library</Text>
+          <Text style={styles.subtitle}>Explore wellness content</Text>
+        </View>
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.categoriesScroll}
-        contentContainerStyle={styles.categoriesContent}
-      >
-        <CategoryPill
-          category={'all' as ContentCategory}
-          selected={!selectedCategory}
-          onPress={() => setSelectedCategory(undefined)}
-        />
-        {categories.map((category) => (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.categoriesScroll}
+          contentContainerStyle={styles.categoriesContent}
+        >
           <CategoryPill
-            key={category}
-            category={category}
-            selected={selectedCategory === category}
-            onPress={() => setSelectedCategory(category)}
+            category={'all' as ContentCategory}
+            selected={!selectedCategory}
+            onPress={() => setSelectedCategory(undefined)}
           />
-        ))}
-      </ScrollView>
+          {categories.map((category) => (
+            <CategoryPill
+              key={category}
+              category={category}
+              selected={selectedCategory === category}
+              onPress={() => setSelectedCategory(category)}
+            />
+          ))}
+        </ScrollView>
 
-      <FlatList
-        data={content || []}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <ArticleCard
-            item={item}
-            onPress={() => {}}
-            onBookmarkToggle={() =>
-              toggleBookmark.mutate({
-                contentId: item.id,
-                isBookmarked: !item.isBookmarked,
-              })
-            }
-          />
-        )}
-        contentContainerStyle={styles.listContent}
-        ListEmptyComponent={
-          <Text style={styles.emptyText}>
-            {isLoading ? 'Loading...' : 'No content available'}
-          </Text>
-        }
-      />
-    </View>
+        <FlatList
+          data={content}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <ArticleCard
+              item={item}
+              onPress={() => {}}
+              onBookmarkToggle={() => {}}
+            />
+          )}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: colors.background.secondary,
+  },
+
   container: {
     flex: 1,
     backgroundColor: colors.background.secondary,

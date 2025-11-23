@@ -1,49 +1,45 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, RefreshControl, SafeAreaView } from 'react-native';
 import { useStore } from '@store/index';
-import { useGoals, useGoalStats } from '@hooks/useGoals';
-import { useLibrary } from '@hooks/useLibrary';
 import { GoalCard } from '@components/goals';
 import { ArticleCard } from '@components/library';
 import { Avatar } from '@components/common';
 import { colors, spacing, typography } from '@theme/index';
-import { useToggleBookmark } from '@hooks/useLibrary';
+import { mockGoals, mockGoalStats, mockLibraryContent } from '@services/mockData';
 
 export const HomeScreen: React.FC = () => {
   const user = useStore((state) => state.user);
-  const { data: goals, isLoading: goalsLoading, refetch: refetchGoals } = useGoals();
-  const { data: stats } = useGoalStats();
-  const { data: recentContent, isLoading: contentLoading, refetch: refetchContent } = useLibrary();
-  const toggleBookmark = useToggleBookmark();
-
   const [refreshing, setRefreshing] = React.useState(false);
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
-    await Promise.all([refetchGoals(), refetchContent()]);
-    setRefreshing(false);
-  }, [refetchGoals, refetchContent]);
+    // Simulate refresh delay
+    setTimeout(() => setRefreshing(false), 1000);
+  }, []);
 
-  const activeGoals = goals?.filter((g) => g.status === 'active').slice(0, 3) || [];
-  const featuredContent = recentContent?.slice(0, 3) || [];
+  // Use mock data
+  const activeGoals = mockGoals.filter((g) => g.status === 'active').slice(0, 3);
+  const featuredContent = mockLibraryContent.slice(0, 3);
+  const stats = mockGoalStats;
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.content}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
-    >
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.greeting}>Hello, {user?.name}! 👋</Text>
-          <Text style={styles.subGreeting}>Welcome back to your wellness journey</Text>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.header}>
+          <View style={styles.headerText}>
+            <Text style={styles.greeting}>Hello, {user?.name}! 👋</Text>
+            <Text style={styles.subGreeting}>Welcome back to your wellness journey</Text>
+          </View>
+          <Avatar uri={user?.avatar} name={user?.name || ''} size="md" />
         </View>
-        <Avatar uri={user?.avatar} name={user?.name || ''} size="lg" />
-      </View>
 
-      {stats && (
         <View style={styles.statsContainer}>
           <View style={styles.statCard}>
             <Text style={styles.statValue}>{stats.activeGoals}</Text>
@@ -58,48 +54,36 @@ export const HomeScreen: React.FC = () => {
             <Text style={styles.statLabel}>Progress</Text>
           </View>
         </View>
-      )}
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Active Goals</Text>
-        {goalsLoading ? (
-          <Text style={styles.loadingText}>Loading...</Text>
-        ) : activeGoals.length > 0 ? (
-          activeGoals.map((goal) => (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Active Goals</Text>
+          {activeGoals.map((goal) => (
             <GoalCard key={goal.id} goal={goal} onPress={() => {}} />
-          ))
-        ) : (
-          <Text style={styles.emptyText}>No active goals yet</Text>
-        )}
-      </View>
+          ))}
+        </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Featured Content</Text>
-        {contentLoading ? (
-          <Text style={styles.loadingText}>Loading...</Text>
-        ) : featuredContent.length > 0 ? (
-          featuredContent.map((item) => (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Featured Content</Text>
+          {featuredContent.map((item) => (
             <ArticleCard
               key={item.id}
               item={item}
               onPress={() => {}}
-              onBookmarkToggle={() =>
-                toggleBookmark.mutate({
-                  contentId: item.id,
-                  isBookmarked: !item.isBookmarked,
-                })
-              }
+              onBookmarkToggle={() => {}}
             />
-          ))
-        ) : (
-          <Text style={styles.emptyText}>No content available</Text>
-        )}
-      </View>
-    </ScrollView>
+          ))}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: colors.background.secondary,
+  },
+
   container: {
     flex: 1,
     backgroundColor: colors.background.secondary,
@@ -107,13 +91,20 @@ const styles = StyleSheet.create({
 
   content: {
     padding: spacing.screenPadding,
+    paddingTop: spacing.md,
   },
 
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.lg,
+    marginBottom: spacing.xl,
+    marginTop: spacing.sm,
+  },
+
+  headerText: {
+    flex: 1,
+    marginRight: spacing.md,
   },
 
   greeting: {
@@ -126,6 +117,7 @@ const styles = StyleSheet.create({
   subGreeting: {
     fontSize: typography.fontSize.sm,
     color: colors.text.secondary,
+    lineHeight: typography.fontSize.sm * 1.4,
   },
 
   statsContainer: {

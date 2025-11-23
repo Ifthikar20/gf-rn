@@ -1,25 +1,25 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
-import { useGoals, useGoalStats } from '@hooks/useGoals';
+import { View, Text, StyleSheet, FlatList, SafeAreaView } from 'react-native';
 import { GoalCard } from '@components/goals';
 import { Button } from '@components/common';
 import { colors, spacing, typography } from '@theme/index';
+import { mockGoals, mockGoalStats } from '@services/mockData';
 
 export const GoalsScreen: React.FC = () => {
-  const { data: goals, isLoading } = useGoals();
-  const { data: stats } = useGoalStats();
+  const goals = mockGoals;
+  const stats = mockGoalStats;
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.title}>My Goals</Text>
-          <Text style={styles.subtitle}>Track your progress</Text>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.title}>My Goals</Text>
+            <Text style={styles.subtitle}>Track your progress</Text>
+          </View>
+          <Button title="+" size="sm" onPress={() => {}} style={styles.addButton} />
         </View>
-        <Button title="+" size="sm" onPress={() => {}} style={styles.addButton} />
-      </View>
 
-      {stats && (
         <View style={styles.statsRow}>
           <View style={styles.stat}>
             <Text style={styles.statValue}>{stats.totalGoals}</Text>
@@ -38,28 +38,25 @@ export const GoalsScreen: React.FC = () => {
             <Text style={styles.statLabel}>Best Streak</Text>
           </View>
         </View>
-      )}
 
-      <FlatList
-        data={goals || []}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <GoalCard goal={item} onPress={() => {}} />}
-        contentContainerStyle={styles.listContent}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyIcon}>🎯</Text>
-            <Text style={styles.emptyText}>
-              {isLoading ? 'Loading...' : 'No goals yet'}
-            </Text>
-            <Text style={styles.emptySubtext}>Create your first goal to get started</Text>
-          </View>
-        }
-      />
-    </View>
+        <FlatList
+          data={goals}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => <GoalCard goal={item} onPress={() => {}} />}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: colors.background.secondary,
+  },
+
   container: {
     flex: 1,
     backgroundColor: colors.background.secondary,
