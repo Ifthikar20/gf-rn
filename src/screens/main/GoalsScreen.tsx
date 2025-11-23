@@ -1,8 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, SafeAreaView } from 'react-native';
 import { GoalCard } from '@components/goals';
-import { Button } from '@components/common';
-import { colors, spacing, typography } from '@theme/index';
+import { Button, ThemedBackground } from '@components/common';
+import { spacing, typography } from '@theme/index';
+import { useThemedColors } from '@/hooks/useThemedColors';
 import { mockGoals, mockGoalStats } from '@services/mockData';
 
 const formatDate = (dateString: string) => {
@@ -20,73 +21,74 @@ const formatDate = (dateString: string) => {
 };
 
 export const GoalsScreen: React.FC = () => {
+  const colors = useThemedColors();
   const goals = mockGoals.sort((a, b) =>
     new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   );
   const stats = mockGoalStats;
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <View>
-            <Text style={styles.title}>My Goals</Text>
-            <Text style={styles.subtitle}>Track your progress</Text>
-          </View>
-          <Button title="+" size="sm" onPress={() => {}} style={styles.addButton} />
-        </View>
-
-        <View style={styles.statsRow}>
-          <View style={styles.stat}>
-            <Text style={styles.statValue}>{stats.totalGoals}</Text>
-            <Text style={styles.statLabel}>Total</Text>
-          </View>
-          <View style={styles.stat}>
-            <Text style={styles.statValue}>{stats.activeGoals}</Text>
-            <Text style={styles.statLabel}>Active</Text>
-          </View>
-          <View style={styles.stat}>
-            <Text style={styles.statValue}>{stats.completedGoals}</Text>
-            <Text style={styles.statLabel}>Completed</Text>
-          </View>
-          <View style={styles.stat}>
-            <Text style={styles.statValue}>{stats.longestStreak}</Text>
-            <Text style={styles.statLabel}>Best Streak</Text>
-          </View>
-        </View>
-
-        <FlatList
-          data={goals}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item, index }) => (
-            <View style={styles.timelineItem}>
-              <View style={styles.timelineLeft}>
-                <Text style={styles.dateText}>{formatDate(item.updatedAt)}</Text>
-                <View style={styles.timelineDot} />
-                {index < goals.length - 1 && <View style={styles.timelineLine} />}
-              </View>
-              <View style={styles.timelineRight}>
-                <GoalCard goal={item} onPress={() => {}} />
-              </View>
+    <ThemedBackground>
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <View>
+              <Text style={[styles.title, { color: colors.text.primary }]}>My Goals</Text>
+              <Text style={[styles.subtitle, { color: colors.text.secondary }]}>Track your progress</Text>
             </View>
-          )}
-          contentContainerStyle={styles.listContent}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
-    </SafeAreaView>
+            <Button title="+" size="sm" onPress={() => {}} style={styles.addButton} />
+          </View>
+
+          <View style={[styles.statsRow, { backgroundColor: colors.background.primary }]}>
+            <View style={styles.stat}>
+              <Text style={[styles.statValue, { color: colors.primary.main }]}>{stats.totalGoals}</Text>
+              <Text style={[styles.statLabel, { color: colors.text.secondary }]}>Total</Text>
+            </View>
+            <View style={styles.stat}>
+              <Text style={[styles.statValue, { color: colors.primary.main }]}>{stats.activeGoals}</Text>
+              <Text style={[styles.statLabel, { color: colors.text.secondary }]}>Active</Text>
+            </View>
+            <View style={styles.stat}>
+              <Text style={[styles.statValue, { color: colors.primary.main }]}>{stats.completedGoals}</Text>
+              <Text style={[styles.statLabel, { color: colors.text.secondary }]}>Completed</Text>
+            </View>
+            <View style={styles.stat}>
+              <Text style={[styles.statValue, { color: colors.primary.main }]}>{stats.longestStreak}</Text>
+              <Text style={[styles.statLabel, { color: colors.text.secondary }]}>Best Streak</Text>
+            </View>
+          </View>
+
+          <FlatList
+            data={goals}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item, index }) => (
+              <View style={styles.timelineItem}>
+                <View style={styles.timelineLeft}>
+                  <Text style={[styles.dateText, { color: colors.text.secondary }]}>{formatDate(item.updatedAt)}</Text>
+                  <View style={[styles.timelineDot, { backgroundColor: colors.primary.main, borderColor: colors.background.secondary }]} />
+                  {index < goals.length - 1 && <View style={[styles.timelineLine, { backgroundColor: colors.border.light }]} />}
+                </View>
+                <View style={styles.timelineRight}>
+                  <GoalCard goal={item} onPress={() => {}} />
+                </View>
+              </View>
+            )}
+            contentContainerStyle={styles.listContent}
+            showsVerticalScrollIndicator={false}
+          />
+        </View>
+      </SafeAreaView>
+    </ThemedBackground>
   );
 };
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.background.secondary,
   },
 
   container: {
     flex: 1,
-    backgroundColor: colors.background.secondary,
   },
 
   header: {
@@ -100,13 +102,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: typography.fontSize['3xl'],
     fontWeight: typography.fontWeight.bold,
-    color: colors.text.primary,
     marginBottom: spacing.xs,
   },
 
   subtitle: {
     fontSize: typography.fontSize.base,
-    color: colors.text.secondary,
   },
 
   addButton: {
@@ -116,7 +116,6 @@ const styles = StyleSheet.create({
 
   statsRow: {
     flexDirection: 'row',
-    backgroundColor: colors.background.primary,
     marginHorizontal: spacing.screenPadding,
     marginBottom: spacing.md,
     padding: spacing.md,
@@ -131,13 +130,11 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: typography.fontSize.xl,
     fontWeight: typography.fontWeight.bold,
-    color: colors.primary.main,
     marginBottom: spacing.xs / 2,
   },
 
   statLabel: {
     fontSize: typography.fontSize.xs,
-    color: colors.text.secondary,
   },
 
   listContent: {
@@ -157,7 +154,6 @@ const styles = StyleSheet.create({
 
   dateText: {
     fontSize: 10,
-    color: colors.text.secondary,
     marginBottom: spacing.xs,
     textAlign: 'center',
     lineHeight: 12,
@@ -168,16 +164,13 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: colors.primary.main,
     borderWidth: 2,
-    borderColor: colors.background.secondary,
     zIndex: 1,
   },
 
   timelineLine: {
     position: 'absolute',
     width: 2,
-    backgroundColor: colors.border.light,
     top: 38,
     bottom: -20,
   },
@@ -199,12 +192,10 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.text.primary,
     marginBottom: spacing.xs,
   },
 
   emptySubtext: {
     fontSize: typography.fontSize.sm,
-    color: colors.text.secondary,
   },
 });

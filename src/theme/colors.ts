@@ -1,4 +1,4 @@
-export const colors = {
+export const lightColors = {
   // Primary colors
   primary: {
     main: '#6366F1',      // Indigo
@@ -90,4 +90,97 @@ export const colors = {
   },
 };
 
-export type Colors = typeof colors;
+export const darkColors = {
+  // Primary colors
+  primary: {
+    main: '#818CF8',      // Lighter Indigo for dark mode
+    light: '#A5B4FC',
+    dark: '#6366F1',
+    contrast: '#FFFFFF',
+  },
+
+  // Secondary colors
+  secondary: {
+    main: '#A78BFA',      // Lighter Purple for dark mode
+    light: '#C4B5FD',
+    dark: '#8B5CF6',
+    contrast: '#FFFFFF',
+  },
+
+  // Semantic colors
+  success: {
+    main: '#34D399',      // Lighter Green for dark mode
+    light: '#6EE7B7',
+    dark: '#10B981',
+    background: '#064E3B',
+  },
+
+  error: {
+    main: '#F87171',      // Lighter Red for dark mode
+    light: '#FCA5A5',
+    dark: '#EF4444',
+    background: '#7F1D1D',
+  },
+
+  warning: {
+    main: '#FBBF24',      // Lighter Amber for dark mode
+    light: '#FCD34D',
+    dark: '#F59E0B',
+    background: '#78350F',
+  },
+
+  info: {
+    main: '#60A5FA',      // Lighter Blue for dark mode
+    light: '#93C5FD',
+    dark: '#3B82F6',
+    background: '#1E3A8A',
+  },
+
+  // Neutral colors (reversed for dark mode)
+  neutral: {
+    50: '#111827',
+    100: '#1F2937',
+    200: '#374151',
+    300: '#4B5563',
+    400: '#6B7280',
+    500: '#9CA3AF',
+    600: '#D1D5DB',
+    700: '#E5E7EB',
+    800: '#F3F4F6',
+    900: '#F9FAFB',
+  },
+
+  // Background colors
+  background: {
+    primary: '#0F172A',    // Dark slate
+    secondary: '#1E293B',  // Lighter dark slate
+    tertiary: '#334155',   // Even lighter
+    dark: '#020617',       // Darkest
+  },
+
+  // Text colors
+  text: {
+    primary: '#F9FAFB',
+    secondary: '#D1D5DB',
+    tertiary: '#9CA3AF',
+    disabled: '#6B7280',
+    inverse: '#111827',
+  },
+
+  // Border colors
+  border: {
+    light: '#374151',
+    main: '#4B5563',
+    dark: '#6B7280',
+  },
+
+  // Overlay colors
+  overlay: {
+    light: 'rgba(0, 0, 0, 0.3)',
+    medium: 'rgba(0, 0, 0, 0.5)',
+    dark: 'rgba(0, 0, 0, 0.8)',
+  },
+};
+
+export const colors = lightColors;
+export type Colors = typeof lightColors;

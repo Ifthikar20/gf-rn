@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity } from 'react-native';
-import { colors, spacing, typography, borderRadius } from '@theme/index';
+import { ThemedBackground } from '@components/common';
+import { spacing, typography, borderRadius } from '@theme/index';
+import { useThemedColors } from '@/hooks/useThemedColors';
 
 interface AudioPlayerScreenProps {
   route: {
@@ -18,6 +20,7 @@ interface AudioPlayerScreenProps {
 }
 
 export const AudioPlayerScreen: React.FC<AudioPlayerScreenProps> = ({ route, navigation }) => {
+  const colors = useThemedColors();
   const { category } = route.params;
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -37,50 +40,50 @@ export const AudioPlayerScreen: React.FC<AudioPlayerScreenProps> = ({ route, nav
   const progress = totalTime > 0 ? (currentTime / totalTime) * 100 : 0;
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Text style={styles.backText}>← Back</Text>
-        </TouchableOpacity>
+    <ThemedBackground>
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.container}>
+          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+            <Text style={[styles.backText, { color: colors.primary.main }]}>← Back</Text>
+          </TouchableOpacity>
 
-        <View style={styles.content}>
-          <Image source={{ uri: category.image }} style={styles.coverImage} />
+          <View style={styles.content}>
+            <Image source={{ uri: category.image }} style={styles.coverImage} />
 
-          <View style={styles.info}>
-            <Text style={styles.title}>{category.title}</Text>
-            <Text style={styles.description}>{category.description}</Text>
-          </View>
-
-          <View style={styles.progressContainer}>
-            <View style={styles.progressBar}>
-              <View style={[styles.progressFill, { width: `${progress}%` }]} />
+            <View style={styles.info}>
+              <Text style={[styles.title, { color: colors.text.primary }]}>{category.title}</Text>
+              <Text style={[styles.description, { color: colors.text.secondary }]}>{category.description}</Text>
             </View>
-            <View style={styles.timeLabels}>
-              <Text style={styles.timeText}>{formatTime(currentTime)}</Text>
-              <Text style={styles.timeText}>{formatTime(totalTime)}</Text>
-            </View>
-          </View>
 
-          <View style={styles.controls}>
-            <TouchableOpacity style={styles.playButton} onPress={handlePlayPause}>
-              <Text style={styles.playButtonText}>{isPlaying ? '❚❚' : '▶'}</Text>
-            </TouchableOpacity>
+            <View style={styles.progressContainer}>
+              <View style={[styles.progressBar, { backgroundColor: colors.neutral[200] }]}>
+                <View style={[styles.progressFill, { width: `${progress}%`, backgroundColor: colors.primary.main }]} />
+              </View>
+              <View style={styles.timeLabels}>
+                <Text style={[styles.timeText, { color: colors.text.tertiary }]}>{formatTime(currentTime)}</Text>
+                <Text style={[styles.timeText, { color: colors.text.tertiary }]}>{formatTime(totalTime)}</Text>
+              </View>
+            </View>
+
+            <View style={styles.controls}>
+              <TouchableOpacity style={[styles.playButton, { backgroundColor: colors.primary.main }]} onPress={handlePlayPause}>
+                <Text style={[styles.playButtonText, { color: colors.primary.contrast }]}>{isPlaying ? '❚❚' : '▶'}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </ThemedBackground>
   );
 };
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.background.secondary,
   },
 
   container: {
     flex: 1,
-    backgroundColor: colors.background.secondary,
   },
 
   backButton: {
@@ -90,7 +93,6 @@ const styles = StyleSheet.create({
 
   backText: {
     fontSize: typography.fontSize.base,
-    color: colors.primary.main,
     fontWeight: typography.fontWeight.medium,
   },
 
@@ -116,14 +118,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: typography.fontSize['2xl'],
     fontWeight: typography.fontWeight.bold,
-    color: colors.text.primary,
     marginBottom: spacing.xs,
     textAlign: 'center',
   },
 
   description: {
     fontSize: typography.fontSize.base,
-    color: colors.text.secondary,
     textAlign: 'center',
   },
 
@@ -135,7 +135,6 @@ const styles = StyleSheet.create({
   progressBar: {
     width: '100%',
     height: 4,
-    backgroundColor: colors.neutral[200],
     borderRadius: 2,
     overflow: 'hidden',
     marginBottom: spacing.sm,
@@ -143,7 +142,6 @@ const styles = StyleSheet.create({
 
   progressFill: {
     height: '100%',
-    backgroundColor: colors.primary.main,
     borderRadius: 2,
   },
 
@@ -154,7 +152,6 @@ const styles = StyleSheet.create({
 
   timeText: {
     fontSize: typography.fontSize.xs,
-    color: colors.text.tertiary,
   },
 
   controls: {
@@ -165,13 +162,11 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: 36,
-    backgroundColor: colors.primary.main,
     alignItems: 'center',
     justifyContent: 'center',
   },
 
   playButtonText: {
     fontSize: 32,
-    color: colors.primary.contrast,
   },
 });

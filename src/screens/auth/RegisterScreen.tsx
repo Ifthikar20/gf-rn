@@ -9,17 +9,19 @@ import {
   Alert,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Button, Input } from '@components/common';
+import { Button, Input, ThemedBackground } from '@components/common';
 import { authApi } from '@services/api';
 import { secureStorage } from '@services/storage/secureStorage';
 import { useStore } from '@store/index';
-import { colors, spacing, typography } from '@theme/index';
+import { spacing, typography } from '@theme/index';
+import { useThemedColors } from '@/hooks/useThemedColors';
 
 type RegisterScreenProps = {
   navigation: NativeStackNavigationProp<any>;
 };
 
 export const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
+  const colors = useThemedColors();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -112,98 +114,99 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) =>
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
+    <ThemedBackground>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <View style={styles.header}>
-          <Text style={styles.title}>Create Account</Text>
-          <Text style={styles.subtitle}>Start your wellness journey today</Text>
-        </View>
-
-        <View style={styles.form}>
-          <Input
-            label="Name"
-            placeholder="Enter your full name"
-            value={name}
-            onChangeText={(text) => {
-              setName(text);
-              setErrors((prev) => ({ ...prev, name: '' }));
-            }}
-            error={errors.name}
-            autoCapitalize="words"
-          />
-
-          <Input
-            label="Email"
-            placeholder="Enter your email"
-            value={email}
-            onChangeText={(text) => {
-              setEmail(text);
-              setErrors((prev) => ({ ...prev, email: '' }));
-            }}
-            error={errors.email}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
-
-          <Input
-            label="Password"
-            placeholder="Create a password"
-            value={password}
-            onChangeText={(text) => {
-              setPassword(text);
-              setErrors((prev) => ({ ...prev, password: '' }));
-            }}
-            error={errors.password}
-            secureTextEntry
-            helperText="Must be at least 6 characters"
-          />
-
-          <Input
-            label="Confirm Password"
-            placeholder="Confirm your password"
-            value={confirmPassword}
-            onChangeText={(text) => {
-              setConfirmPassword(text);
-              setErrors((prev) => ({ ...prev, confirmPassword: '' }));
-            }}
-            error={errors.confirmPassword}
-            secureTextEntry
-          />
-
-          <Button
-            title="Create Account"
-            onPress={handleRegister}
-            loading={loading}
-            disabled={loading}
-            style={styles.submitButton}
-          />
-
-          <View style={styles.loginContainer}>
-            <Text style={styles.loginText}>Already have an account? </Text>
-            <Button
-              title="Sign In"
-              variant="ghost"
-              size="sm"
-              onPress={() => navigation.navigate('Login')}
-            />
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.header}>
+            <Text style={[styles.title, { color: colors.text.primary }]}>Create Account</Text>
+            <Text style={[styles.subtitle, { color: colors.text.secondary }]}>Start your wellness journey today</Text>
           </View>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+
+          <View style={styles.form}>
+            <Input
+              label="Name"
+              placeholder="Enter your full name"
+              value={name}
+              onChangeText={(text) => {
+                setName(text);
+                setErrors((prev) => ({ ...prev, name: '' }));
+              }}
+              error={errors.name}
+              autoCapitalize="words"
+            />
+
+            <Input
+              label="Email"
+              placeholder="Enter your email"
+              value={email}
+              onChangeText={(text) => {
+                setEmail(text);
+                setErrors((prev) => ({ ...prev, email: '' }));
+              }}
+              error={errors.email}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+
+            <Input
+              label="Password"
+              placeholder="Create a password"
+              value={password}
+              onChangeText={(text) => {
+                setPassword(text);
+                setErrors((prev) => ({ ...prev, password: '' }));
+              }}
+              error={errors.password}
+              secureTextEntry
+              helperText="Must be at least 6 characters"
+            />
+
+            <Input
+              label="Confirm Password"
+              placeholder="Confirm your password"
+              value={confirmPassword}
+              onChangeText={(text) => {
+                setConfirmPassword(text);
+                setErrors((prev) => ({ ...prev, confirmPassword: '' }));
+              }}
+              error={errors.confirmPassword}
+              secureTextEntry
+            />
+
+            <Button
+              title="Create Account"
+              onPress={handleRegister}
+              loading={loading}
+              disabled={loading}
+              style={styles.submitButton}
+            />
+
+            <View style={styles.loginContainer}>
+              <Text style={[styles.loginText, { color: colors.text.secondary }]}>Already have an account? </Text>
+              <Button
+                title="Sign In"
+                variant="ghost"
+                size="sm"
+                onPress={() => navigation.navigate('Login')}
+              />
+            </View>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </ThemedBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.primary,
   },
 
   scrollContent: {
@@ -219,13 +222,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: typography.fontSize['3xl'],
     fontWeight: typography.fontWeight.bold,
-    color: colors.text.primary,
     marginBottom: spacing.sm,
   },
 
   subtitle: {
     fontSize: typography.fontSize.base,
-    color: colors.text.secondary,
   },
 
   form: {
@@ -245,6 +246,5 @@ const styles = StyleSheet.create({
 
   loginText: {
     fontSize: typography.fontSize.sm,
-    color: colors.text.secondary,
   },
 });

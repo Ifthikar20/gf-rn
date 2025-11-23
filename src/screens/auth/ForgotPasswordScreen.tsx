@@ -9,9 +9,10 @@ import {
   Alert,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Button, Input } from '@components/common';
+import { Button, Input, ThemedBackground } from '@components/common';
 import { authApi } from '@services/api';
-import { colors, spacing, typography } from '@theme/index';
+import { spacing, typography } from '@theme/index';
+import { useThemedColors } from '@/hooks/useThemedColors';
 
 type ForgotPasswordScreenProps = {
   navigation: NativeStackNavigationProp<any>;
@@ -20,6 +21,7 @@ type ForgotPasswordScreenProps = {
 export const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
   navigation,
 }) => {
+  const colors = useThemedColors();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -58,79 +60,82 @@ export const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
 
   if (submitted) {
     return (
-      <View style={styles.container}>
-        <View style={styles.successContainer}>
-          <Text style={styles.successIcon}>✉️</Text>
-          <Text style={styles.successTitle}>Check Your Email</Text>
-          <Text style={styles.successMessage}>
-            We've sent password reset instructions to {email}
-          </Text>
-          <Button
-            title="Back to Login"
-            onPress={() => navigation.navigate('Login')}
-            style={styles.backButton}
-          />
+      <ThemedBackground>
+        <View style={styles.container}>
+          <View style={styles.successContainer}>
+            <Text style={styles.successIcon}>✉️</Text>
+            <Text style={[styles.successTitle, { color: colors.text.primary }]}>Check Your Email</Text>
+            <Text style={[styles.successMessage, { color: colors.text.secondary }]}>
+              We've sent password reset instructions to {email}
+            </Text>
+            <Button
+              title="Back to Login"
+              onPress={() => navigation.navigate('Login')}
+              style={styles.backButton}
+            />
+          </View>
         </View>
-      </View>
+      </ThemedBackground>
     );
   }
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
+    <ThemedBackground>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <View style={styles.header}>
-          <Text style={styles.title}>Forgot Password?</Text>
-          <Text style={styles.subtitle}>
-            Enter your email address and we'll send you instructions to reset your
-            password
-          </Text>
-        </View>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.header}>
+            <Text style={[styles.title, { color: colors.text.primary }]}>Forgot Password?</Text>
+            <Text style={[styles.subtitle, { color: colors.text.secondary }]}>
+              Enter your email address and we'll send you instructions to reset your
+              password
+            </Text>
+          </View>
 
-        <View style={styles.form}>
-          <Input
-            label="Email"
-            placeholder="Enter your email"
-            value={email}
-            onChangeText={(text) => {
-              setEmail(text);
-              setError('');
-            }}
-            error={error}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
+          <View style={styles.form}>
+            <Input
+              label="Email"
+              placeholder="Enter your email"
+              value={email}
+              onChangeText={(text) => {
+                setEmail(text);
+                setError('');
+              }}
+              error={error}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
 
-          <Button
-            title="Send Reset Link"
-            onPress={handleSubmit}
-            loading={loading}
-            disabled={loading}
-            style={styles.submitButton}
-          />
+            <Button
+              title="Send Reset Link"
+              onPress={handleSubmit}
+              loading={loading}
+              disabled={loading}
+              style={styles.submitButton}
+            />
 
-          <Button
-            title="Back to Login"
-            variant="ghost"
-            onPress={() => navigation.goBack()}
-            style={styles.backButton}
-          />
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+            <Button
+              title="Back to Login"
+              variant="ghost"
+              onPress={() => navigation.goBack()}
+              style={styles.backButton}
+            />
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </ThemedBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.primary,
   },
 
   scrollContent: {
@@ -146,13 +151,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: typography.fontSize['3xl'],
     fontWeight: typography.fontWeight.bold,
-    color: colors.text.primary,
     marginBottom: spacing.sm,
   },
 
   subtitle: {
     fontSize: typography.fontSize.base,
-    color: colors.text.secondary,
     lineHeight: typography.fontSize.base * typography.lineHeight.normal,
   },
 
@@ -183,14 +186,12 @@ const styles = StyleSheet.create({
   successTitle: {
     fontSize: typography.fontSize['2xl'],
     fontWeight: typography.fontWeight.bold,
-    color: colors.text.primary,
     marginBottom: spacing.md,
     textAlign: 'center',
   },
 
   successMessage: {
     fontSize: typography.fontSize.base,
-    color: colors.text.secondary,
     textAlign: 'center',
     marginBottom: spacing.xl,
     lineHeight: typography.fontSize.base * typography.lineHeight.normal,

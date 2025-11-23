@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, Image, TouchableOpacity } from 'react-native';
-import { colors, spacing, typography, borderRadius } from '@theme/index';
+import { ThemedBackground } from '@components/common';
+import { spacing, typography, borderRadius } from '@theme/index';
+import { useThemedColors } from '@/hooks/useThemedColors';
 
 const discoverSections = [
   {
@@ -42,50 +44,52 @@ const discoverSections = [
 ];
 
 export const DiscoverScreen: React.FC = () => {
-  return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Discover</Text>
-          <Text style={styles.subtitle}>Explore curated wellness content</Text>
-        </View>
+  const colors = useThemedColors();
 
-        {discoverSections.map((section) => (
-          <View key={section.id} style={styles.section}>
-            <Text style={styles.sectionTitle}>{section.title}</Text>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.itemsContainer}
-            >
-              {section.items.map((item) => (
-                <TouchableOpacity key={item.id} style={styles.card} activeOpacity={0.7}>
-                  <Image source={{ uri: item.image }} style={styles.cardImage} />
-                  <View style={styles.cardContent}>
-                    <Text style={styles.cardCategory}>{item.category}</Text>
-                    <Text style={styles.cardTitle} numberOfLines={2}>
-                      {item.title}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
+  return (
+    <ThemedBackground>
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+          <View style={styles.header}>
+            <Text style={[styles.title, { color: colors.text.primary }]}>Discover</Text>
+            <Text style={[styles.subtitle, { color: colors.text.secondary }]}>Explore curated wellness content</Text>
           </View>
-        ))}
-      </ScrollView>
-    </SafeAreaView>
+
+          {discoverSections.map((section) => (
+            <View key={section.id} style={styles.section}>
+              <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>{section.title}</Text>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.itemsContainer}
+              >
+                {section.items.map((item) => (
+                  <TouchableOpacity key={item.id} style={[styles.card, { backgroundColor: colors.background.primary }]} activeOpacity={0.7}>
+                    <Image source={{ uri: item.image }} style={styles.cardImage} />
+                    <View style={styles.cardContent}>
+                      <Text style={[styles.cardCategory, { color: colors.primary.main }]}>{item.category}</Text>
+                      <Text style={[styles.cardTitle, { color: colors.text.primary }]} numberOfLines={2}>
+                        {item.title}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+          ))}
+        </ScrollView>
+      </SafeAreaView>
+    </ThemedBackground>
   );
 };
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.background.secondary,
   },
 
   container: {
     flex: 1,
-    backgroundColor: colors.background.secondary,
   },
 
   header: {
@@ -96,13 +100,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: typography.fontSize['3xl'],
     fontWeight: typography.fontWeight.bold,
-    color: colors.text.primary,
     marginBottom: spacing.xs,
   },
 
   subtitle: {
     fontSize: typography.fontSize.base,
-    color: colors.text.secondary,
   },
 
   section: {
@@ -112,7 +114,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.text.primary,
     paddingHorizontal: spacing.screenPadding,
     marginBottom: spacing.md,
   },
@@ -124,7 +125,6 @@ const styles = StyleSheet.create({
 
   card: {
     width: 200,
-    backgroundColor: colors.background.primary,
     borderRadius: borderRadius.lg,
     overflow: 'hidden',
   },
@@ -141,7 +141,6 @@ const styles = StyleSheet.create({
   cardCategory: {
     fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.medium,
-    color: colors.primary.main,
     textTransform: 'uppercase',
     marginBottom: spacing.xs / 2,
   },
@@ -149,6 +148,5 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.text.primary,
   },
 });

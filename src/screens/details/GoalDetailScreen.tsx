@@ -3,9 +3,10 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
 import { useGoalById } from '@hooks/useGoals';
-import { Button } from '@components/common';
+import { Button, ThemedBackground } from '@components/common';
 import { ProgressRing } from '@components/goals';
-import { colors, spacing, typography } from '@theme/index';
+import { spacing, typography } from '@theme/index';
+import { useThemedColors } from '@/hooks/useThemedColors';
 
 
 export const GoalDetailScreen = ({
@@ -15,78 +16,84 @@ export const GoalDetailScreen = ({
   navigation: any;
   route: any;
 }) => {
+  const colors = useThemedColors();
   const { id } = route.params;
   const { data: goal, isLoading } = useGoalById(id);
 
   if (isLoading) {
     return (
-      <View style={styles.centered}>
-        <Text style={styles.loadingText}>Loading...</Text>
-      </View>
+      <ThemedBackground>
+        <View style={styles.centered}>
+          <Text style={[styles.loadingText, { color: colors.text.secondary }]}>Loading...</Text>
+        </View>
+      </ThemedBackground>
     );
   }
 
   if (!goal) {
     return (
-      <View style={styles.centered}>
-        <Text style={styles.errorText}>Goal not found</Text>
-        <Button title="Go Back" onPress={() => navigation.goBack()} />
-      </View>
+      <ThemedBackground>
+        <View style={styles.centered}>
+          <Text style={[styles.errorText, { color: colors.text.primary }]}>Goal not found</Text>
+          <Button title="Go Back" onPress={() => navigation.goBack()} />
+        </View>
+      </ThemedBackground>
     );
   }
 
   const progress = (goal.current / goal.target) * 100;
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.header}>
-        {goal.icon && <Text style={styles.icon}>{goal.icon}</Text>}
-        <Text style={styles.title}>{goal.title}</Text>
-        <Text style={styles.description}>{goal.description}</Text>
-      </View>
+    <ThemedBackground>
+      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+        <View style={styles.header}>
+          {goal.icon && <Text style={styles.icon}>{goal.icon}</Text>}
+          <Text style={[styles.title, { color: colors.text.primary }]}>{goal.title}</Text>
+          <Text style={[styles.description, { color: colors.text.secondary }]}>{goal.description}</Text>
+        </View>
 
-      <View style={styles.progressSection}>
-        <ProgressRing
-          progress={progress}
-          size={150}
-          strokeWidth={15}
-          color={goal.color || colors.primary.main}
+        <View style={styles.progressSection}>
+          <ProgressRing
+            progress={progress}
+            size={150}
+            strokeWidth={15}
+            color={goal.color || colors.primary.main}
+          />
+          <Text style={[styles.progressText, { color: colors.text.primary }]}>
+            {goal.current} / {goal.target} {goal.unit}
+          </Text>
+        </View>
+
+        <View style={styles.statsGrid}>
+          <View style={[styles.statCard, { backgroundColor: colors.background.secondary }]}>
+            <Text style={[styles.statLabel, { color: colors.text.secondary }]}>Frequency</Text>
+            <Text style={[styles.statValue, { color: colors.text.primary }]}>{goal.frequency}</Text>
+          </View>
+          <View style={[styles.statCard, { backgroundColor: colors.background.secondary }]}>
+            <Text style={[styles.statLabel, { color: colors.text.secondary }]}>Streak</Text>
+            <Text style={[styles.statValue, { color: colors.text.primary }]}>{goal.streak} days</Text>
+          </View>
+          <View style={[styles.statCard, { backgroundColor: colors.background.secondary }]}>
+            <Text style={[styles.statLabel, { color: colors.text.secondary }]}>Status</Text>
+            <Text style={[styles.statValue, { color: colors.text.primary }]}>{goal.status}</Text>
+          </View>
+        </View>
+
+        <Button title="Update Progress" onPress={() => {}} style={styles.button} />
+        <Button
+          title="Edit Goal"
+          variant="outline"
+          onPress={() => {}}
+          style={styles.button}
         />
-        <Text style={styles.progressText}>
-          {goal.current} / {goal.target} {goal.unit}
-        </Text>
-      </View>
-
-      <View style={styles.statsGrid}>
-        <View style={styles.statCard}>
-          <Text style={styles.statLabel}>Frequency</Text>
-          <Text style={styles.statValue}>{goal.frequency}</Text>
-        </View>
-        <View style={styles.statCard}>
-          <Text style={styles.statLabel}>Streak</Text>
-          <Text style={styles.statValue}>{goal.streak} days</Text>
-        </View>
-        <View style={styles.statCard}>
-          <Text style={styles.statLabel}>Status</Text>
-          <Text style={styles.statValue}>{goal.status}</Text>
-        </View>
-      </View>
-
-      <Button title="Update Progress" onPress={() => {}} style={styles.button} />
-      <Button
-        title="Edit Goal"
-        variant="outline"
-        onPress={() => {}}
-        style={styles.button}
-      />
-    </ScrollView>
+      </ScrollView>
+    </ThemedBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.primary,
   },
 
   content: {
@@ -102,12 +109,10 @@ const styles = StyleSheet.create({
 
   loadingText: {
     fontSize: typography.fontSize.base,
-    color: colors.text.secondary,
   },
 
   errorText: {
     fontSize: typography.fontSize.lg,
-    color: colors.text.primary,
     marginBottom: spacing.lg,
   },
 
@@ -124,14 +129,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: typography.fontSize['2xl'],
     fontWeight: typography.fontWeight.bold,
-    color: colors.text.primary,
     textAlign: 'center',
     marginBottom: spacing.sm,
   },
 
   description: {
     fontSize: typography.fontSize.base,
-    color: colors.text.secondary,
     textAlign: 'center',
   },
 
@@ -143,7 +146,6 @@ const styles = StyleSheet.create({
   progressText: {
     fontSize: typography.fontSize.xl,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.text.primary,
     marginTop: spacing.lg,
   },
 
@@ -155,7 +157,6 @@ const styles = StyleSheet.create({
 
   statCard: {
     flex: 1,
-    backgroundColor: colors.background.secondary,
     padding: spacing.md,
     borderRadius: 12,
     alignItems: 'center',
@@ -163,14 +164,12 @@ const styles = StyleSheet.create({
 
   statLabel: {
     fontSize: typography.fontSize.xs,
-    color: colors.text.secondary,
     marginBottom: spacing.xs,
   },
 
   statValue: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.text.primary,
     textAlign: 'center',
     textTransform: 'capitalize',
   },
