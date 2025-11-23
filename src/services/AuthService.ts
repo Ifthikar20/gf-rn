@@ -98,8 +98,8 @@ class AuthService {
   // Login with email and password
   async login(email: string, password: string): Promise<User> {
     // Mock authentication for development
-    // Use: admin@test.com / admin123
-    if (email === 'admin@test.com' && password === 'admin123') {
+    // Use: admin / admin
+    if (email === 'admin' && password === 'admin') {
       const mockUser: User = {
         id: 'mock-user-001',
         email: 'admin@gfwellness.com',

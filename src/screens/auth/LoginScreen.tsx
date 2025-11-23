@@ -38,7 +38,7 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const isFormValid = email.includes('@') && password.length >= 6;
+  const isFormValid = email.length > 0 && password.length > 0;
 
   const handleLogin = async () => {
     try {
