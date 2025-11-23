@@ -143,36 +143,36 @@ const styles = StyleSheet.create({
 
   timelineItem: {
     flexDirection: 'row',
-    marginBottom: spacing.md,
+    marginBottom: spacing.xl,
   },
 
   timelineLeft: {
-    width: 60,
+    width: 70,
     alignItems: 'center',
-    paddingTop: spacing.xs,
+    paddingTop: spacing.sm,
   },
 
   dateText: {
-    fontSize: 10,
-    marginBottom: spacing.xs,
+    fontSize: 11,
+    marginBottom: spacing.sm,
     textAlign: 'center',
-    lineHeight: 12,
+    lineHeight: 14,
     fontWeight: typography.fontWeight.medium,
   },
 
   timelineDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    borderWidth: 2,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    borderWidth: 3,
     zIndex: 1,
   },
 
   timelineLine: {
     position: 'absolute',
     width: 2,
-    top: 38,
-    bottom: -20,
+    top: 45,
+    bottom: -spacing.xl,
   },
 
   timelineRight: {

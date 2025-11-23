@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, Image, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, Image, TouchableOpacity, TextInput } from 'react-native';
 import { ThemedBackground } from '@components/common';
 import { spacing, typography, borderRadius } from '@theme/index';
 import { useThemedColors } from '@/hooks/useThemedColors';
@@ -45,6 +45,7 @@ const discoverSections = [
 
 export const DiscoverScreen: React.FC = () => {
   const colors = useThemedColors();
+  const [searchQuery, setSearchQuery] = useState('');
 
   return (
     <ThemedBackground>
@@ -53,6 +54,25 @@ export const DiscoverScreen: React.FC = () => {
           <View style={styles.header}>
             <Text style={[styles.title, { color: colors.text.primary }]}>Discover</Text>
             <Text style={[styles.subtitle, { color: colors.text.secondary }]}>Explore curated wellness content</Text>
+          </View>
+
+          {/* Search Bar */}
+          <View style={styles.searchContainer}>
+            <View style={[styles.searchBar, { backgroundColor: colors.background.primary, borderColor: colors.border.light }]}>
+              <Text style={[styles.searchIcon, { color: colors.text.tertiary }]}>🔍</Text>
+              <TextInput
+                style={[styles.searchInput, { color: colors.text.primary }]}
+                placeholder="Search articles, topics..."
+                placeholderTextColor={colors.text.tertiary}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+              />
+              {searchQuery.length > 0 && (
+                <TouchableOpacity onPress={() => setSearchQuery('')}>
+                  <Text style={[styles.clearButton, { color: colors.text.tertiary }]}>✕</Text>
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
 
           {discoverSections.map((section) => (
@@ -123,19 +143,48 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
 
+  searchContainer: {
+    paddingHorizontal: spacing.screenPadding,
+    marginBottom: spacing.md,
+  },
+
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+  },
+
+  searchIcon: {
+    fontSize: typography.fontSize.lg,
+    marginRight: spacing.sm,
+  },
+
+  searchInput: {
+    flex: 1,
+    fontSize: typography.fontSize.base,
+  },
+
+  clearButton: {
+    fontSize: typography.fontSize.xl,
+    paddingHorizontal: spacing.xs,
+  },
+
   card: {
-    width: 200,
+    width: 160,
     borderRadius: borderRadius.lg,
     overflow: 'hidden',
   },
 
   cardImage: {
     width: '100%',
-    height: 120,
+    height: 100,
   },
 
   cardContent: {
-    padding: spacing.md,
+    padding: spacing.sm,
   },
 
   cardCategory: {
