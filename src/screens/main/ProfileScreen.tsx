@@ -1,14 +1,16 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Switch } from 'react-native';
 import { useStore } from '@store/index';
 import { Avatar, Button, ThemedBackground } from '@components/common';
 import { authApi } from '@services/api';
 import { secureStorage } from '@services/storage/secureStorage';
 import { spacing, typography } from '@theme/index';
 import { useThemedColors } from '@/hooks/useThemedColors';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export const ProfileScreen: React.FC = () => {
   const colors = useThemedColors();
+  const { isDarkMode, toggleTheme } = useTheme();
   const user = useStore((state) => state.user);
   const logout = useStore((state) => state.logout);
 
@@ -35,7 +37,6 @@ export const ProfileScreen: React.FC = () => {
   const menuItems = [
     { icon: '●', title: 'Edit Profile', subtitle: 'Update your information' },
     { icon: '●', title: 'Notifications', subtitle: 'Manage your notifications' },
-    { icon: '●', title: 'Appearance', subtitle: 'Theme and display settings' },
     { icon: '●', title: 'Data & Privacy', subtitle: 'Manage your data' },
     { icon: '●', title: 'Help & Support', subtitle: 'Get help or contact us' },
     { icon: '●', title: 'Terms & Privacy', subtitle: 'Legal information' },
@@ -48,6 +49,27 @@ export const ProfileScreen: React.FC = () => {
           <Avatar uri={user?.avatar} name={user?.name || ''} size="xl" />
           <Text style={[styles.name, { color: colors.text.primary }]}>{user?.name}</Text>
           <Text style={[styles.email, { color: colors.text.secondary }]}>{user?.email}</Text>
+        </View>
+
+        {/* Dark Mode Toggle */}
+        <View style={[styles.menuSection, { backgroundColor: colors.background.primary }]}>
+          <View style={[styles.menuItem, { borderBottomWidth: 0 }]}>
+            <View style={styles.menuItemLeft}>
+              <Text style={styles.menuIcon}>{isDarkMode ? '🌙' : '☀️'}</Text>
+              <View style={styles.menuItemText}>
+                <Text style={[styles.menuTitle, { color: colors.text.primary }]}>Dark Mode</Text>
+                <Text style={[styles.menuSubtitle, { color: colors.text.secondary }]}>
+                  {isDarkMode ? 'Dark theme enabled' : 'Light theme enabled'}
+                </Text>
+              </View>
+            </View>
+            <Switch
+              value={isDarkMode}
+              onValueChange={toggleTheme}
+              trackColor={{ false: colors.neutral[300], true: colors.primary.main }}
+              thumbColor={colors.background.primary}
+            />
+          </View>
         </View>
 
         <View style={[styles.menuSection, { backgroundColor: colors.background.primary }]}>

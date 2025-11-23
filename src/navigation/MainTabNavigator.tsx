@@ -58,6 +58,7 @@ export type MainTabParamList = {
   Library: undefined;
   Meditate: undefined;
   Discover: undefined;
+  Profile: undefined;
 };
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -266,6 +267,14 @@ export const MainTabNavigator = () => {
         options={{
           tabBarLabel: 'Discover',
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 20, color }}>◇</Text>,
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileStackNavigator}
+        options={{
+          tabBarLabel: 'Profile',
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20, color }}>◉</Text>,
         }}
       />
     </Tab.Navigator>

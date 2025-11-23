@@ -55,6 +55,48 @@ const meditationCategories: MeditationCategory[] = [
     image: 'https://images.unsplash.com/photo-1511295742362-92c96b1cf484?w=800',
     audioUrl: 'https://example.com/sleep-sounds.mp3',
   },
+  {
+    id: '7',
+    title: 'Mindfulness Practice',
+    description: 'Present moment awareness exercises',
+    image: 'https://images.unsplash.com/photo-1545389336-cf090694435e?w=800',
+    audioUrl: 'https://example.com/mindfulness.mp3',
+  },
+  {
+    id: '8',
+    title: 'Breathing Exercises',
+    description: 'Focused breathing techniques',
+    image: 'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=800',
+    audioUrl: 'https://example.com/breathing.mp3',
+  },
+  {
+    id: '9',
+    title: 'Chakra Meditation',
+    description: 'Energy center balancing',
+    image: 'https://images.unsplash.com/photo-1528715471579-d1bcf0ba5e83?w=800',
+    audioUrl: 'https://example.com/chakra.mp3',
+  },
+  {
+    id: '10',
+    title: 'White Noise',
+    description: 'Consistent ambient sound for focus',
+    image: 'https://images.unsplash.com/photo-1483086431886-3590a88317fe?w=800',
+    audioUrl: 'https://example.com/white-noise.mp3',
+  },
+  {
+    id: '11',
+    title: 'Thunderstorm',
+    description: 'Powerful storm sounds',
+    image: 'https://images.unsplash.com/photo-1605727216801-e27ce1d0cc28?w=800',
+    audioUrl: 'https://example.com/thunderstorm.mp3',
+  },
+  {
+    id: '12',
+    title: 'Mountain Zen',
+    description: 'High altitude tranquility',
+    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
+    audioUrl: 'https://example.com/mountain-zen.mp3',
+  },
 ];
 
 interface MeditateScreenProps {
