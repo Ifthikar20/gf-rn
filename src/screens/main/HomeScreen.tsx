@@ -34,7 +34,7 @@ export const HomeScreen: React.FC = () => {
       >
         <View style={styles.header}>
           <View style={styles.headerText}>
-            <Text style={styles.greeting}>Hello, {user?.name}! 👋</Text>
+            <Text style={styles.greeting}>Hello, {user?.name}!</Text>
             <Text style={styles.subGreeting}>Welcome back to your wellness journey</Text>
           </View>
           <Avatar uri={user?.avatar} name={user?.name || ''} size="md" />

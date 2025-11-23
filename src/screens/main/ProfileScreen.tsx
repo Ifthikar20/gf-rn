@@ -31,12 +31,12 @@ export const ProfileScreen: React.FC = () => {
   };
 
   const menuItems = [
-    { icon: '👤', title: 'Edit Profile', subtitle: 'Update your information' },
-    { icon: '🔔', title: 'Notifications', subtitle: 'Manage your notifications' },
-    { icon: '🎨', title: 'Appearance', subtitle: 'Theme and display settings' },
-    { icon: '📊', title: 'Data & Privacy', subtitle: 'Manage your data' },
-    { icon: '❓', title: 'Help & Support', subtitle: 'Get help or contact us' },
-    { icon: '📄', title: 'Terms & Privacy', subtitle: 'Legal information' },
+    { icon: '●', title: 'Edit Profile', subtitle: 'Update your information' },
+    { icon: '●', title: 'Notifications', subtitle: 'Manage your notifications' },
+    { icon: '●', title: 'Appearance', subtitle: 'Theme and display settings' },
+    { icon: '●', title: 'Data & Privacy', subtitle: 'Manage your data' },
+    { icon: '●', title: 'Help & Support', subtitle: 'Get help or contact us' },
+    { icon: '●', title: 'Terms & Privacy', subtitle: 'Legal information' },
   ];
 
   return (

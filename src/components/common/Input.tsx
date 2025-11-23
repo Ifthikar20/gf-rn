@@ -62,7 +62,7 @@ export const Input: React.FC<InputProps> = ({
             onPress={() => setIsPasswordVisible(!isPasswordVisible)}
           >
             <Text style={styles.passwordToggle}>
-              {isPasswordVisible ? '👁️' : '👁️‍🗨️'}
+              {isPasswordVisible ? 'Hide' : 'Show'}
             </Text>
           </TouchableOpacity>
         )}

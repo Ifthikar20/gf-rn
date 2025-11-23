@@ -34,13 +34,12 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, onPress }) => {
         <View style={styles.content}>
           <View style={styles.header}>
             <View style={styles.titleContainer}>
-              {goal.icon && <Text style={styles.icon}>{goal.icon}</Text>}
               <View style={styles.titleTextContainer}>
                 <Text style={styles.title} numberOfLines={1}>
                   {goal.title}
                 </Text>
                 <Text style={styles.frequency}>
-                  {goal.frequency} • {goal.streak} day streak 🔥
+                  {goal.frequency} • {goal.streak} day streak
                 </Text>
               </View>
             </View>
@@ -108,11 +107,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
-  },
-
-  icon: {
-    fontSize: typography.fontSize['2xl'],
-    marginRight: spacing.sm,
   },
 
   titleTextContainer: {

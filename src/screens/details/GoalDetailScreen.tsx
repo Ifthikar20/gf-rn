@@ -64,7 +64,7 @@ export const GoalDetailScreen = ({
         </View>
         <View style={styles.statCard}>
           <Text style={styles.statLabel}>Streak</Text>
-          <Text style={styles.statValue}>{goal.streak} days 🔥</Text>
+          <Text style={styles.statValue}>{goal.streak} days</Text>
         </View>
         <View style={styles.statCard}>
           <Text style={styles.statLabel}>Status</Text>

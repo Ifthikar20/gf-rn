@@ -15,21 +15,6 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
   onPress,
   onBookmarkToggle,
 }) => {
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case 'article':
-        return '📄';
-      case 'video':
-        return '🎥';
-      case 'audio':
-        return '🎧';
-      case 'meditation':
-        return '🧘';
-      default:
-        return '📄';
-    }
-  };
-
   const getDuration = () => {
     if (item.duration) {
       const minutes = Math.floor(item.duration / 60);
@@ -44,42 +29,40 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
       <Card padding={0} style={styles.card}>
-        {item.thumbnail && (
-          <Image source={{ uri: item.thumbnail }} style={styles.thumbnail} />
-        )}
+        <View style={styles.cardContent}>
+          {item.thumbnail && (
+            <Image source={{ uri: item.thumbnail }} style={styles.thumbnail} />
+          )}
 
-        <View style={styles.content}>
-          <View style={styles.header}>
-            <View style={styles.typeContainer}>
-              <Text style={styles.typeIcon}>{getTypeIcon(item.type)}</Text>
-              <Text style={styles.type}>{item.type}</Text>
+          <View style={styles.content}>
+            <View style={styles.header}>
+              <Text style={styles.type}>{item.type.toUpperCase()}</Text>
+              <TouchableOpacity onPress={onBookmarkToggle} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                <Text style={styles.bookmarkIcon}>
+                  {item.isBookmarked ? '★' : '☆'}
+                </Text>
+              </TouchableOpacity>
             </View>
 
-            <TouchableOpacity onPress={onBookmarkToggle} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-              <Text style={styles.bookmarkIcon}>
-                {item.isBookmarked ? '🔖' : '📑'}
-              </Text>
-            </TouchableOpacity>
-          </View>
+            <Text style={styles.title} numberOfLines={2}>
+              {item.title}
+            </Text>
 
-          <Text style={styles.title} numberOfLines={2}>
-            {item.title}
-          </Text>
+            <Text style={styles.description} numberOfLines={2}>
+              {item.description}
+            </Text>
 
-          <Text style={styles.description} numberOfLines={2}>
-            {item.description}
-          </Text>
-
-          <View style={styles.footer}>
-            {getDuration() && (
-              <Text style={styles.duration}>{getDuration()}</Text>
-            )}
-            {item.author && (
-              <>
+            <View style={styles.footer}>
+              {getDuration() && (
+                <Text style={styles.duration}>{getDuration()}</Text>
+              )}
+              {item.author && getDuration() && (
                 <Text style={styles.separator}>•</Text>
-                <Text style={styles.author}>{item.author}</Text>
-              </>
-            )}
+              )}
+              {item.author && (
+                <Text style={styles.author} numberOfLines={1}>{item.author}</Text>
+              )}
+            </View>
           </View>
         </View>
       </Card>
@@ -92,56 +75,53 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
 
+  cardContent: {
+    flexDirection: 'row',
+  },
+
   thumbnail: {
-    width: '100%',
-    height: 180,
+    width: 100,
+    height: 100,
     borderTopLeftRadius: borderRadius.lg,
-    borderTopRightRadius: borderRadius.lg,
+    borderBottomLeftRadius: borderRadius.lg,
   },
 
   content: {
-    padding: spacing.md,
+    flex: 1,
+    padding: spacing.sm,
   },
 
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.sm,
-  },
-
-  typeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-
-  typeIcon: {
-    fontSize: typography.fontSize.base,
-    marginRight: spacing.xs,
-  },
-
-  type: {
-    fontSize: typography.fontSize.sm,
-    color: colors.text.secondary,
-    textTransform: 'capitalize',
-  },
-
-  bookmarkIcon: {
-    fontSize: typography.fontSize.xl,
-  },
-
-  title: {
-    fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.text.primary,
     marginBottom: spacing.xs,
   },
 
+  type: {
+    fontSize: typography.fontSize.xs,
+    color: colors.primary.main,
+    fontWeight: typography.fontWeight.semibold,
+    letterSpacing: 0.5,
+  },
+
+  bookmarkIcon: {
+    fontSize: 18,
+    color: colors.primary.main,
+  },
+
+  title: {
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.text.primary,
+    marginBottom: spacing.xs / 2,
+  },
+
   description: {
-    fontSize: typography.fontSize.sm,
+    fontSize: typography.fontSize.xs,
     color: colors.text.secondary,
-    lineHeight: typography.fontSize.sm * typography.lineHeight.normal,
-    marginBottom: spacing.sm,
+    lineHeight: typography.fontSize.xs * 1.4,
+    marginBottom: spacing.xs,
   },
 
   footer: {
@@ -157,11 +137,12 @@ const styles = StyleSheet.create({
   separator: {
     fontSize: typography.fontSize.xs,
     color: colors.text.tertiary,
-    marginHorizontal: spacing.xs,
+    marginHorizontal: spacing.xs / 2,
   },
 
   author: {
     fontSize: typography.fontSize.xs,
     color: colors.text.tertiary,
+    flex: 1,
   },
 });

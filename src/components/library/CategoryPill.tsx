@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   pill: {
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    borderRadius: borderRadius.full,
+    borderRadius: borderRadius.lg,
     backgroundColor: colors.background.tertiary,
     marginRight: spacing.sm,
   },

@@ -6,6 +6,7 @@ import {
   HomeScreen,
   LibraryScreen,
   GoalsScreen,
+  MeditateScreen,
   ProfileScreen,
 } from '@screens/main';
 import { ArticleDetailScreen, GoalDetailScreen } from '@screens/details';
@@ -27,14 +28,19 @@ export type GoalsStackParamList = {
   GoalDetail: { id: string };
 };
 
+export type MeditateStackParamList = {
+  MeditateMain: undefined;
+  ArticleDetail: { id: string };
+};
+
 export type ProfileStackParamList = {
   ProfileMain: undefined;
 };
 
 export type MainTabParamList = {
-  Home: undefined;
-  Library: undefined;
   Goals: undefined;
+  Library: undefined;
+  Meditate: undefined;
   Profile: undefined;
 };
 
@@ -42,13 +48,14 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 const HomeStack = createNativeStackNavigator<HomeStackParamList>();
 const LibraryStack = createNativeStackNavigator<LibraryStackParamList>();
 const GoalsStack = createNativeStackNavigator<GoalsStackParamList>();
+const MeditateStack = createNativeStackNavigator<MeditateStackParamList>();
 const ProfileStack = createNativeStackNavigator<ProfileStackParamList>();
 
 const HomeStackNavigator = () => (
   <HomeStack.Navigator>
     <HomeStack.Screen
       name="HomeMain"
-      component={HomeScreen}
+      component={GoalsScreen}
       options={{ headerShown: false }}
     />
     <HomeStack.Screen
@@ -94,6 +101,21 @@ const GoalsStackNavigator = () => (
   </GoalsStack.Navigator>
 );
 
+const MeditateStackNavigator = () => (
+  <MeditateStack.Navigator>
+    <MeditateStack.Screen
+      name="MeditateMain"
+      component={MeditateScreen}
+      options={{ headerShown: false }}
+    />
+    <MeditateStack.Screen
+      name="ArticleDetail"
+      component={ArticleDetailScreen}
+      options={{ title: 'Article' }}
+    />
+  </MeditateStack.Navigator>
+);
+
 const ProfileStackNavigator = () => (
   <ProfileStack.Navigator>
     <ProfileStack.Screen
@@ -122,11 +144,11 @@ export const MainTabNavigator = () => {
       }}
     >
       <Tab.Screen
-        name="Home"
+        name="Goals"
         component={HomeStackNavigator}
         options={{
-          tabBarLabel: 'Home',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>🏠</Text>,
+          tabBarLabel: 'Goals',
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20, color }}>●</Text>,
         }}
       />
       <Tab.Screen
@@ -134,15 +156,15 @@ export const MainTabNavigator = () => {
         component={LibraryStackNavigator}
         options={{
           tabBarLabel: 'Library',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>📚</Text>,
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20, color }}>■</Text>,
         }}
       />
       <Tab.Screen
-        name="Goals"
-        component={GoalsStackNavigator}
+        name="Meditate"
+        component={MeditateStackNavigator}
         options={{
-          tabBarLabel: 'Goals',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>🎯</Text>,
+          tabBarLabel: 'Meditate',
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20, color }}>◆</Text>,
         }}
       />
       <Tab.Screen
@@ -150,7 +172,7 @@ export const MainTabNavigator = () => {
         component={ProfileStackNavigator}
         options={{
           tabBarLabel: 'Profile',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>👤</Text>,
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20, color }}>▲</Text>,
         }}
       />
     </Tab.Navigator>

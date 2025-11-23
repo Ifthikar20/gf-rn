@@ -5,8 +5,24 @@ import { Button } from '@components/common';
 import { colors, spacing, typography } from '@theme/index';
 import { mockGoals, mockGoalStats } from '@services/mockData';
 
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffTime = Math.abs(now.getTime() - date.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) return 'Today';
+  if (diffDays === 1) return 'Yesterday';
+  if (diffDays < 7) return `${diffDays} days ago`;
+  if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+};
+
 export const GoalsScreen: React.FC = () => {
-  const goals = mockGoals;
+  const goals = mockGoals.sort((a, b) =>
+    new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+  );
   const stats = mockGoalStats;
 
   return (
@@ -42,7 +58,18 @@ export const GoalsScreen: React.FC = () => {
         <FlatList
           data={goals}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <GoalCard goal={item} onPress={() => {}} />}
+          renderItem={({ item, index }) => (
+            <View style={styles.timelineItem}>
+              <View style={styles.timelineLeft}>
+                <Text style={styles.dateText}>{formatDate(item.updatedAt)}</Text>
+                <View style={styles.timelineDot} />
+                {index < goals.length - 1 && <View style={styles.timelineLine} />}
+              </View>
+              <View style={styles.timelineRight}>
+                <GoalCard goal={item} onPress={() => {}} />
+              </View>
+            </View>
+          )}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
         />
@@ -115,6 +142,46 @@ const styles = StyleSheet.create({
 
   listContent: {
     padding: spacing.screenPadding,
+  },
+
+  timelineItem: {
+    flexDirection: 'row',
+    marginBottom: spacing.md,
+  },
+
+  timelineLeft: {
+    width: 80,
+    alignItems: 'center',
+    paddingTop: spacing.xs,
+  },
+
+  dateText: {
+    fontSize: typography.fontSize.xs,
+    color: colors.text.tertiary,
+    marginBottom: spacing.xs,
+    textAlign: 'center',
+  },
+
+  timelineDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: colors.primary.main,
+    borderWidth: 2,
+    borderColor: colors.background.primary,
+    zIndex: 1,
+  },
+
+  timelineLine: {
+    position: 'absolute',
+    width: 2,
+    backgroundColor: colors.border.light,
+    top: 45,
+    bottom: -20,
+  },
+
+  timelineRight: {
+    flex: 1,
   },
 
   emptyContainer: {
