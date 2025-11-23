@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "ios": "react-native run-ios --scheme greatfeel",
+    "ios": "react-native run-ios --workspace ios/greatfeel.xcworkspace --scheme greatfeel",
     "start": "react-native start",
     "pod-install": "cd ios && pod install && cd .."
   },
