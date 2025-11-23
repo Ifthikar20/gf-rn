@@ -75,14 +75,32 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) =>
 
     setLoading(true);
     try {
-      const response = await authApi.register({ name, email, password });
+      // TEMPORARY: Mock authentication for testing
+      // TODO: Replace with real API call when backend is ready
+      // const response = await authApi.register({ name, email, password });
+
+      // Mock response
+      const mockResponse = {
+        user: {
+          id: '1',
+          email: email,
+          name: name,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+        tokens: {
+          accessToken: 'mock-access-token',
+          refreshToken: 'mock-refresh-token',
+          expiresIn: 3600,
+        },
+      };
 
       await secureStorage.setTokens(
-        response.tokens.accessToken,
-        response.tokens.refreshToken
+        mockResponse.tokens.accessToken,
+        mockResponse.tokens.refreshToken
       );
 
-      login(response.user, response.tokens);
+      login(mockResponse.user, mockResponse.tokens);
     } catch (error: any) {
       Alert.alert(
         'Registration Failed',
