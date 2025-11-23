@@ -3,7 +3,7 @@
   "compilerOptions": {
     "strict": true,
     "baseUrl": ".",
-    "types": [],
+    "skipLibCheck": true,
     "paths": {
       "@components/*": ["src/components/*"],
       "@screens/*": ["src/screens/*"],
@@ -14,5 +14,10 @@
       "@theme/*": ["src/theme/*"],
       "@app-types/*": ["src/types/*"]
     }
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts",
+    "**/*.test.ts"
+  ]
 }
