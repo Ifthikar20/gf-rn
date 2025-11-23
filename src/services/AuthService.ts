@@ -97,6 +97,24 @@ class AuthService {
 
   // Login with email and password
   async login(email: string, password: string): Promise<User> {
+    // Mock authentication for development
+    if (email === 'admin' && password === 'admin') {
+      const mockUser: User = {
+        id: 'mock-user-001',
+        email: 'admin@gfwellness.com',
+        name: 'Admin User',
+        createdAt: new Date().toISOString(),
+      };
+
+      // Store mock tokens
+      await storageService.saveTokens('mock-access-token', 'mock-refresh-token');
+      await storageService.save(StorageKey.USER_ID, mockUser.id);
+      await storageService.save(StorageKey.USER_EMAIL, mockUser.email);
+      await storageService.saveObject(StorageKey.USER_DATA, mockUser);
+
+      return mockUser;
+    }
+
     try {
       const request: LoginRequest = {email, password};
       const response = await networkService.post<AuthResponse, LoginRequest>(
