@@ -26,8 +26,8 @@ export const ThemedBackground: React.FC<ThemedBackgroundProps> = ({ children }) 
             styles.topOverlay,
             {
               backgroundColor: isDarkMode
-                ? 'rgba(15, 23, 42, 0.3)'
-                : 'rgba(255, 255, 255, 0.3)',
+                ? 'rgba(15, 23, 42, 0.5)'
+                : 'rgba(255, 255, 255, 0.5)',
             },
           ]}
         />
@@ -38,8 +38,8 @@ export const ThemedBackground: React.FC<ThemedBackgroundProps> = ({ children }) 
             styles.centerOverlay,
             {
               backgroundColor: isDarkMode
-                ? 'rgba(15, 23, 42, 0.6)'
-                : 'rgba(255, 255, 255, 0.6)',
+                ? 'rgba(15, 23, 42, 0.8)'
+                : 'rgba(255, 255, 255, 0.8)',
             },
           ]}
         />
@@ -50,8 +50,8 @@ export const ThemedBackground: React.FC<ThemedBackgroundProps> = ({ children }) 
             styles.bottomOverlay,
             {
               backgroundColor: isDarkMode
-                ? 'rgba(15, 23, 42, 0.3)'
-                : 'rgba(255, 255, 255, 0.3)',
+                ? 'rgba(15, 23, 42, 0.5)'
+                : 'rgba(255, 255, 255, 0.5)',
             },
           ]}
         />

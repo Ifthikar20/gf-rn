@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, SafeAreaView } from 'react-native';
 import { GoalCard } from '@components/goals';
-import { Button, ThemedBackground } from '@components/common';
+import { Button, ThemedBackground, MoodSelector } from '@components/common';
 import { spacing, typography } from '@theme/index';
 import { useThemedColors } from '@/hooks/useThemedColors';
-import { mockGoals, mockGoalStats } from '@services/mockData';
+import { mockGoals } from '@services/mockData';
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -25,7 +25,6 @@ export const GoalsScreen: React.FC = () => {
   const goals = mockGoals.sort((a, b) =>
     new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   );
-  const stats = mockGoalStats;
 
   return (
     <ThemedBackground>
@@ -39,23 +38,10 @@ export const GoalsScreen: React.FC = () => {
             <Button title="+" size="sm" onPress={() => {}} style={styles.addButton} />
           </View>
 
-          <View style={[styles.statsRow, { backgroundColor: colors.background.primary }]}>
-            <View style={styles.stat}>
-              <Text style={[styles.statValue, { color: colors.primary.main }]}>{stats.totalGoals}</Text>
-              <Text style={[styles.statLabel, { color: colors.text.secondary }]}>Total</Text>
-            </View>
-            <View style={styles.stat}>
-              <Text style={[styles.statValue, { color: colors.primary.main }]}>{stats.activeGoals}</Text>
-              <Text style={[styles.statLabel, { color: colors.text.secondary }]}>Active</Text>
-            </View>
-            <View style={styles.stat}>
-              <Text style={[styles.statValue, { color: colors.primary.main }]}>{stats.completedGoals}</Text>
-              <Text style={[styles.statLabel, { color: colors.text.secondary }]}>Completed</Text>
-            </View>
-            <View style={styles.stat}>
-              <Text style={[styles.statValue, { color: colors.primary.main }]}>{stats.longestStreak}</Text>
-              <Text style={[styles.statLabel, { color: colors.text.secondary }]}>Best Streak</Text>
-            </View>
+          {/* Mood Selector */}
+          <View style={styles.moodSelectorContainer}>
+            <Text style={[styles.moodLabel, { color: colors.text.primary }]}>How are you feeling today?</Text>
+            <MoodSelector />
           </View>
 
           <FlatList
@@ -114,27 +100,16 @@ const styles = StyleSheet.create({
     minHeight: 44,
   },
 
-  statsRow: {
-    flexDirection: 'row',
+  moodSelectorContainer: {
     marginHorizontal: spacing.screenPadding,
-    marginBottom: spacing.md,
-    padding: spacing.md,
-    borderRadius: 12,
+    marginBottom: spacing.lg,
   },
 
-  stat: {
-    flex: 1,
-    alignItems: 'center',
-  },
-
-  statValue: {
-    fontSize: typography.fontSize.xl,
-    fontWeight: typography.fontWeight.bold,
-    marginBottom: spacing.xs / 2,
-  },
-
-  statLabel: {
-    fontSize: typography.fontSize.xs,
+  moodLabel: {
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.semibold,
+    marginBottom: spacing.sm,
+    marginLeft: spacing.xs,
   },
 
   listContent: {
