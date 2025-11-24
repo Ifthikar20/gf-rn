@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   },
 
   moodIcon: {
-    fontSize: 32,
+    fontSize: 28,
     marginBottom: spacing.xs,
   },
 

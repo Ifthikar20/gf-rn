@@ -1,9 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
 import { GoalCard } from '@components/goals';
 import { Button, ThemedBackground, MoodSelector } from '@components/common';
 import { spacing, typography } from '@theme/index';
 import { useThemedColors } from '@/hooks/useThemedColors';
+import { useTheme } from '@/contexts/ThemeContext';
+import { useBackgroundAudio } from '@/hooks/useBackgroundAudio';
 import { mockGoals } from '@services/mockData';
 
 const formatDate = (dateString: string) => {
@@ -22,6 +24,9 @@ const formatDate = (dateString: string) => {
 
 export const GoalsScreen: React.FC = () => {
   const colors = useThemedColors();
+  const { isMuted, toggleMute } = useTheme();
+  useBackgroundAudio(); // Start background audio
+
   const goals = mockGoals.sort((a, b) =>
     new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   );
@@ -35,7 +40,12 @@ export const GoalsScreen: React.FC = () => {
               <Text style={[styles.title, { color: colors.text.primary }]}>My Goals</Text>
               <Text style={[styles.subtitle, { color: colors.text.secondary }]}>Track your progress</Text>
             </View>
-            <Button title="+" size="sm" onPress={() => {}} style={styles.addButton} />
+            <View style={styles.headerButtons}>
+              <TouchableOpacity onPress={toggleMute} style={styles.muteButton}>
+                <Text style={styles.muteIcon}>{isMuted ? '🔇' : '🔊'}</Text>
+              </TouchableOpacity>
+              <Button title="+" size="sm" onPress={() => {}} style={styles.addButton} />
+            </View>
           </View>
 
           {/* Mood Selector */}
@@ -93,6 +103,23 @@ const styles = StyleSheet.create({
 
   subtitle: {
     fontSize: typography.fontSize.base,
+  },
+
+  headerButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+
+  muteButton: {
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  muteIcon: {
+    fontSize: 24,
   },
 
   addButton: {

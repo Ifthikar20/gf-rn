@@ -11,6 +11,7 @@ export interface MoodConfig {
   icon: string;
   lightBackground: string;
   darkBackground: string;
+  audioUrl: string;
 }
 
 export const moods: MoodConfig[] = [
@@ -20,6 +21,7 @@ export const moods: MoodConfig[] = [
     icon: '😊',
     lightBackground: 'https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=1200', // Morning sunshine
     darkBackground: 'https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=1200',
+    audioUrl: 'https://cdn.pixabay.com/audio/2022/03/10/audio_4743d9b189.mp3', // Birds chirping
   },
   {
     id: 'calm',
@@ -27,6 +29,7 @@ export const moods: MoodConfig[] = [
     icon: '😌',
     lightBackground: 'https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=1200', // Waterfall
     darkBackground: 'https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=1200',
+    audioUrl: 'https://cdn.pixabay.com/audio/2022/03/15/audio_17c38181d9.mp3', // Waterfall sounds
   },
   {
     id: 'nervous',
@@ -34,6 +37,7 @@ export const moods: MoodConfig[] = [
     icon: '😰',
     lightBackground: 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200', // Night sky
     darkBackground: 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200',
+    audioUrl: 'https://cdn.pixabay.com/audio/2022/03/24/audio_c8a0c1c2e0.mp3', // Calm night crickets
   },
   {
     id: 'sad',
@@ -41,6 +45,7 @@ export const moods: MoodConfig[] = [
     icon: '😔',
     lightBackground: 'https://images.unsplash.com/photo-1428908728789-d2de25dbd4e2?w=1200', // Rain
     darkBackground: 'https://images.unsplash.com/photo-1428908728789-d2de25dbd4e2?w=1200',
+    audioUrl: 'https://cdn.pixabay.com/audio/2022/03/12/audio_b647834d58.mp3', // Rain sounds
   },
   {
     id: 'energetic',
@@ -48,6 +53,7 @@ export const moods: MoodConfig[] = [
     icon: '⚡',
     lightBackground: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200', // Mountain sunrise
     darkBackground: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200',
+    audioUrl: 'https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf07a.mp3', // Wind and nature
   },
 ];
 
@@ -59,22 +65,27 @@ interface ThemeContextType {
   mood: MoodType;
   setMood: (mood: MoodType) => void;
   getMoodConfig: () => MoodConfig;
+  isMuted: boolean;
+  toggleMute: () => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 const THEME_STORAGE_KEY = '@theme_mode';
 const MOOD_STORAGE_KEY = '@mood_preference';
+const MUTE_STORAGE_KEY = '@audio_muted';
 
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const systemColorScheme = useColorScheme();
   const [themeMode, setThemeModeState] = useState<ThemeMode>('auto');
   const [isDarkMode, setIsDarkMode] = useState(systemColorScheme === 'dark');
   const [mood, setMoodState] = useState<MoodType>('calm');
+  const [isMuted, setIsMutedState] = useState(false);
 
   useEffect(() => {
     loadThemePreference();
     loadMoodPreference();
+    loadMutePreference();
   }, []);
 
   useEffect(() => {
@@ -107,6 +118,17 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }
   };
 
+  const loadMutePreference = async () => {
+    try {
+      const savedMute = await AsyncStorage.getItem(MUTE_STORAGE_KEY);
+      if (savedMute !== null) {
+        setIsMutedState(savedMute === 'true');
+      }
+    } catch (error) {
+      console.error('Failed to load mute preference:', error);
+    }
+  };
+
   const setThemeMode = async (mode: ThemeMode) => {
     try {
       await AsyncStorage.setItem(THEME_STORAGE_KEY, mode);
@@ -134,8 +156,18 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     return moods.find(m => m.id === mood) || moods[1]; // Default to calm
   };
 
+  const toggleMute = async () => {
+    try {
+      const newMuteState = !isMuted;
+      await AsyncStorage.setItem(MUTE_STORAGE_KEY, String(newMuteState));
+      setIsMutedState(newMuteState);
+    } catch (error) {
+      console.error('Failed to save mute preference:', error);
+    }
+  };
+
   return (
-    <ThemeContext.Provider value={{ isDarkMode, themeMode, setThemeMode, toggleTheme, mood, setMood, getMoodConfig }}>
+    <ThemeContext.Provider value={{ isDarkMode, themeMode, setThemeMode, toggleTheme, mood, setMood, getMoodConfig, isMuted, toggleMute }}>
       {children}
     </ThemeContext.Provider>
   );

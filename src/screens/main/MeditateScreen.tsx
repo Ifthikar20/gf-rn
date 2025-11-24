@@ -198,13 +198,14 @@ const styles = StyleSheet.create({
   },
 
   categoryTitle: {
-    fontSize: typography.fontSize.xl,
-    fontWeight: typography.fontWeight.bold,
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.semibold,
     marginBottom: spacing.xs / 2,
   },
 
   categoryDescription: {
     fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.normal,
     opacity: 0.9,
   },
 });
