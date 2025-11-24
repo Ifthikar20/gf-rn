@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, ImageBackground } from 'react-native';
 import { useTheme } from '@/contexts/ThemeContext';
 
 interface ThemedBackgroundProps {
@@ -7,65 +7,60 @@ interface ThemedBackgroundProps {
 }
 
 export const ThemedBackground: React.FC<ThemedBackgroundProps> = ({ children }) => {
-  const { isDarkMode } = useTheme();
+  const { isDarkMode, getMoodConfig } = useTheme();
+  const moodConfig = getMoodConfig();
 
-  // Base background color with subtle pattern effect
-  const baseBackgroundColor = isDarkMode ? '#0F172A' : '#F0F4FF';
+  // Get the appropriate background image based on theme
+  const backgroundImage = isDarkMode ? moodConfig.darkBackground : moodConfig.lightBackground;
 
   return (
-    <View style={[styles.container, { backgroundColor: baseBackgroundColor }]}>
-      {/* Background pattern layers */}
-      <View
-        style={[
-          styles.patternLayer,
-          {
-            backgroundColor: isDarkMode
-              ? 'rgba(99, 102, 241, 0.05)'
-              : 'rgba(99, 102, 241, 0.08)',
-          },
-        ]}
-      />
+    <View style={styles.container}>
+      <ImageBackground
+        source={{ uri: backgroundImage }}
+        style={styles.backgroundImage}
+        resizeMode="cover"
+      >
+        {/* Top gradient overlay - more transparent */}
+        <View
+          style={[
+            styles.topOverlay,
+            {
+              backgroundColor: isDarkMode
+                ? 'rgba(15, 23, 42, 0.3)'
+                : 'rgba(255, 255, 255, 0.3)',
+            },
+          ]}
+        />
 
-      {/* Top gradient overlay - more transparent */}
-      <View
-        style={[
-          styles.topOverlay,
-          {
-            backgroundColor: isDarkMode
-              ? 'rgba(15, 23, 42, 0.3)'
-              : 'rgba(255, 255, 255, 0.3)',
-          },
-        ]}
-      />
+        {/* Center overlay - more opaque */}
+        <View
+          style={[
+            styles.centerOverlay,
+            {
+              backgroundColor: isDarkMode
+                ? 'rgba(15, 23, 42, 0.6)'
+                : 'rgba(255, 255, 255, 0.6)',
+            },
+          ]}
+        />
 
-      {/* Center overlay - more opaque */}
-      <View
-        style={[
-          styles.centerOverlay,
-          {
-            backgroundColor: isDarkMode
-              ? 'rgba(15, 23, 42, 0.6)'
-              : 'rgba(255, 255, 255, 0.6)',
-          },
-        ]}
-      />
+        {/* Bottom gradient overlay - more transparent */}
+        <View
+          style={[
+            styles.bottomOverlay,
+            {
+              backgroundColor: isDarkMode
+                ? 'rgba(15, 23, 42, 0.3)'
+                : 'rgba(255, 255, 255, 0.3)',
+            },
+          ]}
+        />
 
-      {/* Bottom gradient overlay - more transparent */}
-      <View
-        style={[
-          styles.bottomOverlay,
-          {
-            backgroundColor: isDarkMode
-              ? 'rgba(15, 23, 42, 0.3)'
-              : 'rgba(255, 255, 255, 0.3)',
-          },
-        ]}
-      />
-
-      {/* Content */}
-      <View style={styles.content}>
-        {children}
-      </View>
+        {/* Content */}
+        <View style={styles.content}>
+          {children}
+        </View>
+      </ImageBackground>
     </View>
   );
 };
@@ -74,12 +69,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  patternLayer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+  backgroundImage: {
+    flex: 1,
   },
   topOverlay: {
     position: 'absolute',

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Switch } from 'react-native';
 import { useStore } from '@store/index';
-import { Avatar, Button, ThemedBackground } from '@components/common';
+import { Avatar, Button, ThemedBackground, MoodSelector } from '@components/common';
 import { authApi } from '@services/api';
 import { secureStorage } from '@services/storage/secureStorage';
 import { spacing, typography } from '@theme/index';
@@ -49,6 +49,17 @@ export const ProfileScreen: React.FC = () => {
           <Avatar uri={user?.avatar} name={user?.name || ''} size="xl" />
           <Text style={[styles.name, { color: colors.text.primary }]}>{user?.name}</Text>
           <Text style={[styles.email, { color: colors.text.secondary }]}>{user?.email}</Text>
+        </View>
+
+        {/* Mood Selector */}
+        <View style={[styles.menuSection, { backgroundColor: colors.background.primary }]}>
+          <View style={styles.sectionHeader}>
+            <Text style={[styles.sectionHeaderText, { color: colors.text.primary }]}>How are you feeling?</Text>
+            <Text style={[styles.sectionSubtext, { color: colors.text.secondary }]}>
+              Choose your mood to change the background
+            </Text>
+          </View>
+          <MoodSelector />
         </View>
 
         {/* Dark Mode Toggle */}
@@ -136,6 +147,21 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginBottom: spacing.lg,
     overflow: 'hidden',
+  },
+
+  sectionHeader: {
+    padding: spacing.md,
+    paddingBottom: spacing.sm,
+  },
+
+  sectionHeaderText: {
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.semibold,
+    marginBottom: spacing.xs / 2,
+  },
+
+  sectionSubtext: {
+    fontSize: typography.fontSize.sm,
   },
 
   menuItem: {
