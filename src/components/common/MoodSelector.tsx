@@ -63,12 +63,20 @@ const styles = StyleSheet.create({
   },
 
   moodCard: {
-    paddingVertical: spacing.md,
+    paddingVertical: spacing.lg,
     paddingHorizontal: spacing.lg,
-    borderRadius: borderRadius.xl,
+    borderRadius: borderRadius.xxl,
     alignItems: 'center',
     justifyContent: 'center',
-    minWidth: 100,
+    minWidth: 110,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
 
   moodIcon: {

@@ -50,7 +50,10 @@ export const GoalsScreen: React.FC = () => {
 
           {/* Mood Selector */}
           <View style={styles.moodSelectorContainer}>
-            <Text style={[styles.moodLabel, { color: colors.text.primary }]}>How are you feeling today?</Text>
+            <View style={styles.moodLabelContainer}>
+              <Text style={[styles.moodLabel, { color: colors.text.primary }]}>How are you feeling</Text>
+              <Text style={[styles.moodLabelAccent, { color: colors.primary.main }]}>today?</Text>
+            </View>
             <MoodSelector />
           </View>
 
@@ -129,14 +132,28 @@ const styles = StyleSheet.create({
 
   moodSelectorContainer: {
     marginHorizontal: spacing.screenPadding,
-    marginBottom: spacing.lg,
+    marginBottom: spacing.xl,
+    paddingTop: spacing.sm,
+  },
+
+  moodLabelContainer: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    marginBottom: spacing.md,
+    marginLeft: spacing.xs,
+    gap: spacing.xs,
   },
 
   moodLabel: {
-    fontSize: typography.fontSize.lg,
+    fontSize: typography.fontSize.xl,
     fontWeight: typography.fontWeight.semibold,
-    marginBottom: spacing.sm,
-    marginLeft: spacing.xs,
+    letterSpacing: -0.3,
+  },
+
+  moodLabelAccent: {
+    fontSize: typography.fontSize.xl,
+    fontWeight: typography.fontWeight.bold,
+    letterSpacing: -0.3,
   },
 
   listContent: {

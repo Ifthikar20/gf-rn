@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
   },
 
   content: {
-    gap: spacing.md,
+    gap: spacing.sm,
   },
 
   header: {
