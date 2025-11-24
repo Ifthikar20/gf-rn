@@ -242,7 +242,7 @@ export const MainTabNavigator = () => {
         component={HomeStackNavigator}
         options={{
           tabBarLabel: 'Goals',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20, color }}>●</Text>,
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22, color }}>🎯</Text>,
         }}
       />
       <Tab.Screen
@@ -250,7 +250,7 @@ export const MainTabNavigator = () => {
         component={LibraryStackNavigator}
         options={{
           tabBarLabel: 'Library',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20, color }}>■</Text>,
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22, color }}>📚</Text>,
         }}
       />
       <Tab.Screen
@@ -258,7 +258,7 @@ export const MainTabNavigator = () => {
         component={MeditateStackNavigator}
         options={{
           tabBarLabel: 'Meditate',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20, color }}>◆</Text>,
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22, color }}>🧘</Text>,
         }}
       />
       <Tab.Screen
@@ -266,7 +266,7 @@ export const MainTabNavigator = () => {
         component={DiscoverStackNavigator}
         options={{
           tabBarLabel: 'Discover',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20, color }}>◇</Text>,
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22, color }}>🔍</Text>,
         }}
       />
       <Tab.Screen
@@ -274,7 +274,7 @@ export const MainTabNavigator = () => {
         component={ProfileStackNavigator}
         options={{
           tabBarLabel: 'Profile',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20, color }}>◉</Text>,
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22, color }}>👤</Text>,
         }}
       />
     </Tab.Navigator>

@@ -149,31 +149,31 @@ const styles = StyleSheet.create({
   },
 
   timelineLeft: {
-    width: 70,
+    width: 50,
     alignItems: 'center',
     paddingTop: spacing.sm,
   },
 
   dateText: {
-    fontSize: 11,
-    marginBottom: spacing.sm,
+    fontSize: 9,
+    marginBottom: spacing.xs,
     textAlign: 'center',
-    lineHeight: 14,
+    lineHeight: 12,
     fontWeight: typography.fontWeight.medium,
   },
 
   timelineDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    borderWidth: 3,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    borderWidth: 2.5,
     zIndex: 1,
   },
 
   timelineLine: {
     position: 'absolute',
-    width: 2,
-    top: 45,
+    width: 1.5,
+    top: 36,
     bottom: -spacing.xl,
   },
 

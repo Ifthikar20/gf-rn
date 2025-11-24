@@ -65,14 +65,14 @@ const styles = StyleSheet.create({
   moodCard: {
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.lg,
-    borderRadius: borderRadius.lg,
+    borderRadius: borderRadius.xl,
     alignItems: 'center',
     justifyContent: 'center',
     minWidth: 100,
   },
 
   moodIcon: {
-    fontSize: 28,
+    fontSize: 22,
     marginBottom: spacing.xs,
   },
 
