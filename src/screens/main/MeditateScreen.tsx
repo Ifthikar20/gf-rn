@@ -10,6 +10,7 @@ interface MeditationCategory {
   description: string;
   image: string;
   audioUrl: string;
+  videoUrl?: string;
 }
 
 const meditationCategories: MeditationCategory[] = [
@@ -33,6 +34,7 @@ const meditationCategories: MeditationCategory[] = [
     description: 'Gentle rainfall ambience',
     image: 'https://images.unsplash.com/photo-1428908728789-d2de25dbd4e2?w=800',
     audioUrl: 'https://example.com/rain-sounds.mp3',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', // Replace with rain video URL
   },
   {
     id: '4',
@@ -116,8 +118,8 @@ export const MeditateScreen: React.FC<MeditateScreenProps> = ({ navigation }) =>
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <Text style={[styles.title, { color: colors.text.primary }]}>Meditate</Text>
-            <Text style={[styles.subtitle, { color: colors.text.secondary }]}>Choose your meditation sound</Text>
+            <Text style={[styles.title, { color: colors.text.primary }]}>Relax</Text>
+            <Text style={[styles.subtitle, { color: colors.text.secondary }]}>Choose your relaxation sound</Text>
           </View>
 
           <FlatList

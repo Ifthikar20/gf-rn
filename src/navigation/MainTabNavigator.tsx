@@ -56,7 +56,7 @@ export type ProfileStackParamList = {
 export type MainTabParamList = {
   Goals: undefined;
   Library: undefined;
-  Meditate: undefined;
+  Relax: undefined;
   Discover: undefined;
   Profile: undefined;
 };
@@ -254,11 +254,11 @@ export const MainTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Meditate"
+        name="Relax"
         component={MeditateStackNavigator}
         options={{
-          tabBarLabel: 'Meditate',
-          tabBarIcon: ({ color }) => <TabIcon name="meditate" color={color} size={24} />,
+          tabBarLabel: 'Relax',
+          tabBarIcon: ({ color }) => <TabIcon name="relax" color={color} size={24} />,
         }}
       />
       <Tab.Screen

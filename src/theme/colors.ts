@@ -152,26 +152,26 @@ export const darkColors = {
 
   // Background colors
   background: {
-    primary: '#0F172A',    // Dark slate
-    secondary: '#1E293B',  // Lighter dark slate
-    tertiary: '#334155',   // Even lighter
-    dark: '#020617',       // Darkest
+    primary: '#000000',    // Pure black
+    secondary: '#0A0A0A',  // Slightly lighter black
+    tertiary: '#1A1A1A',   // Dark gray
+    dark: '#000000',       // Pure black
   },
 
   // Text colors
   text: {
-    primary: '#F9FAFB',
-    secondary: '#D1D5DB',
-    tertiary: '#9CA3AF',
+    primary: '#FFFFFF',    // Pure white
+    secondary: '#E5E5E5',  // Light gray
+    tertiary: '#B3B3B3',   // Medium gray
     disabled: '#6B7280',
-    inverse: '#111827',
+    inverse: '#000000',    // Black
   },
 
   // Border colors
   border: {
-    light: '#374151',
-    main: '#4B5563',
-    dark: '#6B7280',
+    light: '#1A1A1A',
+    main: '#2A2A2A',
+    dark: '#3A3A3A',
   },
 
   // Overlay colors

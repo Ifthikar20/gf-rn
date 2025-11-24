@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 interface TabIconProps {
-  name: 'goals' | 'library' | 'meditate' | 'discover' | 'profile';
+  name: 'goals' | 'library' | 'relax' | 'discover' | 'profile';
   color: string;
   size?: number;
 }
@@ -12,7 +12,7 @@ export const TabIcon: React.FC<TabIconProps> = ({ name, color, size = 24 }) => {
   const icons = {
     goals: '◎',      // Target/bullseye
     library: '▢',    // Book/library
-    meditate: '✦',   // Star/meditation
+    relax: '✦',      // Star/relaxation
     discover: '◉',   // Search/discover
     profile: '◗',    // Person/profile
   };
