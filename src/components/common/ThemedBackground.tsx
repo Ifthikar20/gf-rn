@@ -20,38 +20,14 @@ export const ThemedBackground: React.FC<ThemedBackgroundProps> = ({ children }) 
         style={styles.backgroundImage}
         resizeMode="cover"
       >
-        {/* Top gradient overlay - more transparent */}
+        {/* Single uniform opaque overlay */}
         <View
           style={[
-            styles.topOverlay,
+            styles.overlay,
             {
               backgroundColor: isDarkMode
-                ? 'rgba(15, 23, 42, 0.5)'
-                : 'rgba(255, 255, 255, 0.5)',
-            },
-          ]}
-        />
-
-        {/* Center overlay - more opaque */}
-        <View
-          style={[
-            styles.centerOverlay,
-            {
-              backgroundColor: isDarkMode
-                ? 'rgba(15, 23, 42, 0.8)'
-                : 'rgba(255, 255, 255, 0.8)',
-            },
-          ]}
-        />
-
-        {/* Bottom gradient overlay - more transparent */}
-        <View
-          style={[
-            styles.bottomOverlay,
-            {
-              backgroundColor: isDarkMode
-                ? 'rgba(15, 23, 42, 0.5)'
-                : 'rgba(255, 255, 255, 0.5)',
+                ? 'rgba(15, 23, 42, 0.85)'
+                : 'rgba(255, 255, 255, 0.85)',
             },
           ]}
         />
@@ -72,26 +48,12 @@ const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
   },
-  topOverlay: {
+  overlay: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    height: '25%',
-  },
-  centerOverlay: {
-    position: 'absolute',
-    top: '25%',
-    left: 0,
-    right: 0,
-    height: '50%',
-  },
-  bottomOverlay: {
-    position: 'absolute',
     bottom: 0,
-    left: 0,
-    right: 0,
-    height: '25%',
   },
   content: {
     flex: 1,
