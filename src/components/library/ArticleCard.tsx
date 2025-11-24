@@ -4,8 +4,8 @@ import { spacing, typography, borderRadius } from '@theme/index';
 import { useThemedColors } from '@/hooks/useThemedColors';
 import { ContentItem } from '@app-types/index';
 
-// Match Discover card size
-const CARD_WIDTH = 160;
+// Smaller Spotify-style card
+const CARD_WIDTH = 130;
 
 interface ArticleCardProps {
   item: ContentItem;
@@ -74,7 +74,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
 const styles = StyleSheet.create({
   container: {
     width: CARD_WIDTH,
-    marginBottom: spacing.md,
+    marginRight: spacing.md,
   },
 
   card: {
