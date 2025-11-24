@@ -29,28 +29,40 @@ export const CategoryPill: React.FC<CategoryPillProps> = ({
 
 const styles = StyleSheet.create({
   pill: {
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
-    borderRadius: borderRadius.lg,
+    borderRadius: borderRadius.full,
     backgroundColor: colors.background.tertiary,
     marginRight: spacing.sm,
     minHeight: 36,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.03,
+    shadowRadius: 4,
+    elevation: 1,
   },
 
   pillSelected: {
     backgroundColor: colors.primary.main,
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 3,
   },
 
   text: {
     fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.medium,
+    fontWeight: typography.fontWeight.semibold,
     color: colors.text.secondary,
     textTransform: 'capitalize',
   },
 
   textSelected: {
     color: colors.primary.contrast,
+    fontWeight: typography.fontWeight.bold,
   },
 });

@@ -132,28 +132,28 @@ const styles = StyleSheet.create({
 
   moodSelectorContainer: {
     marginHorizontal: spacing.screenPadding,
-    marginBottom: spacing.xl,
-    paddingTop: spacing.sm,
+    marginBottom: spacing.lg,
+    paddingTop: spacing.xs,
   },
 
   moodLabelContainer: {
     flexDirection: 'row',
     alignItems: 'baseline',
-    marginBottom: spacing.md,
+    marginBottom: spacing.sm,
     marginLeft: spacing.xs,
     gap: spacing.xs,
   },
 
   moodLabel: {
-    fontSize: typography.fontSize.xl,
+    fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.semibold,
-    letterSpacing: -0.3,
+    letterSpacing: -0.2,
   },
 
   moodLabelAccent: {
-    fontSize: typography.fontSize.xl,
+    fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.bold,
-    letterSpacing: -0.3,
+    letterSpacing: -0.2,
   },
 
   listContent: {

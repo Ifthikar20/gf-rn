@@ -54,37 +54,37 @@ export const MoodSelector: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: spacing.sm,
+    marginVertical: 0,
   },
 
   moodsContainer: {
     paddingHorizontal: spacing.md,
-    gap: spacing.md,
+    gap: spacing.sm,
   },
 
   moodCard: {
-    paddingVertical: spacing.lg,
-    paddingHorizontal: spacing.lg,
-    borderRadius: borderRadius.xxl,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: borderRadius.full,
     alignItems: 'center',
     justifyContent: 'center',
-    minWidth: 110,
+    minWidth: 80,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 1,
   },
 
   moodIcon: {
-    fontSize: 22,
-    marginBottom: spacing.xs,
+    fontSize: 18,
+    marginBottom: spacing.xs / 2,
   },
 
   moodName: {
-    fontSize: typography.fontSize.sm,
+    fontSize: typography.fontSize.xs,
   },
 });

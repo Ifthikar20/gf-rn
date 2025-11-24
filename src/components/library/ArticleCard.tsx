@@ -76,51 +76,55 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
 const styles = StyleSheet.create({
   card: {
     marginBottom: spacing.md,
+    overflow: 'hidden',
   },
 
   cardContent: {
     flexDirection: 'row',
+    minHeight: 120,
   },
 
   thumbnail: {
-    width: 100,
-    height: 100,
-    borderTopLeftRadius: borderRadius.lg,
-    borderBottomLeftRadius: borderRadius.lg,
+    width: 110,
+    height: '100%',
+    borderTopLeftRadius: borderRadius.xl,
+    borderBottomLeftRadius: borderRadius.xl,
   },
 
   content: {
     flex: 1,
-    padding: spacing.sm,
+    padding: spacing.md,
+    justifyContent: 'space-between',
   },
 
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.xs,
+    marginBottom: spacing.xs / 2,
   },
 
   type: {
-    fontSize: typography.fontSize.xs,
-    fontWeight: typography.fontWeight.semibold,
-    letterSpacing: 0.5,
+    fontSize: typography.fontSize.xs - 1,
+    fontWeight: typography.fontWeight.bold,
+    letterSpacing: 0.8,
   },
 
   bookmarkIcon: {
-    fontSize: 18,
+    fontSize: 20,
   },
 
   title: {
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semibold,
-    marginBottom: spacing.xs / 2,
+    fontWeight: typography.fontWeight.bold,
+    marginBottom: spacing.xs,
+    lineHeight: typography.fontSize.base * 1.3,
   },
 
   description: {
-    fontSize: typography.fontSize.xs,
-    lineHeight: typography.fontSize.xs * 1.4,
-    marginBottom: spacing.xs,
+    fontSize: typography.fontSize.sm,
+    lineHeight: typography.fontSize.sm * 1.4,
+    marginBottom: spacing.sm,
   },
 
   footer: {
@@ -130,11 +134,12 @@ const styles = StyleSheet.create({
 
   duration: {
     fontSize: typography.fontSize.xs,
+    fontWeight: typography.fontWeight.medium,
   },
 
   separator: {
     fontSize: typography.fontSize.xs,
-    marginHorizontal: spacing.xs / 2,
+    marginHorizontal: spacing.xs,
   },
 
   author: {
