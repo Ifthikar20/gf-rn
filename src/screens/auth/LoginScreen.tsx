@@ -9,17 +9,19 @@ import {
   Alert,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Button, Input } from '@components/common';
+import { Button, Input, ThemedBackground } from '@components/common';
 import { authApi } from '@services/api';
 import { secureStorage } from '@services/storage/secureStorage';
 import { useStore } from '@store/index';
-import { colors, spacing, typography } from '@theme/index';
+import { spacing, typography } from '@theme/index';
+import { useThemedColors } from '@/hooks/useThemedColors';
 
 type LoginScreenProps = {
   navigation: NativeStackNavigationProp<any>;
 };
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
+  const colors = useThemedColors();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -97,80 +99,81 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
+    <ThemedBackground>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <View style={styles.header}>
-          <Text style={styles.title}>Welcome Back</Text>
-          <Text style={styles.subtitle}>Sign in to continue your wellness journey</Text>
-        </View>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.header}>
+            <Text style={[styles.title, { color: colors.text.primary }]}>Welcome Back</Text>
+            <Text style={[styles.subtitle, { color: colors.text.secondary }]}>Sign in to continue your wellness journey</Text>
+          </View>
 
-        <View style={styles.form}>
-          <Input
-            label="Email"
-            placeholder="Enter your email"
-            value={email}
-            onChangeText={(text) => {
-              setEmail(text);
-              setErrors((prev) => ({ ...prev, email: '' }));
-            }}
-            error={errors.email}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
+          <View style={styles.form}>
+            <Input
+              label="Email"
+              placeholder="Enter your email"
+              value={email}
+              onChangeText={(text) => {
+                setEmail(text);
+                setErrors((prev) => ({ ...prev, email: '' }));
+              }}
+              error={errors.email}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
 
-          <Input
-            label="Password"
-            placeholder="Enter your password"
-            value={password}
-            onChangeText={(text) => {
-              setPassword(text);
-              setErrors((prev) => ({ ...prev, password: '' }));
-            }}
-            error={errors.password}
-            secureTextEntry
-          />
+            <Input
+              label="Password"
+              placeholder="Enter your password"
+              value={password}
+              onChangeText={(text) => {
+                setPassword(text);
+                setErrors((prev) => ({ ...prev, password: '' }));
+              }}
+              error={errors.password}
+              secureTextEntry
+            />
 
-          <Button
-            title="Forgot Password?"
-            variant="ghost"
-            size="sm"
-            onPress={() => navigation.navigate('ForgotPassword')}
-            style={styles.forgotButton}
-          />
-
-          <Button
-            title="Sign In"
-            onPress={handleLogin}
-            loading={loading}
-            disabled={loading}
-          />
-
-          <View style={styles.registerContainer}>
-            <Text style={styles.registerText}>Don't have an account? </Text>
             <Button
-              title="Sign Up"
+              title="Forgot Password?"
               variant="ghost"
               size="sm"
-              onPress={() => navigation.navigate('Register')}
+              onPress={() => navigation.navigate('ForgotPassword')}
+              style={styles.forgotButton}
             />
+
+            <Button
+              title="Sign In"
+              onPress={handleLogin}
+              loading={loading}
+              disabled={loading}
+            />
+
+            <View style={styles.registerContainer}>
+              <Text style={[styles.registerText, { color: colors.text.secondary }]}>Don't have an account? </Text>
+              <Button
+                title="Sign Up"
+                variant="ghost"
+                size="sm"
+                onPress={() => navigation.navigate('Register')}
+              />
+            </View>
           </View>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </ThemedBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.primary,
   },
 
   scrollContent: {
@@ -186,13 +189,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: typography.fontSize['3xl'],
     fontWeight: typography.fontWeight.bold,
-    color: colors.text.primary,
     marginBottom: spacing.sm,
   },
 
   subtitle: {
     fontSize: typography.fontSize.base,
-    color: colors.text.secondary,
   },
 
   form: {
@@ -213,6 +214,5 @@ const styles = StyleSheet.create({
 
   registerText: {
     fontSize: typography.fontSize.sm,
-    color: colors.text.secondary,
   },
 });

@@ -1,12 +1,16 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Switch } from 'react-native';
 import { useStore } from '@store/index';
-import { Avatar, Button } from '@components/common';
+import { Avatar, Button, ThemedBackground, MoodSelector } from '@components/common';
 import { authApi } from '@services/api';
 import { secureStorage } from '@services/storage/secureStorage';
-import { colors, spacing, typography } from '@theme/index';
+import { spacing, typography } from '@theme/index';
+import { useThemedColors } from '@/hooks/useThemedColors';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export const ProfileScreen: React.FC = () => {
+  const colors = useThemedColors();
+  const { isDarkMode, toggleTheme } = useTheme();
   const user = useStore((state) => state.user);
   const logout = useStore((state) => state.logout);
 
@@ -33,56 +37,88 @@ export const ProfileScreen: React.FC = () => {
   const menuItems = [
     { icon: '●', title: 'Edit Profile', subtitle: 'Update your information' },
     { icon: '●', title: 'Notifications', subtitle: 'Manage your notifications' },
-    { icon: '●', title: 'Appearance', subtitle: 'Theme and display settings' },
     { icon: '●', title: 'Data & Privacy', subtitle: 'Manage your data' },
     { icon: '●', title: 'Help & Support', subtitle: 'Get help or contact us' },
     { icon: '●', title: 'Terms & Privacy', subtitle: 'Legal information' },
   ];
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.profileHeader}>
-        <Avatar uri={user?.avatar} name={user?.name || ''} size="xl" />
-        <Text style={styles.name}>{user?.name}</Text>
-        <Text style={styles.email}>{user?.email}</Text>
-      </View>
+    <ThemedBackground>
+      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+        <View style={[styles.profileHeader, { backgroundColor: colors.background.primary }]}>
+          <Avatar uri={user?.avatar} name={user?.name || ''} size="xl" />
+          <Text style={[styles.name, { color: colors.text.primary }]}>{user?.name}</Text>
+          <Text style={[styles.email, { color: colors.text.secondary }]}>{user?.email}</Text>
+        </View>
 
-      <View style={styles.menuSection}>
-        {menuItems.map((item, index) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.menuItem}
-            onPress={() => {}}
-            activeOpacity={0.7}
-          >
+        {/* Mood Selector */}
+        <View style={[styles.menuSection, { backgroundColor: colors.background.primary }]}>
+          <View style={styles.sectionHeader}>
+            <Text style={[styles.sectionHeaderText, { color: colors.text.primary }]}>How are you feeling?</Text>
+            <Text style={[styles.sectionSubtext, { color: colors.text.secondary }]}>
+              Choose your mood to change the background
+            </Text>
+          </View>
+          <MoodSelector />
+        </View>
+
+        {/* Dark Mode Toggle */}
+        <View style={[styles.menuSection, { backgroundColor: colors.background.primary }]}>
+          <View style={[styles.menuItem, { borderBottomWidth: 0 }]}>
             <View style={styles.menuItemLeft}>
-              <Text style={styles.menuIcon}>{item.icon}</Text>
+              <Text style={styles.menuIcon}>{isDarkMode ? '🌙' : '☀️'}</Text>
               <View style={styles.menuItemText}>
-                <Text style={styles.menuTitle}>{item.title}</Text>
-                <Text style={styles.menuSubtitle}>{item.subtitle}</Text>
+                <Text style={[styles.menuTitle, { color: colors.text.primary }]}>Dark Mode</Text>
+                <Text style={[styles.menuSubtitle, { color: colors.text.secondary }]}>
+                  {isDarkMode ? 'Dark theme enabled' : 'Light theme enabled'}
+                </Text>
               </View>
             </View>
-            <Text style={styles.menuArrow}>›</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+            <Switch
+              value={isDarkMode}
+              onValueChange={toggleTheme}
+              trackColor={{ false: colors.neutral[300], true: colors.primary.main }}
+              thumbColor={colors.background.primary}
+            />
+          </View>
+        </View>
 
-      <Button
-        title="Logout"
-        variant="outline"
-        onPress={handleLogout}
-        style={styles.logoutButton}
-      />
+        <View style={[styles.menuSection, { backgroundColor: colors.background.primary }]}>
+          {menuItems.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[styles.menuItem, { borderBottomColor: colors.border.light }]}
+              onPress={() => {}}
+              activeOpacity={0.7}
+            >
+              <View style={styles.menuItemLeft}>
+                <Text style={styles.menuIcon}>{item.icon}</Text>
+                <View style={styles.menuItemText}>
+                  <Text style={[styles.menuTitle, { color: colors.text.primary }]}>{item.title}</Text>
+                  <Text style={[styles.menuSubtitle, { color: colors.text.secondary }]}>{item.subtitle}</Text>
+                </View>
+              </View>
+              <Text style={[styles.menuArrow, { color: colors.text.tertiary }]}>›</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-      <Text style={styles.version}>Version 1.0.0</Text>
-    </ScrollView>
+        <Button
+          title="Logout"
+          variant="outline"
+          onPress={handleLogout}
+          style={styles.logoutButton}
+        />
+
+        <Text style={[styles.version, { color: colors.text.tertiary }]}>Version 1.0.0</Text>
+      </ScrollView>
+    </ThemedBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.secondary,
   },
 
   content: {
@@ -92,7 +128,6 @@ const styles = StyleSheet.create({
   profileHeader: {
     alignItems: 'center',
     padding: spacing.xl,
-    backgroundColor: colors.background.primary,
     borderRadius: 16,
     marginBottom: spacing.lg,
   },
@@ -100,21 +135,33 @@ const styles = StyleSheet.create({
   name: {
     fontSize: typography.fontSize['2xl'],
     fontWeight: typography.fontWeight.bold,
-    color: colors.text.primary,
     marginTop: spacing.md,
     marginBottom: spacing.xs,
   },
 
   email: {
     fontSize: typography.fontSize.sm,
-    color: colors.text.secondary,
   },
 
   menuSection: {
-    backgroundColor: colors.background.primary,
     borderRadius: 16,
     marginBottom: spacing.lg,
     overflow: 'hidden',
+  },
+
+  sectionHeader: {
+    padding: spacing.md,
+    paddingBottom: spacing.sm,
+  },
+
+  sectionHeaderText: {
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.semibold,
+    marginBottom: spacing.xs / 2,
+  },
+
+  sectionSubtext: {
+    fontSize: typography.fontSize.sm,
   },
 
   menuItem: {
@@ -123,7 +170,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border.light,
   },
 
   menuItemLeft: {
@@ -144,18 +190,15 @@ const styles = StyleSheet.create({
   menuTitle: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.medium,
-    color: colors.text.primary,
     marginBottom: spacing.xs / 2,
   },
 
   menuSubtitle: {
     fontSize: typography.fontSize.xs,
-    color: colors.text.secondary,
   },
 
   menuArrow: {
     fontSize: typography.fontSize['2xl'],
-    color: colors.text.tertiary,
   },
 
   logoutButton: {
@@ -164,7 +207,6 @@ const styles = StyleSheet.create({
 
   version: {
     fontSize: typography.fontSize.xs,
-    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: spacing.lg,
   },

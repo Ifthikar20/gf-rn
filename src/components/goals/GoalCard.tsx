@@ -1,9 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Card } from '@components/common';
-import { colors, spacing, typography, borderRadius } from '@theme/index';
+import { spacing, typography, borderRadius } from '@theme/index';
 import { Goal } from '@app-types/index';
 import { ProgressRing } from './ProgressRing';
+import { useThemedColors } from '@/hooks/useThemedColors';
 
 interface GoalCardProps {
   goal: Goal;
@@ -11,6 +12,7 @@ interface GoalCardProps {
 }
 
 export const GoalCard: React.FC<GoalCardProps> = ({ goal, onPress }) => {
+  const colors = useThemedColors();
   const progress = goal.target > 0 ? (goal.current / goal.target) * 100 : 0;
   const isMediaGoal = goal.type === 'video' || goal.type === 'audio';
   const showProgress = !isMediaGoal && goal.target > 0;
@@ -42,10 +44,10 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, onPress }) => {
           <View style={styles.header}>
             <View style={styles.titleContainer}>
               <View style={styles.titleTextContainer}>
-                <Text style={styles.title} numberOfLines={1}>
+                <Text style={[styles.title, { color: colors.text.primary }]} numberOfLines={1}>
                   {goal.title}
                 </Text>
-                <Text style={styles.frequency}>
+                <Text style={[styles.frequency, { color: colors.text.secondary }]}>
                   {goal.frequency} • {goal.streak} day streak
                 </Text>
               </View>
@@ -57,7 +59,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, onPress }) => {
                 { backgroundColor: getStatusColor(goal.status) },
               ]}
             >
-              <Text style={styles.statusText}>{goal.status}</Text>
+              <Text style={[styles.statusText, { color: colors.text.inverse }]}>{goal.status}</Text>
             </View>
           </View>
 
@@ -65,9 +67,9 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, onPress }) => {
             <View style={styles.mediaContainer}>
               <Image source={{ uri: goal.thumbnail }} style={styles.thumbnail} />
               <View style={styles.mediaOverlay}>
-                <Text style={styles.mediaType}>{goal.type?.toUpperCase()}</Text>
+                <Text style={[styles.mediaType, { color: colors.text.inverse }]}>{goal.type?.toUpperCase()}</Text>
                 {goal.duration && (
-                  <Text style={styles.mediaDuration}>{formatDuration(goal.duration)}</Text>
+                  <Text style={[styles.mediaDuration, { color: colors.text.inverse }]}>{formatDuration(goal.duration)}</Text>
                 )}
               </View>
             </View>
@@ -83,10 +85,10 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, onPress }) => {
               />
 
               <View style={styles.progressDetails}>
-                <Text style={styles.progressText}>
+                <Text style={[styles.progressText, { color: colors.text.primary }]}>
                   {goal.current} / {goal.target} {goal.unit}
                 </Text>
-                <View style={styles.progressBar}>
+                <View style={[styles.progressBar, { backgroundColor: colors.neutral[200] }]}>
                   <View
                     style={[
                       styles.progressBarFill,
@@ -97,7 +99,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, onPress }) => {
                     ]}
                   />
                 </View>
-                <Text style={styles.progressPercentage}>
+                <Text style={[styles.progressPercentage, { color: colors.text.secondary }]}>
                   {Math.round(progress)}% complete
                 </Text>
               </View>
@@ -137,13 +139,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.text.primary,
     marginBottom: spacing.xs / 2,
   },
 
   frequency: {
     fontSize: typography.fontSize.xs,
-    color: colors.text.secondary,
     textTransform: 'capitalize',
   },
 
@@ -156,7 +156,6 @@ const styles = StyleSheet.create({
   statusText: {
     fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.medium,
-    color: colors.text.inverse,
     textTransform: 'capitalize',
   },
 
@@ -173,13 +172,11 @@ const styles = StyleSheet.create({
   progressText: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.medium,
-    color: colors.text.primary,
     marginBottom: spacing.xs,
   },
 
   progressBar: {
     height: 8,
-    backgroundColor: colors.neutral[200],
     borderRadius: 4,
     overflow: 'hidden',
     marginBottom: spacing.xs,
@@ -192,7 +189,6 @@ const styles = StyleSheet.create({
 
   progressPercentage: {
     fontSize: typography.fontSize.xs,
-    color: colors.text.secondary,
   },
 
   mediaContainer: {
@@ -223,11 +219,9 @@ const styles = StyleSheet.create({
   mediaType: {
     fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.text.inverse,
   },
 
   mediaDuration: {
     fontSize: typography.fontSize.xs,
-    color: colors.text.inverse,
   },
 });

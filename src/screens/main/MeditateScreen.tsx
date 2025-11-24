@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, SafeAreaView, Image, TouchableOpacity } from 'react-native';
-import { colors, spacing, typography, borderRadius } from '@theme/index';
+import { ThemedBackground } from '@components/common';
+import { spacing, typography, borderRadius } from '@theme/index';
+import { useThemedColors } from '@/hooks/useThemedColors';
 
 interface MeditationCategory {
   id: string;
@@ -53,6 +55,48 @@ const meditationCategories: MeditationCategory[] = [
     image: 'https://images.unsplash.com/photo-1511295742362-92c96b1cf484?w=800',
     audioUrl: 'https://example.com/sleep-sounds.mp3',
   },
+  {
+    id: '7',
+    title: 'Mindfulness Practice',
+    description: 'Present moment awareness exercises',
+    image: 'https://images.unsplash.com/photo-1545389336-cf090694435e?w=800',
+    audioUrl: 'https://example.com/mindfulness.mp3',
+  },
+  {
+    id: '8',
+    title: 'Breathing Exercises',
+    description: 'Focused breathing techniques',
+    image: 'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=800',
+    audioUrl: 'https://example.com/breathing.mp3',
+  },
+  {
+    id: '9',
+    title: 'Chakra Meditation',
+    description: 'Energy center balancing',
+    image: 'https://images.unsplash.com/photo-1528715471579-d1bcf0ba5e83?w=800',
+    audioUrl: 'https://example.com/chakra.mp3',
+  },
+  {
+    id: '10',
+    title: 'White Noise',
+    description: 'Consistent ambient sound for focus',
+    image: 'https://images.unsplash.com/photo-1483086431886-3590a88317fe?w=800',
+    audioUrl: 'https://example.com/white-noise.mp3',
+  },
+  {
+    id: '11',
+    title: 'Thunderstorm',
+    description: 'Powerful storm sounds',
+    image: 'https://images.unsplash.com/photo-1605727216801-e27ce1d0cc28?w=800',
+    audioUrl: 'https://example.com/thunderstorm.mp3',
+  },
+  {
+    id: '12',
+    title: 'Mountain Zen',
+    description: 'High altitude tranquility',
+    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
+    audioUrl: 'https://example.com/mountain-zen.mp3',
+  },
 ];
 
 interface MeditateScreenProps {
@@ -60,52 +104,54 @@ interface MeditateScreenProps {
 }
 
 export const MeditateScreen: React.FC<MeditateScreenProps> = ({ navigation }) => {
+  const colors = useThemedColors();
+
   const handleCategoryPress = (category: MeditationCategory) => {
     // Navigate to audio player
     navigation?.navigate('AudioPlayer', { category });
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Meditate</Text>
-          <Text style={styles.subtitle}>Choose your meditation sound</Text>
-        </View>
+    <ThemedBackground>
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Text style={[styles.title, { color: colors.text.primary }]}>Meditate</Text>
+            <Text style={[styles.subtitle, { color: colors.text.secondary }]}>Choose your meditation sound</Text>
+          </View>
 
-        <FlatList
-          data={meditationCategories}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.categoryCard}
-              onPress={() => handleCategoryPress(item)}
-              activeOpacity={0.7}
-            >
-              <Image source={{ uri: item.image }} style={styles.categoryImage} />
-              <View style={styles.categoryOverlay}>
-                <Text style={styles.categoryTitle}>{item.title}</Text>
-                <Text style={styles.categoryDescription}>{item.description}</Text>
-              </View>
-            </TouchableOpacity>
-          )}
-          contentContainerStyle={styles.listContent}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
-    </SafeAreaView>
+          <FlatList
+            data={meditationCategories}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.categoryCard}
+                onPress={() => handleCategoryPress(item)}
+                activeOpacity={0.7}
+              >
+                <Image source={{ uri: item.image }} style={styles.categoryImage} />
+                <View style={styles.categoryOverlay}>
+                  <Text style={[styles.categoryTitle, { color: colors.text.inverse }]}>{item.title}</Text>
+                  <Text style={[styles.categoryDescription, { color: colors.text.inverse }]}>{item.description}</Text>
+                </View>
+              </TouchableOpacity>
+            )}
+            contentContainerStyle={styles.listContent}
+            showsVerticalScrollIndicator={false}
+          />
+        </View>
+      </SafeAreaView>
+    </ThemedBackground>
   );
 };
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.background.secondary,
   },
 
   container: {
     flex: 1,
-    backgroundColor: colors.background.secondary,
   },
 
   header: {
@@ -116,13 +162,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: typography.fontSize['3xl'],
     fontWeight: typography.fontWeight.bold,
-    color: colors.text.primary,
     marginBottom: spacing.xs,
   },
 
   subtitle: {
     fontSize: typography.fontSize.base,
-    color: colors.text.secondary,
   },
 
   listContent: {
@@ -154,15 +198,14 @@ const styles = StyleSheet.create({
   },
 
   categoryTitle: {
-    fontSize: typography.fontSize.xl,
-    fontWeight: typography.fontWeight.bold,
-    color: colors.text.inverse,
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.semibold,
     marginBottom: spacing.xs / 2,
   },
 
   categoryDescription: {
     fontSize: typography.fontSize.sm,
-    color: colors.text.inverse,
+    fontWeight: typography.fontWeight.normal,
     opacity: 0.9,
   },
 });

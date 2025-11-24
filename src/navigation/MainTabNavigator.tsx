@@ -11,7 +11,8 @@ import {
   ProfileScreen,
 } from '@screens/main';
 import { ArticleDetailScreen, GoalDetailScreen, AudioPlayerScreen } from '@screens/details';
-import { colors, typography } from '@theme/index';
+import { typography } from '@theme/index';
+import { useThemedColors } from '@/hooks/useThemedColors';
 
 export type HomeStackParamList = {
   HomeMain: undefined;
@@ -57,6 +58,7 @@ export type MainTabParamList = {
   Library: undefined;
   Meditate: undefined;
   Discover: undefined;
+  Profile: undefined;
 };
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -67,102 +69,158 @@ const MeditateStack = createNativeStackNavigator<MeditateStackParamList>();
 const DiscoverStack = createNativeStackNavigator<DiscoverStackParamList>();
 const ProfileStack = createNativeStackNavigator<ProfileStackParamList>();
 
-const HomeStackNavigator = () => (
-  <HomeStack.Navigator>
-    <HomeStack.Screen
-      name="HomeMain"
-      component={GoalsScreen}
-      options={{ headerShown: false }}
-    />
-    <HomeStack.Screen
-      name="ArticleDetail"
-      component={ArticleDetailScreen}
-      options={{ title: 'Article' }}
-    />
-    <HomeStack.Screen
-      name="GoalDetail"
-      component={GoalDetailScreen}
-      options={{ title: 'Goal' }}
-    />
-  </HomeStack.Navigator>
-);
+const HomeStackNavigator = () => {
+  const colors = useThemedColors();
+  return (
+    <HomeStack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: colors.background.primary },
+        headerTintColor: colors.text.primary,
+        headerTitleStyle: { color: colors.text.primary },
+      }}
+    >
+      <HomeStack.Screen
+        name="HomeMain"
+        component={GoalsScreen}
+        options={{ headerShown: false }}
+      />
+      <HomeStack.Screen
+        name="ArticleDetail"
+        component={ArticleDetailScreen}
+        options={{ title: 'Article' }}
+      />
+      <HomeStack.Screen
+        name="GoalDetail"
+        component={GoalDetailScreen}
+        options={{ title: 'Goal' }}
+      />
+    </HomeStack.Navigator>
+  );
+};
 
-const LibraryStackNavigator = () => (
-  <LibraryStack.Navigator>
-    <LibraryStack.Screen
-      name="LibraryMain"
-      component={LibraryScreen}
-      options={{ headerShown: false }}
-    />
-    <LibraryStack.Screen
-      name="ArticleDetail"
-      component={ArticleDetailScreen}
-      options={{ title: 'Article' }}
-    />
-  </LibraryStack.Navigator>
-);
+const LibraryStackNavigator = () => {
+  const colors = useThemedColors();
+  return (
+    <LibraryStack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: colors.background.primary },
+        headerTintColor: colors.text.primary,
+        headerTitleStyle: { color: colors.text.primary },
+      }}
+    >
+      <LibraryStack.Screen
+        name="LibraryMain"
+        component={LibraryScreen}
+        options={{ headerShown: false }}
+      />
+      <LibraryStack.Screen
+        name="ArticleDetail"
+        component={ArticleDetailScreen}
+        options={{ title: 'Article' }}
+      />
+    </LibraryStack.Navigator>
+  );
+};
 
-const GoalsStackNavigator = () => (
-  <GoalsStack.Navigator>
-    <GoalsStack.Screen
-      name="GoalsMain"
-      component={GoalsScreen}
-      options={{ headerShown: false }}
-    />
-    <GoalsStack.Screen
-      name="GoalDetail"
-      component={GoalDetailScreen}
-      options={{ title: 'Goal' }}
-    />
-  </GoalsStack.Navigator>
-);
+const GoalsStackNavigator = () => {
+  const colors = useThemedColors();
+  return (
+    <GoalsStack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: colors.background.primary },
+        headerTintColor: colors.text.primary,
+        headerTitleStyle: { color: colors.text.primary },
+      }}
+    >
+      <GoalsStack.Screen
+        name="GoalsMain"
+        component={GoalsScreen}
+        options={{ headerShown: false }}
+      />
+      <GoalsStack.Screen
+        name="GoalDetail"
+        component={GoalDetailScreen}
+        options={{ title: 'Goal' }}
+      />
+    </GoalsStack.Navigator>
+  );
+};
 
-const MeditateStackNavigator = () => (
-  <MeditateStack.Navigator>
-    <MeditateStack.Screen
-      name="MeditateMain"
-      component={MeditateScreen}
-      options={{ headerShown: false }}
-    />
-    <MeditateStack.Screen
-      name="ArticleDetail"
-      component={ArticleDetailScreen}
-      options={{ title: 'Article' }}
-    />
-    <MeditateStack.Screen
-      name="AudioPlayer"
-      component={AudioPlayerScreen}
-      options={{ headerShown: false }}
-    />
-  </MeditateStack.Navigator>
-);
+const MeditateStackNavigator = () => {
+  const colors = useThemedColors();
+  return (
+    <MeditateStack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: colors.background.primary },
+        headerTintColor: colors.text.primary,
+        headerTitleStyle: { color: colors.text.primary },
+      }}
+    >
+      <MeditateStack.Screen
+        name="MeditateMain"
+        component={MeditateScreen}
+        options={{ headerShown: false }}
+      />
+      <MeditateStack.Screen
+        name="ArticleDetail"
+        component={ArticleDetailScreen}
+        options={{ title: 'Article' }}
+      />
+      <MeditateStack.Screen
+        name="AudioPlayer"
+        component={AudioPlayerScreen}
+        options={{ headerShown: false }}
+      />
+    </MeditateStack.Navigator>
+  );
+};
 
-const DiscoverStackNavigator = () => (
-  <DiscoverStack.Navigator>
-    <DiscoverStack.Screen
-      name="DiscoverMain"
-      component={DiscoverScreen}
-      options={{ headerShown: false }}
-    />
-    <DiscoverStack.Screen
-      name="ArticleDetail"
-      component={ArticleDetailScreen}
-      options={{ title: 'Article' }}
-    />
-  </DiscoverStack.Navigator>
-);
+const DiscoverStackNavigator = () => {
+  const colors = useThemedColors();
+  return (
+    <DiscoverStack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: colors.background.primary },
+        headerTintColor: colors.text.primary,
+        headerTitleStyle: { color: colors.text.primary },
+      }}
+    >
+      <DiscoverStack.Screen
+        name="DiscoverMain"
+        component={DiscoverScreen}
+        options={{ headerShown: false }}
+      />
+      <DiscoverStack.Screen
+        name="ArticleDetail"
+        component={ArticleDetailScreen}
+        options={{ title: 'Article' }}
+      />
+    </DiscoverStack.Navigator>
+  );
+};
 
-const ProfileStackNavigator = () => (
-  <ProfileStack.Navigator>
-    <ProfileStack.Screen
-      name="ProfileMain"
-      component={ProfileScreen}
-      options={{ headerShown: false }}
-    />
-  </ProfileStack.Navigator>
-);
+const ProfileStackNavigator = () => {
+  const colors = useThemedColors();
+  return (
+    <ProfileStack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: colors.background.primary },
+        headerTintColor: colors.text.primary,
+        headerTitleStyle: { color: colors.text.primary },
+      }}
+    >
+      <ProfileStack.Screen
+        name="ProfileMain"
+        component={ProfileScreen}
+        options={{ headerShown: false }}
+      />
+    </ProfileStack.Navigator>
+  );
+};
 
 export const MainTabNavigator = () => {
+  const colors = useThemedColors();
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -209,6 +267,14 @@ export const MainTabNavigator = () => {
         options={{
           tabBarLabel: 'Discover',
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 20, color }}>◇</Text>,
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileStackNavigator}
+        options={{
+          tabBarLabel: 'Profile',
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20, color }}>◉</Text>,
         }}
       />
     </Tab.Navigator>

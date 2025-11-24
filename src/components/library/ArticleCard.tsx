@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Card } from '@components/common';
-import { colors, spacing, typography, borderRadius } from '@theme/index';
+import { spacing, typography, borderRadius } from '@theme/index';
+import { useThemedColors } from '@/hooks/useThemedColors';
 import { ContentItem } from '@app-types/index';
 
 interface ArticleCardProps {
@@ -15,6 +16,8 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
   onPress,
   onBookmarkToggle,
 }) => {
+  const colors = useThemedColors();
+
   const getDuration = () => {
     if (item.duration) {
       const minutes = Math.floor(item.duration / 60);
@@ -36,31 +39,31 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
 
           <View style={styles.content}>
             <View style={styles.header}>
-              <Text style={styles.type}>{item.type.toUpperCase()}</Text>
+              <Text style={[styles.type, { color: colors.primary.main }]}>{item.type.toUpperCase()}</Text>
               <TouchableOpacity onPress={onBookmarkToggle} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-                <Text style={styles.bookmarkIcon}>
+                <Text style={[styles.bookmarkIcon, { color: colors.primary.main }]}>
                   {item.isBookmarked ? '★' : '☆'}
                 </Text>
               </TouchableOpacity>
             </View>
 
-            <Text style={styles.title} numberOfLines={2}>
+            <Text style={[styles.title, { color: colors.text.primary }]} numberOfLines={2}>
               {item.title}
             </Text>
 
-            <Text style={styles.description} numberOfLines={2}>
+            <Text style={[styles.description, { color: colors.text.secondary }]} numberOfLines={2}>
               {item.description}
             </Text>
 
             <View style={styles.footer}>
               {getDuration() && (
-                <Text style={styles.duration}>{getDuration()}</Text>
+                <Text style={[styles.duration, { color: colors.text.tertiary }]}>{getDuration()}</Text>
               )}
               {item.author && getDuration() && (
-                <Text style={styles.separator}>•</Text>
+                <Text style={[styles.separator, { color: colors.text.tertiary }]}>•</Text>
               )}
               {item.author && (
-                <Text style={styles.author} numberOfLines={1}>{item.author}</Text>
+                <Text style={[styles.author, { color: colors.text.tertiary }]} numberOfLines={1}>{item.author}</Text>
               )}
             </View>
           </View>
@@ -100,26 +103,22 @@ const styles = StyleSheet.create({
 
   type: {
     fontSize: typography.fontSize.xs,
-    color: colors.primary.main,
     fontWeight: typography.fontWeight.semibold,
     letterSpacing: 0.5,
   },
 
   bookmarkIcon: {
     fontSize: 18,
-    color: colors.primary.main,
   },
 
   title: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.text.primary,
     marginBottom: spacing.xs / 2,
   },
 
   description: {
     fontSize: typography.fontSize.xs,
-    color: colors.text.secondary,
     lineHeight: typography.fontSize.xs * 1.4,
     marginBottom: spacing.xs,
   },
@@ -131,18 +130,15 @@ const styles = StyleSheet.create({
 
   duration: {
     fontSize: typography.fontSize.xs,
-    color: colors.text.tertiary,
   },
 
   separator: {
     fontSize: typography.fontSize.xs,
-    color: colors.text.tertiary,
     marginHorizontal: spacing.xs / 2,
   },
 
   author: {
     fontSize: typography.fontSize.xs,
-    color: colors.text.tertiary,
     flex: 1,
   },
 });

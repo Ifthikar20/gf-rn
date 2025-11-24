@@ -2,6 +2,7 @@ import React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RootNavigator } from '@navigation/index';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -19,9 +20,11 @@ const queryClient = new QueryClient({
 const App = () => {
   return (
     <SafeAreaProvider>
-      <QueryClientProvider client={queryClient}>
-        <RootNavigator />
-      </QueryClientProvider>
+      <ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <RootNavigator />
+        </QueryClientProvider>
+      </ThemeProvider>
     </SafeAreaProvider>
   );
 };

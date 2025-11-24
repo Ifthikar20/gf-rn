@@ -3,8 +3,9 @@ import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
 import { useContentById } from '@hooks/useLibrary';
-import { Button } from '@components/common';
-import { colors, spacing, typography } from '@theme/index';
+import { Button, ThemedBackground } from '@components/common';
+import { spacing, typography } from '@theme/index';
+import { useThemedColors } from '@/hooks/useThemedColors';
 
 
 export const ArticleDetailScreen = ({
@@ -14,58 +15,64 @@ export const ArticleDetailScreen = ({
   navigation: any;
   route: any;
 }) => {
+  const colors = useThemedColors();
   const { id } = route.params;
   const { data: content, isLoading } = useContentById(id);
 
   if (isLoading) {
     return (
-      <View style={styles.centered}>
-        <Text style={styles.loadingText}>Loading...</Text>
-      </View>
+      <ThemedBackground>
+        <View style={styles.centered}>
+          <Text style={[styles.loadingText, { color: colors.text.secondary }]}>Loading...</Text>
+        </View>
+      </ThemedBackground>
     );
   }
 
   if (!content) {
     return (
-      <View style={styles.centered}>
-        <Text style={styles.errorText}>Content not found</Text>
-        <Button title="Go Back" onPress={() => navigation.goBack()} />
-      </View>
+      <ThemedBackground>
+        <View style={styles.centered}>
+          <Text style={[styles.errorText, { color: colors.text.primary }]}>Content not found</Text>
+          <Button title="Go Back" onPress={() => navigation.goBack()} />
+        </View>
+      </ThemedBackground>
     );
   }
 
   return (
-    <ScrollView style={styles.container}>
-      {content.thumbnail && (
-        <Image source={{ uri: content.thumbnail }} style={styles.thumbnail} />
-      )}
-
-      <View style={styles.content}>
-        <Text style={styles.category}>{content.category}</Text>
-        <Text style={styles.title}>{content.title}</Text>
-
-        {content.author && (
-          <Text style={styles.author}>By {content.author}</Text>
+    <ThemedBackground>
+      <ScrollView style={styles.container}>
+        {content.thumbnail && (
+          <Image source={{ uri: content.thumbnail }} style={styles.thumbnail} />
         )}
 
-        <Text style={styles.description}>{content.description}</Text>
+        <View style={styles.content}>
+          <Text style={[styles.category, { color: colors.primary.main }]}>{content.category}</Text>
+          <Text style={[styles.title, { color: colors.text.primary }]}>{content.title}</Text>
 
-        <View style={styles.tags}>
-          {content.tags.map((tag) => (
-            <View key={tag} style={styles.tag}>
-              <Text style={styles.tagText}>{tag}</Text>
-            </View>
-          ))}
+          {content.author && (
+            <Text style={[styles.author, { color: colors.text.secondary }]}>By {content.author}</Text>
+          )}
+
+          <Text style={[styles.description, { color: colors.text.primary }]}>{content.description}</Text>
+
+          <View style={styles.tags}>
+            {content.tags.map((tag) => (
+              <View key={tag} style={[styles.tag, { backgroundColor: colors.background.tertiary }]}>
+                <Text style={[styles.tagText, { color: colors.text.secondary }]}>{tag}</Text>
+              </View>
+            ))}
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </ThemedBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.primary,
   },
 
   centered: {
@@ -77,12 +84,10 @@ const styles = StyleSheet.create({
 
   loadingText: {
     fontSize: typography.fontSize.base,
-    color: colors.text.secondary,
   },
 
   errorText: {
     fontSize: typography.fontSize.lg,
-    color: colors.text.primary,
     marginBottom: spacing.lg,
   },
 
@@ -97,7 +102,6 @@ const styles = StyleSheet.create({
 
   category: {
     fontSize: typography.fontSize.sm,
-    color: colors.primary.main,
     textTransform: 'uppercase',
     fontWeight: typography.fontWeight.semibold,
     marginBottom: spacing.sm,
@@ -106,20 +110,17 @@ const styles = StyleSheet.create({
   title: {
     fontSize: typography.fontSize['3xl'],
     fontWeight: typography.fontWeight.bold,
-    color: colors.text.primary,
     marginBottom: spacing.md,
     lineHeight: typography.fontSize['3xl'] * typography.lineHeight.tight,
   },
 
   author: {
     fontSize: typography.fontSize.sm,
-    color: colors.text.secondary,
     marginBottom: spacing.lg,
   },
 
   description: {
     fontSize: typography.fontSize.base,
-    color: colors.text.primary,
     lineHeight: typography.fontSize.base * typography.lineHeight.relaxed,
     marginBottom: spacing.lg,
   },
@@ -131,7 +132,6 @@ const styles = StyleSheet.create({
   },
 
   tag: {
-    backgroundColor: colors.background.tertiary,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderRadius: 20,
@@ -139,6 +139,5 @@ const styles = StyleSheet.create({
 
   tagText: {
     fontSize: typography.fontSize.xs,
-    color: colors.text.secondary,
   },
 });
