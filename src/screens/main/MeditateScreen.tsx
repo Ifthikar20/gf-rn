@@ -133,8 +133,8 @@ export const MeditateScreen: React.FC<MeditateScreenProps> = ({ navigation }) =>
               >
                 <Image source={{ uri: item.image }} style={styles.categoryImage} />
                 <View style={styles.categoryOverlay}>
-                  <Text style={[styles.categoryTitle, { color: colors.text.inverse }]}>{item.title}</Text>
-                  <Text style={[styles.categoryDescription, { color: colors.text.inverse }]}>{item.description}</Text>
+                  <Text style={styles.categoryTitle}>{item.title}</Text>
+                  <Text style={styles.categoryDescription}>{item.description}</Text>
                 </View>
               </TouchableOpacity>
             )}
@@ -203,11 +203,13 @@ const styles = StyleSheet.create({
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.semibold,
     marginBottom: spacing.xs / 2,
+    color: '#FFFFFF',
   },
 
   categoryDescription: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.normal,
     opacity: 0.9,
+    color: '#FFFFFF',
   },
 });

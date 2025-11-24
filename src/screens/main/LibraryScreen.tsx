@@ -101,12 +101,13 @@ const styles = StyleSheet.create({
   },
 
   categoriesScroll: {
-    maxHeight: 50,
+    flexGrow: 0,
     marginBottom: spacing.md,
   },
 
   categoriesContent: {
     paddingHorizontal: spacing.screenPadding,
+    paddingVertical: spacing.sm,
   },
 
   listContent: {
