@@ -1,9 +1,12 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { Card } from '@components/common';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { spacing, typography, borderRadius } from '@theme/index';
 import { useThemedColors } from '@/hooks/useThemedColors';
 import { ContentItem } from '@app-types/index';
+
+const { width } = Dimensions.get('window');
+const CARD_MARGIN = spacing.md;
+const CARD_WIDTH = (width - spacing.screenPadding * 2 - CARD_MARGIN) / 2;
 
 interface ArticleCardProps {
   item: ContentItem;
@@ -30,120 +33,133 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
   };
 
   return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
-      <Card padding={0} style={styles.card}>
-        <View style={styles.cardContent}>
-          {item.thumbnail && (
-            <Image source={{ uri: item.thumbnail }} style={styles.thumbnail} />
-          )}
+    <TouchableOpacity onPress={onPress} activeOpacity={0.7} style={styles.container}>
+      <View style={[styles.card, { backgroundColor: colors.background.secondary }]}>
+        {/* Full Image */}
+        {item.thumbnail && (
+          <Image source={{ uri: item.thumbnail }} style={styles.image} />
+        )}
 
-          <View style={styles.content}>
-            <View style={styles.header}>
-              <Text style={[styles.type, { color: colors.primary.main }]}>{item.type.toUpperCase()}</Text>
-              <TouchableOpacity onPress={onBookmarkToggle} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-                <Text style={[styles.bookmarkIcon, { color: colors.primary.main }]}>
-                  {item.isBookmarked ? '★' : '☆'}
-                </Text>
-              </TouchableOpacity>
-            </View>
+        {/* Bookmark Icon - Top Right */}
+        <TouchableOpacity
+          onPress={onBookmarkToggle}
+          style={styles.bookmarkButton}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <Text style={styles.bookmarkIcon}>
+            {item.isBookmarked ? '★' : '☆'}
+          </Text>
+        </TouchableOpacity>
 
-            <Text style={[styles.title, { color: colors.text.primary }]} numberOfLines={2}>
-              {item.title}
-            </Text>
+        {/* Bottom Overlay with Title and Info */}
+        <View style={styles.overlay}>
+          <Text style={styles.title} numberOfLines={2}>
+            {item.title}
+          </Text>
 
-            <Text style={[styles.description, { color: colors.text.secondary }]} numberOfLines={2}>
-              {item.description}
-            </Text>
-
-            <View style={styles.footer}>
-              {getDuration() && (
-                <Text style={[styles.duration, { color: colors.text.tertiary }]}>{getDuration()}</Text>
-              )}
-              {item.author && getDuration() && (
-                <Text style={[styles.separator, { color: colors.text.tertiary }]}>•</Text>
-              )}
-              {item.author && (
-                <Text style={[styles.author, { color: colors.text.tertiary }]} numberOfLines={1}>{item.author}</Text>
-              )}
-            </View>
+          <View style={styles.metaInfo}>
+            <Text style={styles.type}>{item.type.toUpperCase()}</Text>
+            {getDuration() && (
+              <>
+                <Text style={styles.separator}>•</Text>
+                <Text style={styles.duration}>{getDuration()}</Text>
+              </>
+            )}
           </View>
         </View>
-      </Card>
+      </View>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    width: CARD_WIDTH,
+    marginBottom: spacing.lg,
+  },
+
   card: {
-    marginBottom: spacing.md,
+    borderRadius: borderRadius.lg,
     overflow: 'hidden',
+    aspectRatio: 0.85, // Slightly taller than wide (Spotify-style)
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
   },
 
-  cardContent: {
-    flexDirection: 'row',
-    minHeight: 120,
-  },
-
-  thumbnail: {
-    width: 110,
+  image: {
+    width: '100%',
     height: '100%',
-    borderTopLeftRadius: borderRadius.xl,
-    borderBottomLeftRadius: borderRadius.xl,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
 
-  content: {
-    flex: 1,
-    padding: spacing.md,
-    justifyContent: 'space-between',
-  },
-
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  bookmarkButton: {
+    position: 'absolute',
+    top: spacing.sm,
+    right: spacing.sm,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     alignItems: 'center',
-    marginBottom: spacing.xs / 2,
-  },
-
-  type: {
-    fontSize: typography.fontSize.xs - 1,
-    fontWeight: typography.fontWeight.bold,
-    letterSpacing: 0.8,
+    justifyContent: 'center',
+    zIndex: 2,
   },
 
   bookmarkIcon: {
-    fontSize: 20,
+    fontSize: 18,
+    color: '#FFFFFF',
+  },
+
+  overlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: spacing.md,
+    paddingTop: spacing.xl,
+    background: 'linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent)',
+    // React Native fallback for gradient
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
   },
 
   title: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.bold,
+    color: '#FFFFFF',
     marginBottom: spacing.xs,
     lineHeight: typography.fontSize.base * 1.3,
   },
 
-  description: {
-    fontSize: typography.fontSize.sm,
-    lineHeight: typography.fontSize.sm * 1.4,
-    marginBottom: spacing.sm,
-  },
-
-  footer: {
+  metaInfo: {
     flexDirection: 'row',
     alignItems: 'center',
   },
 
-  duration: {
+  type: {
     fontSize: typography.fontSize.xs,
-    fontWeight: typography.fontWeight.medium,
+    fontWeight: typography.fontWeight.semibold,
+    color: '#FFFFFF',
+    opacity: 0.9,
+    letterSpacing: 0.5,
   },
 
   separator: {
     fontSize: typography.fontSize.xs,
-    marginHorizontal: spacing.xs,
+    color: '#FFFFFF',
+    opacity: 0.7,
+    marginHorizontal: spacing.xs / 2,
   },
 
-  author: {
+  duration: {
     fontSize: typography.fontSize.xs,
-    flex: 1,
+    color: '#FFFFFF',
+    opacity: 0.9,
   },
 });

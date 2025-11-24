@@ -60,6 +60,8 @@ export const LibraryScreen: React.FC = () => {
           <FlatList
             data={content}
             keyExtractor={(item) => item.id}
+            numColumns={2}
+            columnWrapperStyle={styles.row}
             renderItem={({ item }) => (
               <ArticleCard
                 item={item}
@@ -112,6 +114,11 @@ const styles = StyleSheet.create({
 
   listContent: {
     padding: spacing.screenPadding,
+    paddingTop: 0,
+  },
+
+  row: {
+    justifyContent: 'space-between',
   },
 
   emptyText: {
