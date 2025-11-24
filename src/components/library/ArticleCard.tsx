@@ -1,12 +1,11 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { spacing, typography, borderRadius } from '@theme/index';
 import { useThemedColors } from '@/hooks/useThemedColors';
 import { ContentItem } from '@app-types/index';
 
-const { width } = Dimensions.get('window');
-const CARD_MARGIN = spacing.md;
-const CARD_WIDTH = (width - spacing.screenPadding * 2 - CARD_MARGIN) / 2;
+// Match Discover card size
+const CARD_WIDTH = 160;
 
 interface ArticleCardProps {
   item: ContentItem;
@@ -75,18 +74,18 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
 const styles = StyleSheet.create({
   container: {
     width: CARD_WIDTH,
-    marginBottom: spacing.lg,
+    marginBottom: spacing.md,
   },
 
   card: {
     borderRadius: borderRadius.lg,
     overflow: 'hidden',
-    aspectRatio: 0.85, // Slightly taller than wide (Spotify-style)
+    aspectRatio: 0.75, // Compact Spotify-style
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    elevation: 4,
   },
 
   image: {
@@ -101,11 +100,11 @@ const styles = StyleSheet.create({
 
   bookmarkButton: {
     position: 'absolute',
-    top: spacing.sm,
-    right: spacing.sm,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    top: spacing.xs,
+    right: spacing.xs,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     alignItems: 'center',
     justifyContent: 'center',
@@ -113,7 +112,7 @@ const styles = StyleSheet.create({
   },
 
   bookmarkIcon: {
-    fontSize: 18,
+    fontSize: 16,
     color: '#FFFFFF',
   },
 
@@ -122,19 +121,19 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    padding: spacing.md,
-    paddingTop: spacing.xl,
+    padding: spacing.sm,
+    paddingTop: spacing.lg,
     background: 'linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent)',
     // React Native fallback for gradient
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
   },
 
   title: {
-    fontSize: typography.fontSize.base,
+    fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.bold,
     color: '#FFFFFF',
-    marginBottom: spacing.xs,
-    lineHeight: typography.fontSize.base * 1.3,
+    marginBottom: spacing.xs / 2,
+    lineHeight: typography.fontSize.sm * 1.3,
   },
 
   metaInfo: {
