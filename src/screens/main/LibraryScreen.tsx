@@ -58,6 +58,7 @@ export const LibraryScreen: React.FC = () => {
           </ScrollView>
 
           <FlatList
+            key="library-grid"
             data={content}
             keyExtractor={(item) => item.id}
             numColumns={2}

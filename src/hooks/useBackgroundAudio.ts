@@ -1,11 +1,24 @@
 import { useEffect, useState } from 'react';
-import { Audio } from 'expo-av';
+
+// Gracefully handle expo-av module if not available
+let Audio: any = null;
+try {
+  const expoAV = require('expo-av');
+  Audio = expoAV.Audio;
+} catch (error) {
+  console.log('expo-av not available - background audio disabled. Run "cd ios && pod install" to enable.');
+}
 
 export const useBackgroundAudio = () => {
-  const [sound, setSound] = useState<Audio.Sound | null>(null);
+  const [sound, setSound] = useState<any>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
+    // If Audio module is not available, skip setup
+    if (!Audio) {
+      return;
+    }
+
     let isMounted = true;
 
     const setupAudio = async () => {
@@ -45,7 +58,7 @@ export const useBackgroundAudio = () => {
   }, []);
 
   const togglePlayback = async () => {
-    if (!sound) return;
+    if (!sound || !Audio) return;
 
     try {
       const status = await sound.getStatusAsync();
@@ -64,7 +77,7 @@ export const useBackgroundAudio = () => {
   };
 
   const setVolume = async (volume: number) => {
-    if (!sound) return;
+    if (!sound || !Audio) return;
     try {
       await sound.setVolumeAsync(volume);
     } catch (error) {
