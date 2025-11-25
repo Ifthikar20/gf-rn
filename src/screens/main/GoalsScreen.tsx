@@ -50,7 +50,10 @@ export const GoalsScreen: React.FC = () => {
 
           {/* Mood Selector */}
           <View style={styles.moodSelectorContainer}>
-            <Text style={[styles.moodLabel, { color: colors.text.primary }]}>How are you feeling today?</Text>
+            <View style={styles.moodLabelContainer}>
+              <Text style={[styles.moodLabel, { color: colors.text.primary }]}>How are you feeling</Text>
+              <Text style={[styles.moodLabelAccent, { color: colors.primary.main }]}>today?</Text>
+            </View>
             <MoodSelector />
           </View>
 
@@ -130,13 +133,27 @@ const styles = StyleSheet.create({
   moodSelectorContainer: {
     marginHorizontal: spacing.screenPadding,
     marginBottom: spacing.lg,
+    paddingTop: spacing.xs,
+  },
+
+  moodLabelContainer: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    marginBottom: spacing.sm,
+    marginLeft: spacing.xs,
+    gap: spacing.xs,
   },
 
   moodLabel: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.semibold,
-    marginBottom: spacing.sm,
-    marginLeft: spacing.xs,
+    letterSpacing: -0.2,
+  },
+
+  moodLabelAccent: {
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.bold,
+    letterSpacing: -0.2,
   },
 
   listContent: {
@@ -149,31 +166,31 @@ const styles = StyleSheet.create({
   },
 
   timelineLeft: {
-    width: 70,
+    width: 50,
     alignItems: 'center',
     paddingTop: spacing.sm,
   },
 
   dateText: {
-    fontSize: 11,
-    marginBottom: spacing.sm,
+    fontSize: 9,
+    marginBottom: spacing.xs,
     textAlign: 'center',
-    lineHeight: 14,
+    lineHeight: 12,
     fontWeight: typography.fontWeight.medium,
   },
 
   timelineDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    borderWidth: 3,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    borderWidth: 2.5,
     zIndex: 1,
   },
 
   timelineLine: {
     position: 'absolute',
-    width: 2,
-    top: 45,
+    width: 1.5,
+    top: 36,
     bottom: -spacing.xl,
   },
 

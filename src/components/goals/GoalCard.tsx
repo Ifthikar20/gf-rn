@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
   },
 
   content: {
-    gap: spacing.md,
+    gap: spacing.sm,
   },
 
   header: {
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
   statusBadge: {
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs / 2,
-    borderRadius: 12,
+    borderRadius: borderRadius.xl,
   },
 
   statusText: {
@@ -177,14 +177,14 @@ const styles = StyleSheet.create({
 
   progressBar: {
     height: 8,
-    borderRadius: 4,
+    borderRadius: borderRadius.full,
     overflow: 'hidden',
     marginBottom: spacing.xs,
   },
 
   progressBarFill: {
     height: '100%',
-    borderRadius: 4,
+    borderRadius: borderRadius.full,
   },
 
   progressPercentage: {
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     width: '100%',
     height: 160,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.xl,
     overflow: 'hidden',
   },
 

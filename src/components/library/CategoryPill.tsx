@@ -1,6 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { colors, spacing, borderRadius, typography } from '@theme/index';
+import { spacing, borderRadius, typography } from '@theme/index';
+import { useThemedColors } from '@/hooks/useThemedColors';
 import { ContentCategory } from '@app-types/index';
 
 interface CategoryPillProps {
@@ -14,13 +15,25 @@ export const CategoryPill: React.FC<CategoryPillProps> = ({
   selected = false,
   onPress,
 }) => {
+  const colors = useThemedColors();
+
   return (
     <TouchableOpacity
-      style={[styles.pill, selected && styles.pillSelected]}
+      style={[
+        styles.pill,
+        { backgroundColor: colors.background.tertiary },
+        selected && [styles.pillSelected, { backgroundColor: colors.primary.main }],
+      ]}
       onPress={onPress}
       activeOpacity={0.7}
     >
-      <Text style={[styles.text, selected && styles.textSelected]}>
+      <Text
+        style={[
+          styles.text,
+          { color: colors.text.secondary },
+          selected && [styles.textSelected, { color: colors.primary.contrast }],
+        ]}
+      >
         {category}
       </Text>
     </TouchableOpacity>
@@ -29,28 +42,36 @@ export const CategoryPill: React.FC<CategoryPillProps> = ({
 
 const styles = StyleSheet.create({
   pill: {
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
-    borderRadius: borderRadius.lg,
-    backgroundColor: colors.background.tertiary,
+    borderRadius: borderRadius.full,
     marginRight: spacing.sm,
-    minHeight: 36,
+    height: 36,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.03,
+    shadowRadius: 4,
+    elevation: 1,
   },
 
   pillSelected: {
-    backgroundColor: colors.primary.main,
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 3,
   },
 
   text: {
     fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.text.secondary,
+    fontWeight: typography.fontWeight.semibold,
     textTransform: 'capitalize',
   },
 
   textSelected: {
-    color: colors.primary.contrast,
+    fontWeight: typography.fontWeight.bold,
   },
 });

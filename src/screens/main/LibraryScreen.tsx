@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, ScrollView, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import { ArticleCard, CategoryPill } from '@components/library';
 import { ThemedBackground } from '@components/common';
 import { ContentCategory } from '@app-types/index';
@@ -18,14 +18,39 @@ const categories: ContentCategory[] = [
   'self-care',
 ];
 
+const categoryLabels: Record<ContentCategory | 'all', string> = {
+  all: 'All Content',
+  mindfulness: 'Mindfulness',
+  stress: 'Stress Relief',
+  sleep: 'Better Sleep',
+  anxiety: 'Anxiety Support',
+  depression: 'Mental Wellness',
+  productivity: 'Productivity',
+  relationships: 'Relationships',
+  'self-care': 'Self Care',
+};
+
 export const LibraryScreen: React.FC = () => {
   const colors = useThemedColors();
   const [selectedCategory, setSelectedCategory] = useState<ContentCategory | undefined>();
 
-  // Filter mock data by category
-  const content = selectedCategory
-    ? mockLibraryContent.filter((item) => item.category === selectedCategory)
-    : mockLibraryContent;
+  // Group content by category
+  const contentByCategory: Record<string, typeof mockLibraryContent> = {};
+
+  if (selectedCategory) {
+    // If a category is selected, only show that category
+    contentByCategory[selectedCategory] = mockLibraryContent.filter(
+      (item) => item.category === selectedCategory
+    );
+  } else {
+    // Show all categories
+    categories.forEach((category) => {
+      const items = mockLibraryContent.filter((item) => item.category === category);
+      if (items.length > 0) {
+        contentByCategory[category] = items;
+      }
+    });
+  }
 
   return (
     <ThemedBackground>
@@ -57,19 +82,33 @@ export const LibraryScreen: React.FC = () => {
             ))}
           </ScrollView>
 
-          <FlatList
-            data={content}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <ArticleCard
-                item={item}
-                onPress={() => {}}
-                onBookmarkToggle={() => {}}
-              />
-            )}
-            contentContainerStyle={styles.listContent}
+          <ScrollView
+            style={styles.sectionsContainer}
             showsVerticalScrollIndicator={false}
-          />
+          >
+            {Object.entries(contentByCategory).map(([category, items]) => (
+              <View key={category} style={styles.section}>
+                <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>
+                  {categoryLabels[category as ContentCategory] || category}
+                </Text>
+
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.cardsContainer}
+                >
+                  {items.map((item) => (
+                    <ArticleCard
+                      key={item.id}
+                      item={item}
+                      onPress={() => {}}
+                      onBookmarkToggle={() => {}}
+                    />
+                  ))}
+                </ScrollView>
+              </View>
+            ))}
+          </ScrollView>
         </View>
       </SafeAreaView>
     </ThemedBackground>
@@ -101,21 +140,33 @@ const styles = StyleSheet.create({
   },
 
   categoriesScroll: {
-    maxHeight: 50,
-    marginBottom: spacing.md,
+    flexGrow: 0,
+    marginBottom: spacing.lg,
   },
 
   categoriesContent: {
     paddingHorizontal: spacing.screenPadding,
+    paddingVertical: spacing.xs,
+    alignItems: 'center',
   },
 
-  listContent: {
-    padding: spacing.screenPadding,
+  sectionsContainer: {
+    flex: 1,
   },
 
-  emptyText: {
-    fontSize: typography.fontSize.base,
-    textAlign: 'center',
-    padding: spacing.xl,
+  section: {
+    marginBottom: spacing.xl,
+  },
+
+  sectionTitle: {
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.semibold,
+    paddingHorizontal: spacing.screenPadding,
+    marginBottom: spacing.md,
+  },
+
+  cardsContainer: {
+    paddingLeft: spacing.screenPadding,
+    paddingRight: spacing.screenPadding,
   },
 });
