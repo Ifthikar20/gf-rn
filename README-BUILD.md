@@ -47,6 +47,19 @@ npx react-native run-ios --simulator="iPhone 14 Pro"
 
 ## Troubleshooting
 
+### If you get "Unable to resolve module expo-asset" error:
+```bash
+# Error: expo-asset could not be found within the project
+
+# Fix:
+./fix-expo-deps.sh
+
+# Then run:
+./run-ios.sh
+```
+
+This installs missing expo dependencies and clears Metro cache.
+
 ### If you get "Permission denied" error:
 ```bash
 # Error: sh: node_modules/.bin/react-native: Permission denied
