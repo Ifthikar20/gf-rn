@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   },
 
   moodsContainer: {
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: spacing.screenPadding,
     gap: spacing.sm,
   },
 

@@ -141,12 +141,13 @@ const styles = StyleSheet.create({
 
   categoriesScroll: {
     flexGrow: 0,
-    marginBottom: spacing.md,
+    marginBottom: spacing.lg,
   },
 
   categoriesContent: {
     paddingHorizontal: spacing.screenPadding,
-    paddingVertical: spacing.sm,
+    paddingVertical: spacing.xs,
+    alignItems: 'center',
   },
 
   sectionsContainer: {
@@ -165,6 +166,7 @@ const styles = StyleSheet.create({
   },
 
   cardsContainer: {
-    paddingHorizontal: spacing.screenPadding,
+    paddingLeft: spacing.screenPadding,
+    paddingRight: spacing.screenPadding,
   },
 });
