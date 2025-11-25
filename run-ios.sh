@@ -13,7 +13,8 @@ cd "$(dirname "$0")/ios" || exit 1
 # Clean extended attributes and build artifacts (fixes codesign errors)
 echo "🧹 Cleaning build artifacts and extended attributes..."
 rm -rf build
-xattr -cr .
+# Remove extended attributes (skip Pods directory to avoid permission warnings)
+find . -type f -not -path "./Pods/*" -exec xattr -c {} \; 2>/dev/null || true
 find . -name ".DS_Store" -type f -delete
 
 # Go back to project root

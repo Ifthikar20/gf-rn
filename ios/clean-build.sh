@@ -18,7 +18,8 @@ rm -rf ~/Library/Developer/Xcode/DerivedData/greatfeel-*
 
 # Remove extended attributes (fixes codesign resource fork errors)
 echo "Removing extended attributes..."
-xattr -cr .
+# Skip Pods directory to avoid permission warnings
+find . -type f -not -path "./Pods/*" -exec xattr -c {} \; 2>/dev/null || true
 
 # Remove .DS_Store files
 echo "Removing .DS_Store files..."

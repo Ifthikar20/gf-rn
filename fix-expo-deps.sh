@@ -25,7 +25,8 @@ kill $METRO_PID 2>/dev/null || true
 echo "🧹 Cleaning iOS build..."
 cd ios
 rm -rf build
-xattr -cr .
+# Skip Pods directory to avoid permission warnings
+find . -type f -not -path "./Pods/*" -exec xattr -c {} \; 2>/dev/null || true
 cd ..
 
 # Fix permissions

@@ -11,7 +11,8 @@ cd "$(dirname "$0")" || exit 1
 rm -rf build
 
 # Remove extended attributes (this is the main fix for "resource fork" errors)
-xattr -cr .
+# Skip Pods directory to avoid permission warnings
+find . -type f -not -path "./Pods/*" -exec xattr -c {} \; 2>/dev/null || true
 
 # Remove .DS_Store files
 find . -name ".DS_Store" -type f -delete
