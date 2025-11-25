@@ -47,6 +47,19 @@ npx react-native run-ios --simulator="iPhone 14 Pro"
 
 ## Troubleshooting
 
+### If you get "Permission denied" error:
+```bash
+# Error: sh: node_modules/.bin/react-native: Permission denied
+
+# Quick fix:
+./fix-permissions.sh
+
+# Or manually:
+chmod +x node_modules/.bin/*
+```
+
+This happens when npm/yarn installation doesn't set execute permissions correctly.
+
 ### If you get codesign errors:
 ```bash
 cd ios

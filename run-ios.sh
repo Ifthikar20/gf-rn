@@ -19,6 +19,12 @@ find . -name ".DS_Store" -type f -delete
 # Go back to project root
 cd ..
 
+# Fix node_modules permissions if needed
+echo "🔧 Ensuring node_modules permissions are correct..."
+if [ -d "node_modules/.bin" ]; then
+    chmod +x node_modules/.bin/* 2>/dev/null || true
+fi
+
 # Build and run on iPhone 14 Pro simulator
 echo "📱 Building and launching on iPhone 14 Pro simulator..."
 npx react-native run-ios --simulator="iPhone 14 Pro"

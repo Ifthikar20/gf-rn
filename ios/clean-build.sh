@@ -33,5 +33,13 @@ pod cache clean --all 2>/dev/null || true
 echo "Installing pods..."
 pod install
 
+# Fix node_modules permissions
+echo "Fixing node_modules permissions..."
+cd ..
+if [ -d "node_modules/.bin" ]; then
+    chmod +x node_modules/.bin/* 2>/dev/null || true
+    echo "✅ Permissions fixed"
+fi
+
 echo "✅ Clean complete! You can now try building again."
 echo "Run: npx react-native run-ios"
