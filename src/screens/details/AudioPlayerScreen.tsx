@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity, Alert } from 'react-native';
-import Sound from 'react-native-sound';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity } from 'react-native';
+import { Audio } from 'expo-av';
 import { ThemedBackground } from '@components/common';
 import { spacing, typography, borderRadius } from '@theme/index';
 import { useThemedColors } from '@/hooks/useThemedColors';
@@ -23,87 +23,64 @@ interface AudioPlayerScreenProps {
 export const AudioPlayerScreen: React.FC<AudioPlayerScreenProps> = ({ route, navigation }) => {
   const colors = useThemedColors();
   const { category } = route.params;
+  const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [totalTime, setTotalTime] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const soundRef = useRef<Sound | null>(null);
-  const progressInterval = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    // Enable playback in silence mode (iOS)
-    Sound.setCategory('Playback');
-
-    // Load the audio file
     loadAudio();
 
-    // Cleanup on unmount
     return () => {
-      if (soundRef.current) {
-        soundRef.current.stop();
-        soundRef.current.release();
-      }
-      if (progressInterval.current) {
-        clearInterval(progressInterval.current);
+      if (sound) {
+        sound.unloadAsync();
       }
     };
   }, []);
 
-  const loadAudio = () => {
+  const loadAudio = async () => {
     try {
-      const sound = new Sound(category.audioUrl, Sound.MAIN_BUNDLE, (error) => {
-        if (error) {
-          console.error('Failed to load the sound', error);
-          Alert.alert('Error', 'Failed to load audio file');
-          setIsLoading(false);
-          return;
-        }
-
-        // Successfully loaded
-        soundRef.current = sound;
-        setTotalTime(Math.floor(sound.getDuration()));
-        setIsLoading(false);
+      await Audio.setAudioModeAsync({
+        playsInSilentModeIOS: true,
+        staysActiveInBackground: true,
       });
+
+      const { sound: newSound } = await Audio.Sound.createAsync(
+        typeof category.audioUrl === 'string'
+          ? { uri: category.audioUrl }
+          : category.audioUrl,
+        { shouldPlay: false },
+        onPlaybackStatusUpdate
+      );
+
+      setSound(newSound);
+      setIsLoading(false);
     } catch (error) {
-      console.error('Error creating sound:', error);
-      Alert.alert('Error', 'Failed to initialize audio');
+      console.error('Error loading audio:', error);
       setIsLoading(false);
     }
   };
 
-  const handlePlayPause = () => {
-    if (!soundRef.current || isLoading) return;
+  const onPlaybackStatusUpdate = (status: any) => {
+    if (status.isLoaded) {
+      setCurrentTime(Math.floor(status.positionMillis / 1000));
+      setTotalTime(Math.floor(status.durationMillis / 1000));
+      setIsPlaying(status.isPlaying);
+    }
+  };
 
-    if (isPlaying) {
-      // Pause
-      soundRef.current.pause();
-      setIsPlaying(false);
-      if (progressInterval.current) {
-        clearInterval(progressInterval.current);
+  const handlePlayPause = async () => {
+    if (!sound || isLoading) return;
+
+    try {
+      if (isPlaying) {
+        await sound.pauseAsync();
+      } else {
+        await sound.playAsync();
       }
-    } else {
-      // Play
-      soundRef.current.play((success) => {
-        if (success) {
-          console.log('Successfully finished playing');
-        } else {
-          console.log('Playback failed due to audio decoding errors');
-        }
-        setIsPlaying(false);
-        if (progressInterval.current) {
-          clearInterval(progressInterval.current);
-        }
-      });
-      setIsPlaying(true);
-
-      // Start updating progress
-      progressInterval.current = setInterval(() => {
-        if (soundRef.current) {
-          soundRef.current.getCurrentTime((seconds) => {
-            setCurrentTime(Math.floor(seconds));
-          });
-        }
-      }, 100);
+    } catch (error) {
+      console.error('Error toggling playback:', error);
     }
   };
 
