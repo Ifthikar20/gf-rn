@@ -3,7 +3,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RootNavigator } from '@navigation/index';
 import { ThemeProvider } from '@/contexts/ThemeContext';
-import { useBackgroundAudio } from '@/hooks/useBackgroundAudio';
+// import { useBackgroundAudio } from '@/hooks/useBackgroundAudio'; // Disabled until iOS pods are installed
 
 const queryClient = new QueryClient({
   defaultOptions: {
