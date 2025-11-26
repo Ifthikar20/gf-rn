@@ -67,8 +67,11 @@ npx react-native run-ios
 
 The app uses `expo-av` for background audio (rain sounds). This requires native iOS modules. Once you run `pod install` on macOS:
 
-1. Uncomment the `useBackgroundAudio()` line in `src/App.tsx`
-2. Rebuild the app
+1. In `src/App.tsx`, uncomment both:
+   - Line 6: The import statement `import { useBackgroundAudio } from '@/hooks/useBackgroundAudio';`
+   - Line 24: The hook call `useBackgroundAudio();`
+2. Restart Metro bundler: `npm start -- --reset-cache`
+3. Rebuild the app
 
 ## Troubleshooting
 
