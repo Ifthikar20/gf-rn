@@ -22,7 +22,7 @@ interface MeditationCategory {
   description: string;
   author?: string;
   image: any;
-  audioUrl: string;
+  audioUrl: any; // Can be a URL string or require() for local audio
   videoUrl?: string;
   featured?: boolean;
 }
@@ -42,7 +42,7 @@ const meditationCategories: MeditationCategory[] = [
     description: 'Calming ocean sounds',
     author: 'Peaceful Sounds',
     image: require('@assets/img/women-cudly-1.png'),
-    audioUrl: 'https://example.com/ocean-waves.mp3',
+    audioUrl: require('@assets/img/sea-mp3.mp3'),
     featured: true,
   },
   {
