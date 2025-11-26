@@ -22,7 +22,7 @@ interface MeditationCategory {
   description: string;
   author?: string;
   image: any;
-  audioUrl: string;
+  audioUrl: any; // Can be a URL string or require() for local audio
   videoUrl?: string;
   featured?: boolean;
 }
@@ -42,7 +42,7 @@ const meditationCategories: MeditationCategory[] = [
     description: 'Calming ocean sounds',
     author: 'Peaceful Sounds',
     image: require('@assets/img/women-cudly-1.png'),
-    audioUrl: 'https://example.com/ocean-waves.mp3',
+    audioUrl: 'https://example.com/ocean-waves.mp3', // Audio file to be added to assets/audio/
     featured: true,
   },
   {
@@ -156,7 +156,7 @@ export const MeditateScreen: React.FC<MeditateScreenProps> = ({ navigation }) =>
       >
         {/* Hero Section */}
         <ImageBackground
-          source={{ uri: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200' }}
+          source={require('@assets/img/women-cudly-7.png')}
           style={styles.heroSection}
           resizeMode="cover"
         >

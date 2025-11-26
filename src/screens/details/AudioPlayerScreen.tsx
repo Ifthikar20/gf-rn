@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity } from 'react-native';
+import { Audio } from 'expo-av';
 import { ThemedBackground } from '@components/common';
 import { spacing, typography, borderRadius } from '@theme/index';
 import { useThemedColors } from '@/hooks/useThemedColors';
@@ -11,8 +12,8 @@ interface AudioPlayerScreenProps {
         id: string;
         title: string;
         description: string;
-        image: string;
-        audioUrl: string;
+        image: any;
+        audioUrl: any;
       };
     };
   };
@@ -22,13 +23,65 @@ interface AudioPlayerScreenProps {
 export const AudioPlayerScreen: React.FC<AudioPlayerScreenProps> = ({ route, navigation }) => {
   const colors = useThemedColors();
   const { category } = route.params;
+  const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const totalTime = 600; // 10 minutes in seconds
+  const [totalTime, setTotalTime] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handlePlayPause = () => {
-    setIsPlaying(!isPlaying);
-    // In a real app, you would integrate with an audio library here
+  useEffect(() => {
+    loadAudio();
+
+    return () => {
+      if (sound) {
+        sound.unloadAsync();
+      }
+    };
+  }, []);
+
+  const loadAudio = async () => {
+    try {
+      await Audio.setAudioModeAsync({
+        playsInSilentModeIOS: true,
+        staysActiveInBackground: true,
+      });
+
+      const { sound: newSound } = await Audio.Sound.createAsync(
+        typeof category.audioUrl === 'string'
+          ? { uri: category.audioUrl }
+          : category.audioUrl,
+        { shouldPlay: false },
+        onPlaybackStatusUpdate
+      );
+
+      setSound(newSound);
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error loading audio:', error);
+      setIsLoading(false);
+    }
+  };
+
+  const onPlaybackStatusUpdate = (status: any) => {
+    if (status.isLoaded) {
+      setCurrentTime(Math.floor(status.positionMillis / 1000));
+      setTotalTime(Math.floor(status.durationMillis / 1000));
+      setIsPlaying(status.isPlaying);
+    }
+  };
+
+  const handlePlayPause = async () => {
+    if (!sound || isLoading) return;
+
+    try {
+      if (isPlaying) {
+        await sound.pauseAsync();
+      } else {
+        await sound.playAsync();
+      }
+    } catch (error) {
+      console.error('Error toggling playback:', error);
+    }
   };
 
   const formatTime = (seconds: number) => {
@@ -66,8 +119,18 @@ export const AudioPlayerScreen: React.FC<AudioPlayerScreenProps> = ({ route, nav
             </View>
 
             <View style={styles.controls}>
-              <TouchableOpacity style={[styles.playButton, { backgroundColor: colors.primary.main }]} onPress={handlePlayPause}>
-                <Text style={[styles.playButtonText, { color: colors.primary.contrast }]}>{isPlaying ? '❚❚' : '▶'}</Text>
+              <TouchableOpacity
+                style={[
+                  styles.playButton,
+                  { backgroundColor: colors.primary.main },
+                  isLoading && { opacity: 0.5 }
+                ]}
+                onPress={handlePlayPause}
+                disabled={isLoading}
+              >
+                <Text style={[styles.playButtonText, { color: colors.primary.contrast }]}>
+                  {isLoading ? '...' : isPlaying ? '❚❚' : '▶'}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
