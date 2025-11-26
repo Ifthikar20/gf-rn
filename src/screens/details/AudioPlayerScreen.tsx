@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity, Alert } from 'react-native';
+import Sound from 'react-native-sound';
 import { ThemedBackground } from '@components/common';
 import { spacing, typography, borderRadius } from '@theme/index';
 import { useThemedColors } from '@/hooks/useThemedColors';
@@ -24,12 +25,86 @@ export const AudioPlayerScreen: React.FC<AudioPlayerScreenProps> = ({ route, nav
   const { category } = route.params;
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const totalTime = 600; // Mock 10 minutes
+  const [totalTime, setTotalTime] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const soundRef = useRef<Sound | null>(null);
+  const progressInterval = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    // Enable playback in silence mode (iOS)
+    Sound.setCategory('Playback');
+
+    // Load the audio file
+    loadAudio();
+
+    // Cleanup on unmount
+    return () => {
+      if (soundRef.current) {
+        soundRef.current.stop();
+        soundRef.current.release();
+      }
+      if (progressInterval.current) {
+        clearInterval(progressInterval.current);
+      }
+    };
+  }, []);
+
+  const loadAudio = () => {
+    try {
+      const sound = new Sound(category.audioUrl, Sound.MAIN_BUNDLE, (error) => {
+        if (error) {
+          console.error('Failed to load the sound', error);
+          Alert.alert('Error', 'Failed to load audio file');
+          setIsLoading(false);
+          return;
+        }
+
+        // Successfully loaded
+        soundRef.current = sound;
+        setTotalTime(Math.floor(sound.getDuration()));
+        setIsLoading(false);
+      });
+    } catch (error) {
+      console.error('Error creating sound:', error);
+      Alert.alert('Error', 'Failed to initialize audio');
+      setIsLoading(false);
+    }
+  };
 
   const handlePlayPause = () => {
-    setIsPlaying(!isPlaying);
-    // Audio playback will be implemented later
-    console.log('Audio playback:', category.audioUrl);
+    if (!soundRef.current || isLoading) return;
+
+    if (isPlaying) {
+      // Pause
+      soundRef.current.pause();
+      setIsPlaying(false);
+      if (progressInterval.current) {
+        clearInterval(progressInterval.current);
+      }
+    } else {
+      // Play
+      soundRef.current.play((success) => {
+        if (success) {
+          console.log('Successfully finished playing');
+        } else {
+          console.log('Playback failed due to audio decoding errors');
+        }
+        setIsPlaying(false);
+        if (progressInterval.current) {
+          clearInterval(progressInterval.current);
+        }
+      });
+      setIsPlaying(true);
+
+      // Start updating progress
+      progressInterval.current = setInterval(() => {
+        if (soundRef.current) {
+          soundRef.current.getCurrentTime((seconds) => {
+            setCurrentTime(Math.floor(seconds));
+          });
+        }
+      }, 100);
+    }
   };
 
   const formatTime = (seconds: number) => {
@@ -67,8 +142,18 @@ export const AudioPlayerScreen: React.FC<AudioPlayerScreenProps> = ({ route, nav
             </View>
 
             <View style={styles.controls}>
-              <TouchableOpacity style={[styles.playButton, { backgroundColor: colors.primary.main }]} onPress={handlePlayPause}>
-                <Text style={[styles.playButtonText, { color: colors.primary.contrast }]}>{isPlaying ? '❚❚' : '▶'}</Text>
+              <TouchableOpacity
+                style={[
+                  styles.playButton,
+                  { backgroundColor: colors.primary.main },
+                  isLoading && { opacity: 0.5 }
+                ]}
+                onPress={handlePlayPause}
+                disabled={isLoading}
+              >
+                <Text style={[styles.playButtonText, { color: colors.primary.contrast }]}>
+                  {isLoading ? '...' : isPlaying ? '❚❚' : '▶'}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
