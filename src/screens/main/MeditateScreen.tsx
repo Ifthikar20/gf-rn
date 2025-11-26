@@ -156,7 +156,7 @@ export const MeditateScreen: React.FC<MeditateScreenProps> = ({ navigation }) =>
       >
         {/* Hero Section */}
         <ImageBackground
-          source={{ uri: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200' }}
+          source={require('@assets/img/women-cudly-7.png')}
           style={styles.heroSection}
           resizeMode="cover"
         >
