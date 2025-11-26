@@ -15,7 +15,6 @@ import { useThemedColors } from '@/hooks/useThemedColors';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_WIDTH = 160;
-const LARGE_CARD_WIDTH = 200;
 
 interface MeditationCategory {
   id: string;
@@ -185,19 +184,19 @@ export const MeditateScreen: React.FC<MeditateScreenProps> = ({ navigation }) =>
             {featuredContent.map((item) => (
               <TouchableOpacity
                 key={item.id}
-                style={styles.largeCard}
+                style={styles.card}
                 onPress={() => handleCategoryPress(item)}
                 activeOpacity={0.8}
               >
-                <Image source={{ uri: item.image }} style={styles.largeCardImage} />
-                <View style={styles.largeCardInfo}>
+                <Image source={{ uri: item.image }} style={styles.cardImage} />
+                <View style={styles.cardInfo}>
                   <Text
-                    style={[styles.largeCardTitle, { color: colors.text.primary }]}
+                    style={[styles.cardTitle, { color: colors.text.primary }]}
                     numberOfLines={2}
                   >
                     {item.title}
                   </Text>
-                  <Text style={[styles.largeCardAuthor, { color: colors.text.secondary }]}>
+                  <Text style={[styles.cardAuthor, { color: colors.text.secondary }]}>
                     {item.author}
                   </Text>
                 </View>
@@ -351,33 +350,7 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
 
-  // Large Card (Featured - 200x200)
-  largeCard: {
-    width: LARGE_CARD_WIDTH,
-  },
-
-  largeCardImage: {
-    width: LARGE_CARD_WIDTH,
-    height: LARGE_CARD_WIDTH,
-    borderRadius: borderRadius.md,
-    marginBottom: spacing.sm,
-  },
-
-  largeCardInfo: {
-    gap: spacing.xs / 2,
-  },
-
-  largeCardTitle: {
-    fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semibold,
-    lineHeight: typography.fontSize.base * 1.3,
-  },
-
-  largeCardAuthor: {
-    fontSize: typography.fontSize.sm,
-  },
-
-  // Regular Card (160x160)
+  // Card (160x160)
   card: {
     width: CARD_WIDTH,
   },
