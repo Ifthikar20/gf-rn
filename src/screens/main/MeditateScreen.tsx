@@ -1,16 +1,30 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, SafeAreaView, Image, TouchableOpacity } from 'react-native';
-import { ThemedBackground } from '@components/common';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  SafeAreaView,
+  Image,
+  TouchableOpacity,
+  ImageBackground,
+  Dimensions,
+} from 'react-native';
 import { spacing, typography, borderRadius } from '@theme/index';
 import { useThemedColors } from '@/hooks/useThemedColors';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const CARD_WIDTH = 160;
 
 interface MeditationCategory {
   id: string;
   title: string;
   description: string;
-  image: string;
+  author?: string;
+  image: any;
   audioUrl: string;
   videoUrl?: string;
+  featured?: boolean;
 }
 
 const meditationCategories: MeditationCategory[] = [
@@ -18,85 +32,101 @@ const meditationCategories: MeditationCategory[] = [
     id: '1',
     title: 'Sounds of Nature',
     description: 'Relaxing natural soundscapes',
-    image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800',
+    author: 'Nature Studio',
+    image: require('@assets/img/women-cudly.png'),
     audioUrl: 'https://example.com/nature-sounds.mp3',
   },
   {
     id: '2',
     title: 'Ocean Waves',
     description: 'Calming ocean sounds',
-    image: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800',
+    author: 'Peaceful Sounds',
+    image: require('@assets/img/women-cudly-1.png'),
     audioUrl: 'https://example.com/ocean-waves.mp3',
+    featured: true,
   },
   {
     id: '3',
     title: 'Rain Sounds',
     description: 'Gentle rainfall ambience',
-    image: 'https://images.unsplash.com/photo-1428908728789-d2de25dbd4e2?w=800',
+    author: 'Tranquil Audio',
+    image: require('@assets/img/women-cudly-2.png'),
     audioUrl: 'https://example.com/rain-sounds.mp3',
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', // Replace with rain video URL
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+    featured: true,
   },
   {
     id: '4',
     title: 'Forest Ambience',
     description: 'Peaceful forest sounds',
-    image: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=800',
+    author: 'Nature Studio',
+    image: require('@assets/img/women-cudly-3.png'),
     audioUrl: 'https://example.com/forest-ambience.mp3',
   },
   {
     id: '5',
     title: 'Guided Meditation',
     description: 'Voice-guided meditation sessions',
-    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800',
+    author: 'Mindful Masters',
+    image: require('@assets/img/women-cudly-4.png'),
     audioUrl: 'https://example.com/guided-meditation.mp3',
+    featured: true,
   },
   {
     id: '6',
     title: 'Sleep Sounds',
     description: 'Soothing sounds for better sleep',
-    image: 'https://images.unsplash.com/photo-1511295742362-92c96b1cf484?w=800',
+    author: 'Dream Escapes',
+    image: require('@assets/img/women-cudly-5.png'),
     audioUrl: 'https://example.com/sleep-sounds.mp3',
   },
   {
     id: '7',
     title: 'Mindfulness Practice',
     description: 'Present moment awareness exercises',
-    image: 'https://images.unsplash.com/photo-1545389336-cf090694435e?w=800',
+    author: 'Zen Collective',
+    image: require('@assets/img/women-cudly.png'),
     audioUrl: 'https://example.com/mindfulness.mp3',
   },
   {
     id: '8',
     title: 'Breathing Exercises',
     description: 'Focused breathing techniques',
-    image: 'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=800',
+    author: 'Calm Breathwork',
+    image: require('@assets/img/women-cudly-1.png'),
     audioUrl: 'https://example.com/breathing.mp3',
   },
   {
     id: '9',
     title: 'Chakra Meditation',
     description: 'Energy center balancing',
-    image: 'https://images.unsplash.com/photo-1528715471579-d1bcf0ba5e83?w=800',
+    author: 'Spiritual Journey',
+    image: require('@assets/img/women-cudly-2.png'),
     audioUrl: 'https://example.com/chakra.mp3',
+    featured: true,
   },
   {
     id: '10',
     title: 'White Noise',
     description: 'Consistent ambient sound for focus',
-    image: 'https://images.unsplash.com/photo-1483086431886-3590a88317fe?w=800',
+    author: 'Focus Sounds',
+    image: require('@assets/img/women-cudly-3.png'),
     audioUrl: 'https://example.com/white-noise.mp3',
   },
   {
     id: '11',
     title: 'Thunderstorm',
     description: 'Powerful storm sounds',
-    image: 'https://images.unsplash.com/photo-1605727216801-e27ce1d0cc28?w=800',
+    author: 'Storm Collective',
+    image: require('@assets/img/women-cudly-4.png'),
     audioUrl: 'https://example.com/thunderstorm.mp3',
   },
   {
     id: '12',
     title: 'Mountain Zen',
     description: 'High altitude tranquility',
-    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
+    author: 'Peak Meditation',
+    image: require('@assets/img/women-cudly-5.png'),
     audioUrl: 'https://example.com/mountain-zen.mp3',
   },
 ];
@@ -109,107 +139,244 @@ export const MeditateScreen: React.FC<MeditateScreenProps> = ({ navigation }) =>
   const colors = useThemedColors();
 
   const handleCategoryPress = (category: MeditationCategory) => {
-    // Navigate to audio player
     navigation?.navigate('AudioPlayer', { category });
   };
 
-  return (
-    <ThemedBackground>
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.container}>
-          <View style={styles.header}>
-            <Text style={[styles.title, { color: colors.text.primary }]}>Relax</Text>
-            <Text style={[styles.subtitle, { color: colors.text.secondary }]}>Choose your relaxation sound</Text>
-          </View>
+  // Group content by sections
+  const featuredContent = meditationCategories.filter((c) => c.featured);
+  const popularContent = meditationCategories.slice(0, 6);
+  const editorsPicksContent = meditationCategories.slice(3, 9);
 
-          <FlatList
-            data={meditationCategories}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
+  return (
+    <View style={styles.container}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {/* Hero Section */}
+        <ImageBackground
+          source={{ uri: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200' }}
+          style={styles.heroSection}
+          resizeMode="cover"
+        >
+          <View style={styles.heroOverlay} />
+          <SafeAreaView style={styles.heroContent}>
+            <TouchableOpacity style={styles.backButton} onPress={() => navigation?.goBack()}>
+              <Text style={styles.backIcon}>←</Text>
+            </TouchableOpacity>
+            <View style={styles.heroTextContainer}>
+              <Text style={styles.heroTitle}>Relaxation Sounds</Text>
+            </View>
+          </SafeAreaView>
+        </ImageBackground>
+
+        {/* Featured Sessions Section */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>
+            Featured sessions
+          </Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.cardsContainer}
+          >
+            {featuredContent.map((item) => (
               <TouchableOpacity
-                style={styles.categoryCard}
+                key={item.id}
+                style={styles.card}
                 onPress={() => handleCategoryPress(item)}
-                activeOpacity={0.7}
+                activeOpacity={0.8}
               >
-                <Image source={{ uri: item.image }} style={styles.categoryImage} />
-                <View style={styles.categoryOverlay}>
-                  <Text style={styles.categoryTitle}>{item.title}</Text>
-                  <Text style={styles.categoryDescription}>{item.description}</Text>
+                <Image source={item.image} style={styles.cardImage} />
+                <View style={styles.cardInfo}>
+                  <Text
+                    style={[styles.cardTitle, { color: colors.text.primary }]}
+                    numberOfLines={2}
+                  >
+                    {item.title}
+                  </Text>
+                  <Text style={[styles.cardAuthor, { color: colors.text.secondary }]}>
+                    {item.author}
+                  </Text>
                 </View>
               </TouchableOpacity>
-            )}
-            contentContainerStyle={styles.listContent}
-            showsVerticalScrollIndicator={false}
-          />
+            ))}
+          </ScrollView>
         </View>
-      </SafeAreaView>
-    </ThemedBackground>
+
+        {/* Popular This Week Section */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>
+            Popular this week
+          </Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.cardsContainer}
+          >
+            {popularContent.map((item) => (
+              <TouchableOpacity
+                key={item.id}
+                style={styles.card}
+                onPress={() => handleCategoryPress(item)}
+                activeOpacity={0.8}
+              >
+                <Image source={item.image} style={styles.cardImage} />
+                <View style={styles.cardInfo}>
+                  <Text style={[styles.cardTitle, { color: colors.text.primary }]} numberOfLines={2}>
+                    {item.title}
+                  </Text>
+                  <Text style={[styles.cardAuthor, { color: colors.text.secondary }]}>
+                    {item.author}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+
+        {/* Editors' Picks Section */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>
+            Editors' picks
+          </Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.cardsContainer}
+          >
+            {editorsPicksContent.map((item) => (
+              <TouchableOpacity
+                key={item.id}
+                style={styles.card}
+                onPress={() => handleCategoryPress(item)}
+                activeOpacity={0.8}
+              >
+                <Image source={item.image} style={styles.cardImage} />
+                <View style={styles.cardInfo}>
+                  <Text style={[styles.cardTitle, { color: colors.text.primary }]} numberOfLines={2}>
+                    {item.title}
+                  </Text>
+                  <Text style={[styles.cardAuthor, { color: colors.text.secondary }]}>
+                    {item.author}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+
+        <View style={styles.bottomPadding} />
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
-
   container: {
     flex: 1,
+    backgroundColor: '#000000',
   },
 
-  header: {
-    padding: spacing.screenPadding,
-    paddingBottom: spacing.md,
+  scrollView: {
+    flex: 1,
   },
 
-  title: {
-    fontSize: typography.fontSize['3xl'],
-    fontWeight: typography.fontWeight.bold,
-    marginBottom: spacing.xs,
+  scrollContent: {
+    paddingBottom: spacing.xl,
   },
 
-  subtitle: {
-    fontSize: typography.fontSize.base,
-  },
-
-  listContent: {
-    padding: spacing.screenPadding,
-    paddingTop: 0,
-  },
-
-  categoryCard: {
+  // Hero Section
+  heroSection: {
+    height: 400,
     width: '100%',
-    height: 180,
-    marginBottom: spacing.md,
-    borderRadius: borderRadius.lg,
-    overflow: 'hidden',
     position: 'relative',
   },
 
-  categoryImage: {
-    width: '100%',
-    height: '100%',
+  heroOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
   },
 
-  categoryOverlay: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    padding: spacing.md,
+  heroContent: {
+    flex: 1,
+    justifyContent: 'space-between',
   },
 
-  categoryTitle: {
-    fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.semibold,
-    marginBottom: spacing.xs / 2,
+  backButton: {
+    marginLeft: spacing.screenPadding,
+    marginTop: spacing.sm,
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  backIcon: {
+    fontSize: 28,
     color: '#FFFFFF',
+    fontWeight: typography.fontWeight.medium,
   },
 
-  categoryDescription: {
+  heroTextContainer: {
+    paddingHorizontal: spacing.screenPadding,
+    paddingBottom: spacing.xl,
+  },
+
+  heroTitle: {
+    fontSize: 48,
+    fontWeight: typography.fontWeight.bold,
+    color: '#FFFFFF',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 8,
+  },
+
+  // Section Styles
+  section: {
+    marginTop: spacing.xl,
+  },
+
+  sectionTitle: {
+    fontSize: typography.fontSize.xl,
+    fontWeight: typography.fontWeight.bold,
+    paddingHorizontal: spacing.screenPadding,
+    marginBottom: spacing.md,
+  },
+
+  cardsContainer: {
+    paddingHorizontal: spacing.screenPadding,
+    gap: spacing.md,
+  },
+
+  // Card (160x160)
+  card: {
+    width: CARD_WIDTH,
+  },
+
+  cardImage: {
+    width: CARD_WIDTH,
+    height: CARD_WIDTH,
+    borderRadius: borderRadius.md,
+    marginBottom: spacing.sm,
+  },
+
+  cardInfo: {
+    gap: spacing.xs / 2,
+  },
+
+  cardTitle: {
     fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.normal,
-    opacity: 0.9,
-    color: '#FFFFFF',
+    fontWeight: typography.fontWeight.semibold,
+    lineHeight: typography.fontSize.sm * 1.3,
+  },
+
+  cardAuthor: {
+    fontSize: typography.fontSize.xs,
+  },
+
+  bottomPadding: {
+    height: spacing.xl,
   },
 });

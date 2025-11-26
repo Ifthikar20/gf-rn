@@ -2,7 +2,9 @@ export type GoalStatus = 'active' | 'completed' | 'paused' | 'archived';
 
 export type GoalFrequency = 'daily' | 'weekly' | 'monthly';
 
-export type GoalType = 'progress' | 'video' | 'audio';
+export type GoalType = 'progress' | 'video' | 'audio' | 'meditation' | 'breath' | 'sleep-story' | 'sleep-sound';
+
+export type TimeOfDay = 'morning' | 'day' | 'evening';
 
 export interface Goal {
   id: string;
@@ -23,9 +25,11 @@ export interface Goal {
   streak: number;
   createdAt: string;
   updatedAt: string;
-  thumbnail?: string;
+  thumbnail?: any;
   duration?: number;
   mediaUrl?: string;
+  timeOfDay?: TimeOfDay;
+  isLocked?: boolean;
 }
 
 export interface GoalProgress {

@@ -54,6 +54,16 @@ export const DiscoverScreen: React.FC = () => {
     .filter(item => item.viewCount > 3000)
     .slice(0, 5);
 
+  // Trending authors with profile images
+  const authorImages = [
+    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
+    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
+    'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
+    'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop',
+    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop',
+    'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop',
+  ];
+
   const trendingAuthors = Array.from(
     new Set(filteredContent.map(item => item.author).filter(Boolean))
   )
@@ -61,7 +71,7 @@ export const DiscoverScreen: React.FC = () => {
     .map((author, index) => ({
       id: `author-${index}`,
       name: author!,
-      image: `https://images.unsplash.com/photo-${1500 + index}48767791-00dcc994a43e?w=400`,
+      image: authorImages[index % authorImages.length],
     }));
 
   const featuredContent = filteredContent

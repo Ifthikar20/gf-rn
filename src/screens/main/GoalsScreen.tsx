@@ -1,25 +1,38 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native';
 import { GoalCard } from '@components/goals';
-import { Button, ThemedBackground, MoodSelector } from '@components/common';
-import { spacing, typography } from '@theme/index';
+import { ThemedBackground } from '@components/common';
+import { spacing, typography, borderRadius } from '@theme/index';
 import { useThemedColors } from '@/hooks/useThemedColors';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useBackgroundAudio } from '@/hooks/useBackgroundAudio';
 import { mockGoals } from '@services/mockData';
+import { Goal, TimeOfDay } from '@app-types/index';
 
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffTime = Math.abs(now.getTime() - date.getTime());
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+const getSectionIcon = (timeOfDay: TimeOfDay) => {
+  switch (timeOfDay) {
+    case 'morning':
+      return '☀️';
+    case 'day':
+      return '☼';
+    case 'evening':
+      return '☾';
+    default:
+      return '●';
+  }
+};
 
-  if (diffDays === 0) return 'Today';
-  if (diffDays === 1) return 'Yesterday';
-  if (diffDays < 7) return `${diffDays} days ago`;
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+const getSectionTitle = (timeOfDay: TimeOfDay) => {
+  switch (timeOfDay) {
+    case 'morning':
+      return 'Morning';
+    case 'day':
+      return 'Day';
+    case 'evening':
+      return 'Evening';
+    default:
+      return '';
+  }
 };
 
 export const GoalsScreen: React.FC = () => {
@@ -27,55 +40,80 @@ export const GoalsScreen: React.FC = () => {
   const { isMuted, toggleMute } = useTheme();
   useBackgroundAudio(); // Start background audio
 
-  const goals = mockGoals.sort((a, b) =>
-    new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-  );
+  // Group goals by time of day
+  const morningGoals = mockGoals.filter((g) => g.timeOfDay === 'morning');
+  const dayGoals = mockGoals.filter((g) => g.timeOfDay === 'day');
+  const eveningGoals = mockGoals.filter((g) => g.timeOfDay === 'evening');
+
+  const renderSection = (timeOfDay: TimeOfDay, goals: Goal[]) => {
+    if (goals.length === 0) return null;
+
+    return (
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionIcon}>{getSectionIcon(timeOfDay)}</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text.secondary }]}>
+            {getSectionTitle(timeOfDay)}
+          </Text>
+        </View>
+        {goals.map((goal) => (
+          <GoalCard key={goal.id} goal={goal} onPress={() => {}} />
+        ))}
+      </View>
+    );
+  };
 
   return (
     <ThemedBackground>
       <SafeAreaView style={styles.safeArea}>
-        <View style={styles.container}>
+        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+          {/* Header */}
           <View style={styles.header}>
             <View>
-              <Text style={[styles.title, { color: colors.text.primary }]}>My Goals</Text>
-              <Text style={[styles.subtitle, { color: colors.text.secondary }]}>Track your progress</Text>
+              <Text style={[styles.title, { color: colors.text.primary }]}>Plan</Text>
+              <Text style={[styles.date, { color: colors.text.secondary }]}>
+                {new Date().toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </Text>
             </View>
-            <View style={styles.headerButtons}>
-              <TouchableOpacity onPress={toggleMute} style={styles.muteButton}>
-                <Text style={styles.muteIcon}>{isMuted ? '🔇' : '🔊'}</Text>
-              </TouchableOpacity>
-              <Button title="+" size="sm" onPress={() => {}} style={styles.addButton} />
-            </View>
-          </View>
-
-          {/* Mood Selector */}
-          <View style={styles.moodSelectorContainer}>
-            <View style={styles.moodLabelContainer}>
-              <Text style={[styles.moodLabel, { color: colors.text.primary }]}>How are you feeling</Text>
-              <Text style={[styles.moodLabelAccent, { color: colors.primary.main }]}>today?</Text>
-            </View>
-            <MoodSelector />
-          </View>
-
-          <FlatList
-            data={goals}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item, index }) => (
-              <View style={styles.timelineItem}>
-                <View style={styles.timelineLeft}>
-                  <Text style={[styles.dateText, { color: colors.text.secondary }]}>{formatDate(item.updatedAt)}</Text>
-                  <View style={[styles.timelineDot, { backgroundColor: colors.primary.main, borderColor: colors.background.secondary }]} />
-                  {index < goals.length - 1 && <View style={[styles.timelineLine, { backgroundColor: colors.border.light }]} />}
-                </View>
-                <View style={styles.timelineRight}>
-                  <GoalCard goal={item} onPress={() => {}} />
-                </View>
+            <TouchableOpacity style={styles.profileButton}>
+              <View style={[styles.profileIcon, { backgroundColor: colors.primary.main }]}>
+                <Text style={styles.profileText}>👤</Text>
               </View>
-            )}
-            contentContainerStyle={styles.listContent}
-            showsVerticalScrollIndicator={false}
-          />
-        </View>
+            </TouchableOpacity>
+          </View>
+
+          {/* Morning Section */}
+          {renderSection('morning', morningGoals)}
+
+          {/* Day Section */}
+          {renderSection('day', dayGoals)}
+
+          {/* Evening Section */}
+          {renderSection('evening', eveningGoals)}
+
+          {/* Welcome Message */}
+          <TouchableOpacity
+            style={[styles.welcomeMessage, { backgroundColor: colors.primary.main }]}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.welcomeIcon}>✉️</Text>
+            <View style={styles.welcomeContent}>
+              <Text style={[styles.welcomeTitle, { color: colors.text.inverse }]}>
+                Welcome aboard!
+              </Text>
+              <Text style={[styles.welcomeSubtitle, { color: colors.text.inverse }]}>
+                You have 1 new message
+              </Text>
+            </View>
+            <Text style={[styles.welcomeArrow, { color: colors.text.inverse }]}>›</Text>
+          </TouchableOpacity>
+
+          <View style={styles.bottomPadding} />
+        </ScrollView>
       </SafeAreaView>
     </ThemedBackground>
   );
@@ -93,128 +131,94 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     padding: spacing.screenPadding,
+    paddingTop: spacing.lg,
     paddingBottom: spacing.md,
   },
 
   title: {
     fontSize: typography.fontSize['3xl'],
     fontWeight: typography.fontWeight.bold,
-    marginBottom: spacing.xs,
+    marginBottom: spacing.xs / 2,
   },
 
-  subtitle: {
-    fontSize: typography.fontSize.base,
+  date: {
+    fontSize: typography.fontSize.sm,
   },
 
-  headerButtons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
+  profileButton: {
+    padding: spacing.xs,
   },
 
-  muteButton: {
+  profileIcon: {
     width: 44,
     height: 44,
+    borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
   },
 
-  muteIcon: {
-    fontSize: 24,
+  profileText: {
+    fontSize: 20,
   },
 
-  addButton: {
-    width: 44,
-    minHeight: 44,
-  },
-
-  moodSelectorContainer: {
-    marginHorizontal: spacing.screenPadding,
-    marginBottom: spacing.lg,
-    paddingTop: spacing.xs,
-  },
-
-  moodLabelContainer: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    marginBottom: spacing.sm,
-    marginLeft: spacing.xs,
-    gap: spacing.xs,
-  },
-
-  moodLabel: {
-    fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.semibold,
-    letterSpacing: -0.2,
-  },
-
-  moodLabelAccent: {
-    fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.bold,
-    letterSpacing: -0.2,
-  },
-
-  listContent: {
-    padding: spacing.screenPadding,
-  },
-
-  timelineItem: {
-    flexDirection: 'row',
+  section: {
     marginBottom: spacing.xl,
   },
 
-  timelineLeft: {
-    width: 50,
+  sectionHeader: {
+    flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: spacing.sm,
+    marginBottom: spacing.md,
+    paddingHorizontal: spacing.screenPadding,
   },
 
-  dateText: {
-    fontSize: 9,
-    marginBottom: spacing.xs,
-    textAlign: 'center',
-    lineHeight: 12,
-    fontWeight: typography.fontWeight.medium,
+  sectionIcon: {
+    fontSize: 24,
+    marginRight: spacing.sm,
   },
 
-  timelineDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    borderWidth: 2.5,
-    zIndex: 1,
+  sectionTitle: {
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.semibold,
   },
 
-  timelineLine: {
-    position: 'absolute',
-    width: 1.5,
-    top: 36,
-    bottom: -spacing.xl,
+  welcomeMessage: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: spacing.md,
+    marginHorizontal: spacing.screenPadding,
+    marginVertical: spacing.lg,
+    borderRadius: borderRadius.xl,
   },
 
-  timelineRight: {
+  welcomeIcon: {
+    fontSize: 28,
+    marginRight: spacing.md,
+  },
+
+  welcomeContent: {
     flex: 1,
   },
 
-  emptyContainer: {
-    alignItems: 'center',
-    paddingVertical: spacing.xxxl,
-  },
-
-  emptyIcon: {
-    fontSize: 64,
-    marginBottom: spacing.md,
-  },
-
-  emptyText: {
-    fontSize: typography.fontSize.lg,
+  welcomeTitle: {
+    fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
-    marginBottom: spacing.xs,
+    marginBottom: spacing.xs / 2,
   },
 
-  emptySubtext: {
+  welcomeSubtitle: {
     fontSize: typography.fontSize.sm,
+    opacity: 0.9,
+  },
+
+  welcomeArrow: {
+    fontSize: 32,
+    fontWeight: typography.fontWeight.light,
+  },
+
+  bottomPadding: {
+    height: spacing.xl,
   },
 });
