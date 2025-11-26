@@ -1,6 +1,7 @@
 #import "AppDelegate.h"
 
 #import <React/RCTBundleURLProvider.h>
+#import <ExpoModulesCore/EXModuleRegistryProvider.h>
 
 @implementation AppDelegate
 
@@ -9,7 +10,17 @@
   self.moduleName = @"greatfeel";
   self.initialProps = @{};
 
+  // Initialize expo modules
+  self.moduleRegistryAdapter = [[EXModuleRegistryAdapter alloc] initWithModuleRegistryProvider:[[EXModuleRegistryProvider alloc] init]];
+
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
+}
+
+- (NSArray<id<RCTBridgeModule>> *)extraModulesForBridge:(RCTBridge *)bridge
+{
+  // Initialize expo modules
+  NSArray<id<RCTBridgeModule>> *extraModules = [_moduleRegistryAdapter extraModulesForBridge:bridge];
+  return extraModules;
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
