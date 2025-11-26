@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Card } from '@components/common';
 import { spacing, typography, borderRadius } from '@theme/index';
 import { Goal } from '@app-types/index';
-import { ProgressRing } from './ProgressRing';
 import { useThemedColors } from '@/hooks/useThemedColors';
 
 interface GoalCardProps {
@@ -13,98 +12,79 @@ interface GoalCardProps {
 
 export const GoalCard: React.FC<GoalCardProps> = ({ goal, onPress }) => {
   const colors = useThemedColors();
-  const progress = goal.target > 0 ? (goal.current / goal.target) * 100 : 0;
-  const isMediaGoal = goal.type === 'video' || goal.type === 'audio';
-  const showProgress = !isMediaGoal && goal.target > 0;
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active':
-        return colors.success.main;
-      case 'completed':
-        return colors.primary.main;
-      case 'paused':
-        return colors.warning.main;
-      case 'archived':
-        return colors.neutral[400];
+  const getCategoryColor = (type?: string) => {
+    switch (type) {
+      case 'breath':
+        return '#6366F1';
+      case 'meditation':
+        return '#F59E0B';
+      case 'sleep-story':
+        return '#A78BFA';
+      case 'sleep-sound':
+        return '#EC4899';
       default:
-        return colors.neutral[400];
+        return goal.color || colors.primary.main;
     }
   };
 
-  const formatDuration = (seconds: number) => {
+  const getCategoryLabel = (type?: string) => {
+    switch (type) {
+      case 'breath':
+        return 'Breath';
+      case 'meditation':
+        return 'Meditation';
+      case 'sleep-story':
+        return 'Sleep story';
+      case 'sleep-sound':
+        return 'Relax music';
+      default:
+        return goal.description;
+    }
+  };
+
+  const formatDuration = (seconds?: number) => {
+    if (!seconds || seconds === 0) return '';
     const mins = Math.floor(seconds / 60);
     return `${mins} min`;
   };
 
+  const categoryColor = getCategoryColor(goal.type);
+
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
       <Card style={styles.card}>
-        <View style={styles.content}>
-          <View style={styles.header}>
-            <View style={styles.titleContainer}>
-              <View style={styles.titleTextContainer}>
-                <Text style={[styles.title, { color: colors.text.primary }]} numberOfLines={1}>
-                  {goal.title}
-                </Text>
-                <Text style={[styles.frequency, { color: colors.text.secondary }]}>
-                  {goal.frequency} • {goal.streak} day streak
-                </Text>
-              </View>
-            </View>
-
-            <View
-              style={[
-                styles.statusBadge,
-                { backgroundColor: getStatusColor(goal.status) },
-              ]}
-            >
-              <Text style={[styles.statusText, { color: colors.text.inverse }]}>{goal.status}</Text>
-            </View>
+        {/* Header: Icon + Category + Lock */}
+        <View style={styles.cardHeader}>
+          <View style={[styles.iconCircle, { backgroundColor: categoryColor }]}>
+            <Text style={styles.iconText}>{goal.icon || '●'}</Text>
           </View>
+          <Text style={[styles.categoryLabel, { color: colors.text.secondary }]}>
+            {getCategoryLabel(goal.type)}
+          </Text>
+          {goal.isLocked && <Text style={styles.lockIcon}>🔒</Text>}
+        </View>
 
-          {isMediaGoal && goal.thumbnail && (
-            <View style={styles.mediaContainer}>
-              <Image source={{ uri: goal.thumbnail }} style={styles.thumbnail} />
-              <View style={styles.mediaOverlay}>
-                <Text style={[styles.mediaType, { color: colors.text.inverse }]}>{goal.type?.toUpperCase()}</Text>
-                {goal.duration && (
-                  <Text style={[styles.mediaDuration, { color: colors.text.inverse }]}>{formatDuration(goal.duration)}</Text>
-                )}
-              </View>
-            </View>
-          )}
+        {/* Title */}
+        <Text style={[styles.title, { color: colors.text.primary }]} numberOfLines={2}>
+          {goal.title}
+        </Text>
 
-          {showProgress && (
-            <View style={styles.progressContainer}>
-              <ProgressRing
-                progress={progress}
-                size={80}
-                strokeWidth={8}
-                color={goal.color || colors.primary.main}
-              />
+        {/* Duration */}
+        {formatDuration(goal.duration) && (
+          <Text style={[styles.duration, { color: colors.text.secondary }]}>
+            {formatDuration(goal.duration)}
+          </Text>
+        )}
 
-              <View style={styles.progressDetails}>
-                <Text style={[styles.progressText, { color: colors.text.primary }]}>
-                  {goal.current} / {goal.target} {goal.unit}
-                </Text>
-                <View style={[styles.progressBar, { backgroundColor: colors.neutral[200] }]}>
-                  <View
-                    style={[
-                      styles.progressBarFill,
-                      {
-                        width: `${Math.min(progress, 100)}%`,
-                        backgroundColor: goal.color || colors.primary.main,
-                      },
-                    ]}
-                  />
-                </View>
-                <Text style={[styles.progressPercentage, { color: colors.text.secondary }]}>
-                  {Math.round(progress)}% complete
-                </Text>
-              </View>
-            </View>
-          )}
+        {/* Thumbnail */}
+        {goal.thumbnail && (
+          <Image source={{ uri: goal.thumbnail }} style={styles.thumbnail} />
+        )}
+
+        {/* Completion Checkbox */}
+        <View style={[styles.checkbox, { borderColor: colors.border.main }]}>
+          <View style={styles.checkboxInner} />
         </View>
       </Card>
     </TouchableOpacity>
@@ -114,114 +94,78 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, onPress }) => {
 const styles = StyleSheet.create({
   card: {
     marginBottom: spacing.md,
+    marginHorizontal: spacing.screenPadding,
+    position: 'relative',
+    padding: spacing.md,
   },
 
-  content: {
-    gap: spacing.sm,
-  },
-
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-  },
-
-  titleContainer: {
+  cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: spacing.sm,
+  },
+
+  iconCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: spacing.sm,
+  },
+
+  iconText: {
+    fontSize: 16,
+    color: '#FFFFFF',
+  },
+
+  categoryLabel: {
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.semibold,
     flex: 1,
   },
 
-  titleTextContainer: {
-    flex: 1,
+  lockIcon: {
+    fontSize: 16,
+    opacity: 0.8,
   },
 
   title: {
     fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.semibold,
-    marginBottom: spacing.xs / 2,
-  },
-
-  frequency: {
-    fontSize: typography.fontSize.xs,
-    textTransform: 'capitalize',
-  },
-
-  statusBadge: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs / 2,
-    borderRadius: borderRadius.xl,
-  },
-
-  statusText: {
-    fontSize: typography.fontSize.xs,
-    fontWeight: typography.fontWeight.medium,
-    textTransform: 'capitalize',
-  },
-
-  progressContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-
-  progressDetails: {
-    flex: 1,
-  },
-
-  progressText: {
-    fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.medium,
+    fontWeight: typography.fontWeight.bold,
     marginBottom: spacing.xs,
   },
 
-  progressBar: {
-    height: 8,
-    borderRadius: borderRadius.full,
-    overflow: 'hidden',
-    marginBottom: spacing.xs,
-  },
-
-  progressBarFill: {
-    height: '100%',
-    borderRadius: borderRadius.full,
-  },
-
-  progressPercentage: {
-    fontSize: typography.fontSize.xs,
-  },
-
-  mediaContainer: {
-    position: 'relative',
-    width: '100%',
-    height: 160,
-    borderRadius: borderRadius.xl,
-    overflow: 'hidden',
+  duration: {
+    fontSize: typography.fontSize.sm,
+    marginBottom: spacing.sm,
   },
 
   thumbnail: {
-    width: '100%',
-    height: '100%',
+    width: 120,
+    height: 120,
+    borderRadius: borderRadius.lg,
+    alignSelf: 'flex-end',
+    marginTop: spacing.sm,
   },
 
-  mediaOverlay: {
+  checkbox: {
     position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    padding: spacing.sm,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    left: spacing.md,
+    bottom: spacing.md,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 2,
+    backgroundColor: 'transparent',
     alignItems: 'center',
+    justifyContent: 'center',
   },
 
-  mediaType: {
-    fontSize: typography.fontSize.xs,
-    fontWeight: typography.fontWeight.semibold,
-  },
-
-  mediaDuration: {
-    fontSize: typography.fontSize.xs,
+  checkboxInner: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: 'transparent',
   },
 });
