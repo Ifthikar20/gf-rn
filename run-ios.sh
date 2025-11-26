@@ -26,6 +26,20 @@ if [ -d "node_modules/.bin" ]; then
     chmod +x node_modules/.bin/* 2>/dev/null || true
 fi
 
+# Kill any existing Metro bundler
+echo "🧹 Stopping any running Metro bundler..."
+killall -9 node 2>/dev/null || true
+sleep 1
+
+# Start Metro bundler with cache reset in background
+echo "🚀 Starting Metro bundler with cache reset..."
+npx react-native start --reset-cache &
+METRO_PID=$!
+
+# Wait for Metro to start
+echo "⏳ Waiting for Metro to initialize..."
+sleep 10
+
 # Build and run on iPhone 14 Pro simulator
 echo "📱 Building and launching on iPhone 14 Pro simulator..."
 npx react-native run-ios --simulator="iPhone 14 Pro"
