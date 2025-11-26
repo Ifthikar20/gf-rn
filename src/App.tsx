@@ -20,7 +20,8 @@ const queryClient = new QueryClient({
 
 const App = () => {
   // Start background audio (rain sounds) automatically
-  useBackgroundAudio();
+  // Temporarily disabled - requires iOS native modules (pod install on macOS)
+  // useBackgroundAudio();
 
   return (
     <SafeAreaProvider>
