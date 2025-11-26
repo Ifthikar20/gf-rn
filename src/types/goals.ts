@@ -25,7 +25,7 @@ export interface Goal {
   streak: number;
   createdAt: string;
   updatedAt: string;
-  thumbnail?: string;
+  thumbnail?: any;
   duration?: number;
   mediaUrl?: string;
   timeOfDay?: TimeOfDay;

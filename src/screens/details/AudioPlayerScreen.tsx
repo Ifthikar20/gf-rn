@@ -48,7 +48,7 @@ export const AudioPlayerScreen: React.FC<AudioPlayerScreenProps> = ({ route, nav
           </TouchableOpacity>
 
           <View style={styles.content}>
-            <Image source={{ uri: category.image }} style={styles.coverImage} />
+            <Image source={category.image} style={styles.coverImage} />
 
             <View style={styles.info}>
               <Text style={[styles.title, { color: colors.text.primary }]}>{category.title}</Text>

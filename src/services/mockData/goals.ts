@@ -19,7 +19,7 @@ export const mockGoals = [
     reminderTime: '07:00',
     createdAt: '2024-11-01T00:00:00Z',
     updatedAt: '2024-11-26T00:00:00Z',
-    thumbnail: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400&h=400&fit=crop',
+    thumbnail: require('@assets/img/women-cudly.png'),
     duration: 180, // 3 minutes
     timeOfDay: 'morning' as const,
     isLocked: false,
@@ -42,7 +42,7 @@ export const mockGoals = [
     reminderTime: '06:30',
     createdAt: '2024-11-01T00:00:00Z',
     updatedAt: '2024-11-26T00:00:00Z',
-    thumbnail: 'https://images.unsplash.com/photo-1519834785169-98be25ec3f84?w=400&h=400&fit=crop',
+    thumbnail: require('@assets/img/women-cudly-1.png'),
     duration: 300, // 5 minutes
     timeOfDay: 'morning' as const,
     isLocked: false,
@@ -67,7 +67,7 @@ export const mockGoals = [
     reminderTime: '12:00',
     createdAt: '2024-11-01T00:00:00Z',
     updatedAt: '2024-11-26T00:00:00Z',
-    thumbnail: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&h=400&fit=crop',
+    thumbnail: require('@assets/img/women-cudly-2.png'),
     duration: 720, // 12 minutes
     timeOfDay: 'day' as const,
     isLocked: true,
@@ -90,7 +90,7 @@ export const mockGoals = [
     reminderTime: '14:00',
     createdAt: '2024-11-01T00:00:00Z',
     updatedAt: '2024-11-26T00:00:00Z',
-    thumbnail: 'https://images.unsplash.com/photo-1545389336-cf090694435e?w=400&h=400&fit=crop',
+    thumbnail: require('@assets/img/women-cudly-3.png'),
     duration: 600, // 10 minutes
     timeOfDay: 'day' as const,
     isLocked: false,
@@ -115,7 +115,7 @@ export const mockGoals = [
     reminderTime: '21:00',
     createdAt: '2024-11-18T00:00:00Z',
     updatedAt: '2024-11-26T00:00:00Z',
-    thumbnail: 'https://images.unsplash.com/photo-1511295742362-92c96b1cf484?w=400&h=400&fit=crop',
+    thumbnail: require('@assets/img/women-cudly-4.png'),
     duration: 660, // 11 minutes
     timeOfDay: 'evening' as const,
     isLocked: false,
@@ -138,7 +138,7 @@ export const mockGoals = [
     reminderTime: '22:00',
     createdAt: '2024-11-18T00:00:00Z',
     updatedAt: '2024-11-26T00:00:00Z',
-    thumbnail: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&h=400&fit=crop',
+    thumbnail: require('@assets/img/women-cudly-5.png'),
     duration: 0, // Continuous
     timeOfDay: 'evening' as const,
     isLocked: false,
@@ -161,7 +161,7 @@ export const mockGoals = [
     reminderTime: '21:30',
     createdAt: '2024-11-18T00:00:00Z',
     updatedAt: '2024-11-26T00:00:00Z',
-    thumbnail: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=400&h=400&fit=crop',
+    thumbnail: require('@assets/img/women-cudly.png'),
     duration: 780, // 13 minutes
     timeOfDay: 'evening' as const,
     isLocked: false,

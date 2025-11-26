@@ -79,7 +79,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, onPress }) => {
 
         {/* Thumbnail */}
         {goal.thumbnail && (
-          <Image source={{ uri: goal.thumbnail }} style={styles.thumbnail} />
+          <Image source={goal.thumbnail} style={styles.thumbnail} />
         )}
 
         {/* Completion Checkbox */}
