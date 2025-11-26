@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity } from 'react-native';
-import { Audio } from 'expo-av';
 import { ThemedBackground } from '@components/common';
 import { spacing, typography, borderRadius } from '@theme/index';
 import { useThemedColors } from '@/hooks/useThemedColors';
@@ -13,7 +12,7 @@ interface AudioPlayerScreenProps {
         title: string;
         description: string;
         image: any;
-        audioUrl: any; // Can be URL string or require() for local audio
+        audioUrl: any;
       };
     };
   };
@@ -23,63 +22,14 @@ interface AudioPlayerScreenProps {
 export const AudioPlayerScreen: React.FC<AudioPlayerScreenProps> = ({ route, navigation }) => {
   const colors = useThemedColors();
   const { category } = route.params;
-  const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [totalTime, setTotalTime] = useState(0);
+  const totalTime = 600; // Mock 10 minutes
 
-  useEffect(() => {
-    // Load audio when component mounts
-    loadAudio();
-
-    // Cleanup when component unmounts
-    return () => {
-      if (sound) {
-        sound.unloadAsync();
-      }
-    };
-  }, []);
-
-  const loadAudio = async () => {
-    try {
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: false,
-        playsInSilentModeIOS: true,
-        staysActiveInBackground: true,
-      });
-
-      const { sound: newSound } = await Audio.Sound.createAsync(
-        category.audioUrl,
-        { shouldPlay: false },
-        onPlaybackStatusUpdate
-      );
-
-      setSound(newSound);
-    } catch (error) {
-      console.error('Error loading audio:', error);
-    }
-  };
-
-  const onPlaybackStatusUpdate = (status: any) => {
-    if (status.isLoaded) {
-      setCurrentTime(Math.floor(status.positionMillis / 1000));
-      setTotalTime(Math.floor(status.durationMillis / 1000));
-      setIsPlaying(status.isPlaying);
-    }
-  };
-
-  const handlePlayPause = async () => {
-    if (!sound) return;
-
-    try {
-      if (isPlaying) {
-        await sound.pauseAsync();
-      } else {
-        await sound.playAsync();
-      }
-    } catch (error) {
-      console.error('Error toggling playback:', error);
-    }
+  const handlePlayPause = () => {
+    setIsPlaying(!isPlaying);
+    // Audio playback will be implemented later
+    console.log('Audio playback:', category.audioUrl);
   };
 
   const formatTime = (seconds: number) => {
