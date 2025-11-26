@@ -42,7 +42,7 @@ const meditationCategories: MeditationCategory[] = [
     description: 'Calming ocean sounds',
     author: 'Peaceful Sounds',
     image: require('@assets/img/women-cudly-1.png'),
-    audioUrl: require('@assets/img/sea-mp3.mp3'),
+    audioUrl: 'https://example.com/ocean-waves.mp3', // Audio file to be added to assets/audio/
     featured: true,
   },
   {
