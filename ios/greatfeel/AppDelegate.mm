@@ -12,12 +12,6 @@
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
-// Expo modules requires this method to be overridden
-- (RCTRootViewFactory *)createRCTRootViewFactory
-{
-  return [super createRCTRootViewFactory];
-}
-
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
   return [self bundleURL];
