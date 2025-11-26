@@ -54,14 +54,14 @@ export const DiscoverScreen: React.FC = () => {
     .filter(item => item.viewCount > 3000)
     .slice(0, 5);
 
-  // Trending authors with local profile images
+  // Trending authors with profile images
   const authorImages = [
-    require('@assets/img/women-cudly.png'),
-    require('@assets/img/women-cudly-1.png'),
-    require('@assets/img/women-cudly-2.png'),
-    require('@assets/img/women-cudly-3.png'),
-    require('@assets/img/women-cudly-4.png'),
-    require('@assets/img/women-cudly-5.png'),
+    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
+    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
+    'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
+    'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop',
+    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop',
+    'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop',
   ];
 
   const trendingAuthors = Array.from(
@@ -209,7 +209,7 @@ export const DiscoverScreen: React.FC = () => {
                     activeOpacity={0.8}
                   >
                     <Image
-                      source={author.image}
+                      source={{ uri: author.image }}
                       style={styles.authorImage}
                     />
                     <Text

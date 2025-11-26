@@ -21,7 +21,7 @@ interface MeditationCategory {
   title: string;
   description: string;
   author?: string;
-  image: string;
+  image: any;
   audioUrl: string;
   videoUrl?: string;
   featured?: boolean;
@@ -33,7 +33,7 @@ const meditationCategories: MeditationCategory[] = [
     title: 'Sounds of Nature',
     description: 'Relaxing natural soundscapes',
     author: 'Nature Studio',
-    image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800',
+    image: require('@assets/img/women-cudly.png'),
     audioUrl: 'https://example.com/nature-sounds.mp3',
   },
   {
@@ -41,7 +41,7 @@ const meditationCategories: MeditationCategory[] = [
     title: 'Ocean Waves',
     description: 'Calming ocean sounds',
     author: 'Peaceful Sounds',
-    image: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800',
+    image: require('@assets/img/women-cudly-1.png'),
     audioUrl: 'https://example.com/ocean-waves.mp3',
     featured: true,
   },
@@ -50,7 +50,7 @@ const meditationCategories: MeditationCategory[] = [
     title: 'Rain Sounds',
     description: 'Gentle rainfall ambience',
     author: 'Tranquil Audio',
-    image: 'https://images.unsplash.com/photo-1428908728789-d2de25dbd4e2?w=800',
+    image: require('@assets/img/women-cudly-2.png'),
     audioUrl: 'https://example.com/rain-sounds.mp3',
     videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
     featured: true,
@@ -60,7 +60,7 @@ const meditationCategories: MeditationCategory[] = [
     title: 'Forest Ambience',
     description: 'Peaceful forest sounds',
     author: 'Nature Studio',
-    image: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=800',
+    image: require('@assets/img/women-cudly-3.png'),
     audioUrl: 'https://example.com/forest-ambience.mp3',
   },
   {
@@ -68,7 +68,7 @@ const meditationCategories: MeditationCategory[] = [
     title: 'Guided Meditation',
     description: 'Voice-guided meditation sessions',
     author: 'Mindful Masters',
-    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800',
+    image: require('@assets/img/women-cudly-4.png'),
     audioUrl: 'https://example.com/guided-meditation.mp3',
     featured: true,
   },
@@ -77,7 +77,7 @@ const meditationCategories: MeditationCategory[] = [
     title: 'Sleep Sounds',
     description: 'Soothing sounds for better sleep',
     author: 'Dream Escapes',
-    image: 'https://images.unsplash.com/photo-1511295742362-92c96b1cf484?w=800',
+    image: require('@assets/img/women-cudly-5.png'),
     audioUrl: 'https://example.com/sleep-sounds.mp3',
   },
   {
@@ -85,7 +85,7 @@ const meditationCategories: MeditationCategory[] = [
     title: 'Mindfulness Practice',
     description: 'Present moment awareness exercises',
     author: 'Zen Collective',
-    image: 'https://images.unsplash.com/photo-1545389336-cf090694435e?w=800',
+    image: require('@assets/img/women-cudly.png'),
     audioUrl: 'https://example.com/mindfulness.mp3',
   },
   {
@@ -93,7 +93,7 @@ const meditationCategories: MeditationCategory[] = [
     title: 'Breathing Exercises',
     description: 'Focused breathing techniques',
     author: 'Calm Breathwork',
-    image: 'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=800',
+    image: require('@assets/img/women-cudly-1.png'),
     audioUrl: 'https://example.com/breathing.mp3',
   },
   {
@@ -101,7 +101,7 @@ const meditationCategories: MeditationCategory[] = [
     title: 'Chakra Meditation',
     description: 'Energy center balancing',
     author: 'Spiritual Journey',
-    image: 'https://images.unsplash.com/photo-1528715471579-d1bcf0ba5e83?w=800',
+    image: require('@assets/img/women-cudly-2.png'),
     audioUrl: 'https://example.com/chakra.mp3',
     featured: true,
   },
@@ -110,7 +110,7 @@ const meditationCategories: MeditationCategory[] = [
     title: 'White Noise',
     description: 'Consistent ambient sound for focus',
     author: 'Focus Sounds',
-    image: 'https://images.unsplash.com/photo-1483086431886-3590a88317fe?w=800',
+    image: require('@assets/img/women-cudly-3.png'),
     audioUrl: 'https://example.com/white-noise.mp3',
   },
   {
@@ -118,7 +118,7 @@ const meditationCategories: MeditationCategory[] = [
     title: 'Thunderstorm',
     description: 'Powerful storm sounds',
     author: 'Storm Collective',
-    image: 'https://images.unsplash.com/photo-1605727216801-e27ce1d0cc28?w=800',
+    image: require('@assets/img/women-cudly-4.png'),
     audioUrl: 'https://example.com/thunderstorm.mp3',
   },
   {
@@ -126,7 +126,7 @@ const meditationCategories: MeditationCategory[] = [
     title: 'Mountain Zen',
     description: 'High altitude tranquility',
     author: 'Peak Meditation',
-    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
+    image: require('@assets/img/women-cudly-5.png'),
     audioUrl: 'https://example.com/mountain-zen.mp3',
   },
 ];
@@ -188,7 +188,7 @@ export const MeditateScreen: React.FC<MeditateScreenProps> = ({ navigation }) =>
                 onPress={() => handleCategoryPress(item)}
                 activeOpacity={0.8}
               >
-                <Image source={{ uri: item.image }} style={styles.cardImage} />
+                <Image source={item.image} style={styles.cardImage} />
                 <View style={styles.cardInfo}>
                   <Text
                     style={[styles.cardTitle, { color: colors.text.primary }]}
@@ -222,7 +222,7 @@ export const MeditateScreen: React.FC<MeditateScreenProps> = ({ navigation }) =>
                 onPress={() => handleCategoryPress(item)}
                 activeOpacity={0.8}
               >
-                <Image source={{ uri: item.image }} style={styles.cardImage} />
+                <Image source={item.image} style={styles.cardImage} />
                 <View style={styles.cardInfo}>
                   <Text style={[styles.cardTitle, { color: colors.text.primary }]} numberOfLines={2}>
                     {item.title}
@@ -253,7 +253,7 @@ export const MeditateScreen: React.FC<MeditateScreenProps> = ({ navigation }) =>
                 onPress={() => handleCategoryPress(item)}
                 activeOpacity={0.8}
               >
-                <Image source={{ uri: item.image }} style={styles.cardImage} />
+                <Image source={item.image} style={styles.cardImage} />
                 <View style={styles.cardInfo}>
                   <Text style={[styles.cardTitle, { color: colors.text.primary }]} numberOfLines={2}>
                     {item.title}
