@@ -17,6 +17,7 @@ module.exports = {
           '@theme': './src/theme',
           '@app-types': './src/types',
           '@contexts': './src/contexts',
+          '@assets': './assets',
         },
       },
     ],
