@@ -15,6 +15,7 @@ struct DiscoverScreen: View {
 
     @State private var searchText = ""
     @State private var selectedFilter = "All"
+    @State private var triggerTreeWind = false
 
     let filters = ["All", "Sleep", "Anxiety", "Focus", "Music", "Nature"]
 
@@ -29,6 +30,12 @@ struct DiscoverScreen: View {
                 endPoint: .bottomTrailing
             )
             .ignoresSafeArea()
+
+            // Animated Tree Overlay (only in dark mode)
+            if colorScheme == .dark {
+                AnimatedTreeView(triggerWind: $triggerTreeWind)
+                    .ignoresSafeArea()
+            }
 
             VStack(spacing: 0) {
                 // --- Header ---
