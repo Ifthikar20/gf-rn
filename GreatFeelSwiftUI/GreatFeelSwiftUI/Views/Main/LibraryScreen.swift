@@ -2,7 +2,7 @@
 //  LibraryScreen.swift
 //  GreatFeelSwiftUI
 //
-//  Library screen with content filtering
+//  Library screen showing saved/bookmarked content only
 //
 
 import SwiftUI
@@ -14,30 +14,46 @@ struct LibraryScreen: View {
 
     var body: some View {
         NavigationStack {
-            ThemedBackground(opacity: 0.85) {
+            ZStack {
+                // Background Gradient similar to Discovery
+                LinearGradient(
+                    colors: colorScheme == .dark
+                        ? [AppColors.Dark.discoverBackground, Color(hex: "1E1B4B")]
+                        : [Color(hex: "F0F9FF"), Color(hex: "E0F2FE")],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .ignoresSafeArea()
+
                 ScrollView {
                     VStack(alignment: .leading, spacing: AppSpacing.xl) {
                         // Header
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Library")
-                                .font(AppTypography.heading3())
-                                .foregroundColor(AppColors.textPrimary(for: colorScheme))
+                                .font(.system(size: 34, weight: .bold))
+                                .foregroundColor(colorScheme == .dark ? .white : AppColors.Light.textPrimary)
 
-                            Text("Explore wellness content")
+                            Text("Your saved content")
                                 .font(AppTypography.small())
-                                .foregroundColor(AppColors.textSecondary(for: colorScheme))
+                                .foregroundColor(colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
                         }
                         .padding(.horizontal, AppSpacing.md)
                         .padding(.top, AppSpacing.md)
 
-                        // Category Filter
-                        categoryFilter
+                        // Check if there's any bookmarked content
+                        if viewModel.bookmarkedContent.isEmpty {
+                            // Empty State
+                            emptyStateView
+                        } else {
+                            // Category Filter
+                            categoryFilter
 
-                        // Content by Category
-                        ForEach(ContentCategory.allCases, id: \.self) { category in
-                            let items = viewModel.content(for: category)
-                            if !items.isEmpty {
-                                contentSection(title: category.displayName, items: items)
+                            // Bookmarked Content by Category
+                            ForEach(ContentCategory.allCases, id: \.self) { category in
+                                let items = filteredBookmarkedContent.filter { $0.category == category }
+                                if !items.isEmpty {
+                                    contentSection(title: category.displayName, items: items)
+                                }
                             }
                         }
 
@@ -51,6 +67,32 @@ struct LibraryScreen: View {
         }
     }
 
+    // MARK: - Empty State
+    private var emptyStateView: some View {
+        VStack(spacing: 20) {
+            Spacer()
+
+            Image(systemName: "bookmark.slash.fill")
+                .font(.system(size: 60))
+                .foregroundColor(colorScheme == .dark ? AppColors.Dark.textTertiary : AppColors.Light.textTertiary)
+
+            Text("No Saved Content")
+                .font(.title2)
+                .fontWeight(.bold)
+                .foregroundColor(colorScheme == .dark ? .white : AppColors.Light.textPrimary)
+
+            Text("Save content from Discover to access it here")
+                .font(.body)
+                .foregroundColor(colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 40)
+
+            Spacer()
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.top, 100)
+    }
+
     // MARK: - Category Filter
     private var categoryFilter: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -60,13 +102,16 @@ struct LibraryScreen: View {
                     viewModel.selectCategory(nil)
                 }
 
-                // Individual categories
+                // Individual categories (only show categories that have bookmarked content)
                 ForEach(ContentCategory.allCases, id: \.self) { category in
-                    categoryPill(
-                        title: category.displayName,
-                        isSelected: viewModel.selectedCategory == category
-                    ) {
-                        viewModel.selectCategory(category)
+                    let hasContent = viewModel.bookmarkedContent.contains { $0.category == category }
+                    if hasContent {
+                        categoryPill(
+                            title: category.displayName,
+                            isSelected: viewModel.selectedCategory == category
+                        ) {
+                            viewModel.selectCategory(category)
+                        }
                     }
                 }
             }
@@ -78,10 +123,14 @@ struct LibraryScreen: View {
         Button(action: action) {
             Text(title)
                 .font(AppTypography.smallMedium())
-                .foregroundColor(isSelected ? .white : AppColors.textPrimary(for: colorScheme))
+                .foregroundColor(isSelected ? .white : (colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary))
                 .padding(.horizontal, AppSpacing.md)
                 .padding(.vertical, AppSpacing.xs)
-                .background(isSelected ? AppColors.primary(for: colorScheme) : AppColors.surface(for: colorScheme))
+                .background(
+                    isSelected
+                        ? AppColors.primary(for: colorScheme)
+                        : (colorScheme == .dark ? AppColors.Dark.discoverSurface : Color.white)
+                )
                 .cornerRadius(AppSpacing.Radius.full)
         }
     }
@@ -89,15 +138,23 @@ struct LibraryScreen: View {
     // MARK: - Content Section
     private func contentSection(title: String, items: [ContentItem]) -> some View {
         VStack(alignment: .leading, spacing: AppSpacing.md) {
-            Text(title)
-                .font(AppTypography.heading6())
-                .foregroundColor(AppColors.textPrimary(for: colorScheme))
-                .padding(.horizontal, AppSpacing.md)
+            HStack {
+                Text(title)
+                    .font(AppTypography.heading6())
+                    .foregroundColor(colorScheme == .dark ? .white : AppColors.Light.textPrimary)
+
+                Text("(\(items.count))")
+                    .font(AppTypography.caption())
+                    .foregroundColor(colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
+
+                Spacer()
+            }
+            .padding(.horizontal, AppSpacing.md)
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: AppSpacing.md) {
                     ForEach(items) { item in
-                        contentCard(item: item)
+                        savedContentCard(item: item)
                     }
                 }
                 .padding(.horizontal, AppSpacing.md)
@@ -105,26 +162,51 @@ struct LibraryScreen: View {
         }
     }
 
-    private func contentCard(item: ContentItem) -> some View {
+    private func savedContentCard(item: ContentItem) -> some View {
         VStack(alignment: .leading, spacing: AppSpacing.xs) {
             // Thumbnail
-            AsyncImage(url: URL(string: item.thumbnail ?? "")) { phase in
-                switch phase {
-                case .success(let image):
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                case .empty, .failure, _:
-                    AppColors.surface(for: colorScheme)
+            ZStack(alignment: .topTrailing) {
+                AsyncImage(url: URL(string: item.thumbnail ?? "")) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    case .empty, .failure, _:
+                        Rectangle()
+                            .fill(categoryColor(for: item.category).opacity(0.3))
+                            .overlay(
+                                Image(systemName: iconForCategory(item.category))
+                                    .font(.system(size: 30))
+                                    .foregroundColor(categoryColor(for: item.category))
+                            )
+                    }
                 }
+                .frame(width: 130, height: 173)
+                .cornerRadius(AppSpacing.Radius.md)
+
+                // Bookmark button to unsave
+                Button(action: {
+                    viewModel.toggleBookmark(item.id)
+                }) {
+                    Image(systemName: "bookmark.fill")
+                        .font(.system(size: 14))
+                        .foregroundColor(.white)
+                        .padding(8)
+                        .background(AppColors.primary(for: colorScheme))
+                        .clipShape(Circle())
+                        .shadow(radius: 4)
+                }
+                .padding(8)
             }
-            .frame(width: 130, height: 173)
-            .cornerRadius(AppSpacing.Radius.md)
             .overlay(
                 // Type badge
                 VStack {
                     HStack {
                         Spacer()
+                    }
+                    Spacer()
+                    HStack {
                         Text(item.type.rawValue)
                             .font(AppTypography.caption())
                             .foregroundColor(.white)
@@ -133,17 +215,59 @@ struct LibraryScreen: View {
                             .background(Color.black.opacity(0.6))
                             .cornerRadius(AppSpacing.Radius.sm)
                             .padding(AppSpacing.xs)
+                        Spacer()
                     }
-                    Spacer()
                 }
             )
 
             // Title
             Text(item.title)
                 .font(AppTypography.caption())
-                .foregroundColor(AppColors.textPrimary(for: colorScheme))
+                .foregroundColor(colorScheme == .dark ? .white : AppColors.Light.textPrimary)
                 .lineLimit(2)
                 .frame(width: 130, alignment: .leading)
+
+            // Duration
+            if let duration = item.duration {
+                HStack(spacing: 4) {
+                    Image(systemName: "clock.fill")
+                        .font(.system(size: 10))
+                    Text("\(duration) min")
+                        .font(.system(size: 11))
+                }
+                .foregroundColor(colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
+            }
+        }
+    }
+
+    // MARK: - Helper Functions
+    private var filteredBookmarkedContent: [ContentItem] {
+        guard let category = viewModel.selectedCategory else {
+            return viewModel.bookmarkedContent
+        }
+        return viewModel.bookmarkedContent.filter { $0.category == category }
+    }
+
+    private func categoryColor(for category: ContentCategory) -> Color {
+        switch category {
+        case .mindfulness: return AppColors.Category.mindfulness
+        case .stress: return AppColors.Category.stress
+        case .sleep: return AppColors.Category.sleep
+        case .anxiety: return AppColors.Category.anxiety
+        case .meditation: return AppColors.Category.meditation
+        default: return AppColors.primary(for: colorScheme)
+        }
+    }
+
+    private func iconForCategory(_ category: ContentCategory) -> String {
+        switch category {
+        case .mindfulness: return "sparkles"
+        case .stress: return "exclamationmark.triangle.fill"
+        case .sleep: return "moon.stars.fill"
+        case .anxiety: return "heart.fill"
+        case .meditation: return "figure.mind.and.body"
+        case .productivity: return "target"
+        default: return "star.fill"
         }
     }
 }

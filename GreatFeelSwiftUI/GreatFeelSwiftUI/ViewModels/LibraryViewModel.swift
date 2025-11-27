@@ -90,4 +90,9 @@ class LibraryViewModel: ObservableObject {
     var meditations: [ContentItem] {
         content(ofType: .meditation)
     }
+
+    // MARK: - Bookmarked Content
+    var bookmarkedContent: [ContentItem] {
+        content.filter { bookmarkedIds.contains($0.id) }
+    }
 }

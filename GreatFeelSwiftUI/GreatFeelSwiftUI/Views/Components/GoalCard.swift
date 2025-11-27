@@ -113,6 +113,8 @@ struct GoalCard: View {
             return AppColors.Category.stress
         case .anxiety:
             return AppColors.Category.anxiety
+        case .video:
+            return AppColors.Category.productivity
         }
     }
 }

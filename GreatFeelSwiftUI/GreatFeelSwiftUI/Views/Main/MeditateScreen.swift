@@ -2,7 +2,7 @@
 //  MeditateScreen.swift
 //  GreatFeelSwiftUI
 //
-//  Modern, vibrant Spotify-style relaxation screen
+//  Modern relaxation screen with animated tree background
 //
 
 import SwiftUI
@@ -11,44 +11,27 @@ struct MeditateScreen: View {
     @EnvironmentObject var themeViewModel: ThemeViewModel
     @StateObject private var viewModel = MeditationViewModel()
     @Environment(\.colorScheme) var colorScheme
-    @State private var selectedMood: String = "Calm"
-
-    // Dynamic vibrant gradient background
-    private var backgroundGradient: LinearGradient {
-        LinearGradient(
-            colors: colorScheme == .dark
-                ? [Color(hex: "0F172A"), Color(hex: "1E1B4B"), Color(hex: "312E81")]
-                : [Color(hex: "EEF2FF"), Color(hex: "E0E7FF"), Color(hex: "C7D2FE")],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-    }
+    @State private var triggerTreeWind = false
+    @State private var selectedSession: MeditationSession?
+    @State private var showPlayer = false
 
     var body: some View {
-        ZStack {
-            // Vibrant Background
-            backgroundGradient
-                .ignoresSafeArea()
+        NavigationStack {
+            ZStack {
+            // Background Gradient
+            LinearGradient(
+                colors: colorScheme == .dark
+                    ? [AppColors.Dark.deepNightStart, AppColors.Dark.deepNightEnd]
+                    : [Color(hex: "EEF2FF"), Color(hex: "E0E7FF")],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
 
-            // Floating gradient orbs for depth
-            GeometryReader { proxy in
-                Circle()
-                    .fill(AppColors.primary(for: colorScheme).opacity(colorScheme == .dark ? 0.15 : 0.2))
-                    .frame(width: 300, height: 300)
-                    .blur(radius: 60)
-                    .offset(x: -100, y: -50)
-
-                Circle()
-                    .fill(AppColors.secondary(for: colorScheme).opacity(colorScheme == .dark ? 0.15 : 0.2))
-                    .frame(width: 250, height: 250)
-                    .blur(radius: 60)
-                    .offset(x: proxy.size.width - 150, y: proxy.size.height - 200)
-
-                Circle()
-                    .fill(AppColors.Category.relax.opacity(colorScheme == .dark ? 0.1 : 0.15))
-                    .frame(width: 200, height: 200)
-                    .blur(radius: 50)
-                    .offset(x: proxy.size.width / 2, y: 100)
+            // Animated Tree Overlay (only in dark mode)
+            if colorScheme == .dark {
+                AnimatedTreeView(triggerWind: $triggerTreeWind)
+                    .ignoresSafeArea()
             }
 
             // Main Content
@@ -57,9 +40,6 @@ struct MeditateScreen: View {
                     // Header with greeting and stats
                     headerView
                         .padding(.top, 10)
-
-                    // Mood Selector
-                    MoodSelectorView(selectedMood: $selectedMood, colorScheme: colorScheme)
 
                     // Daily Inspiration Card
                     inspirationCard
@@ -97,6 +77,12 @@ struct MeditateScreen: View {
                     Spacer(minLength: 60)
                 }
                 .padding(.horizontal)
+            }
+            }
+        }
+        .fullScreenCover(isPresented: $showPlayer) {
+            if let session = selectedSession {
+                MediaPlayerScreen(session: session)
             }
         }
         .onAppear {
@@ -255,9 +241,12 @@ struct MeditateScreen: View {
                 HStack(spacing: 16) {
                     ForEach(sessions) { session in
                         ModernSessionCard(session: session, colorScheme: colorScheme) {
-                            if session.audioUrl != nil {
-                                viewModel.playSession(session)
-                            }
+                            print("🎵 Card tapped: \(session.title)")
+                            selectedSession = session
+                            showPlayer = true
+                            triggerTreeWind.toggle()
+                            print("🎵 showPlayer set to: \(showPlayer)")
+                            print("🎵 selectedSession: \(selectedSession?.title ?? "nil")")
                         }
                     }
                 }
@@ -272,79 +261,6 @@ struct MeditateScreen: View {
         case 0..<12: return "Good Morning"
         case 12..<17: return "Good Afternoon"
         default: return "Good Evening"
-        }
-    }
-}
-
-// MARK: - Mood Selector Component
-struct MoodSelectorView: View {
-    @Binding var selectedMood: String
-    let colorScheme: ColorScheme
-
-    let moods = [
-        (emoji: "😊", name: "Happy", color: Color.yellow),
-        (emoji: "😌", name: "Calm", color: Color(hex: "8B5CF6")),
-        (emoji: "⚡", name: "Energetic", color: Color.orange),
-        (emoji: "😰", name: "Anxious", color: Color.blue),
-        (emoji: "😢", name: "Sad", color: Color.gray)
-    ]
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("How are you feeling today?")
-                .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(colorScheme == .dark ? AppColors.Dark.textPrimary : AppColors.Light.textPrimary)
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 16) {
-                    ForEach(moods, id: \.name) { mood in
-                        VStack(spacing: 8) {
-                            ZStack {
-                                Circle()
-                                    .fill(
-                                        selectedMood == mood.name
-                                            ? mood.color
-                                            : (colorScheme == .dark
-                                                ? AppColors.Dark.surface
-                                                : AppColors.Light.surface)
-                                    )
-                                    .frame(width: 64, height: 64)
-                                    .overlay(
-                                        Circle()
-                                            .stroke(
-                                                colorScheme == .dark
-                                                    ? Color.white.opacity(0.1)
-                                                    : Color.black.opacity(0.05),
-                                                lineWidth: 1
-                                            )
-                                    )
-                                    .shadow(
-                                        color: selectedMood == mood.name
-                                            ? mood.color.opacity(0.4)
-                                            : .clear,
-                                        radius: 12
-                                    )
-
-                                Text(mood.emoji)
-                                    .font(.system(size: 30))
-                            }
-
-                            Text(mood.name)
-                                .font(.system(size: 13, weight: selectedMood == mood.name ? .semibold : .regular))
-                                .foregroundStyle(
-                                    selectedMood == mood.name
-                                        ? (colorScheme == .dark ? Color.white : Color.black)
-                                        : (colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
-                                )
-                        }
-                        .onTapGesture {
-                            withAnimation(.spring(response: 0.3)) {
-                                selectedMood = mood.name
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
 }
@@ -414,8 +330,7 @@ struct ModernSessionCard: View {
     let onTap: () -> Void
 
     var body: some View {
-        Button(action: onTap) {
-            VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 12) {
                 // Cover Image with Play Button Overlay
                 ZStack(alignment: .bottomTrailing) {
                     AsyncImage(url: URL(string: session.coverImage ?? "")) { phase in
@@ -479,8 +394,9 @@ struct ModernSessionCard: View {
                 }
                 .foregroundStyle(colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
             }
+        .onTapGesture {
+            onTap()
         }
-        .buttonStyle(.plain)
     }
 }
 
