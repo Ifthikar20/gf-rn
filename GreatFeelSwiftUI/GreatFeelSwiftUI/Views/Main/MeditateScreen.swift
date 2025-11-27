@@ -79,10 +79,10 @@ struct MeditateScreen: View {
                 .padding(.horizontal)
             }
             }
-            .navigationDestination(isPresented: $showPlayer) {
-                if let session = selectedSession {
-                    MediaPlayerScreen(session: session)
-                }
+        }
+        .fullScreenCover(isPresented: $showPlayer) {
+            if let session = selectedSession {
+                MediaPlayerScreen(session: session)
             }
         }
         .onAppear {
