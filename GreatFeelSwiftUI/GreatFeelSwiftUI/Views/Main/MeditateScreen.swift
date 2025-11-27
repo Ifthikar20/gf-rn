@@ -15,66 +15,65 @@ struct MeditateScreen: View {
 
     var body: some View {
         ZStack {
-                // Background Gradient
-                LinearGradient(
-                    colors: colorScheme == .dark
-                        ? [AppColors.Dark.deepNightStart, AppColors.Dark.deepNightEnd]
-                        : [Color(hex: "EEF2FF"), Color(hex: "E0E7FF")],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-                .ignoresSafeArea()
+            // Background Gradient
+            LinearGradient(
+                colors: colorScheme == .dark
+                    ? [AppColors.Dark.deepNightStart, AppColors.Dark.deepNightEnd]
+                    : [Color(hex: "EEF2FF"), Color(hex: "E0E7FF")],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
 
-                // Animated Tree Overlay (only in dark mode)
-                if colorScheme == .dark {
-                    AnimatedTreeView(triggerWind: $triggerTreeWind)
-                        .ignoresSafeArea()
-                }
+            // Animated Tree Overlay (only in dark mode)
+            if colorScheme == .dark {
+                AnimatedTreeView(triggerWind: $triggerTreeWind)
+                    .ignoresSafeArea()
+            }
 
-                // Main Content
-                ScrollView(.vertical, showsIndicators: false) {
-                    VStack(spacing: 24) {
-                        // Header with greeting and stats
-                        headerView
-                            .padding(.top, 10)
+            // Main Content
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 24) {
+                    // Header with greeting and stats
+                    headerView
+                        .padding(.top, 10)
 
-                        // Daily Inspiration Card
-                        inspirationCard
+                    // Daily Inspiration Card
+                    inspirationCard
 
-                        // Featured Sessions
-                        if !viewModel.featuredSessions.isEmpty {
-                            modernSessionSection(
-                                title: "Featured Today",
-                                icon: "star.fill",
-                                sessions: viewModel.featuredSessions
-                            )
-                        }
-
-                        // Categories Grid
-                        categoriesGrid
-
-                        // Popular This Week
-                        if !viewModel.popularSessions.isEmpty {
-                            modernSessionSection(
-                                title: "Popular This Week",
-                                icon: "chart.line.uptrend.xyaxis",
-                                sessions: viewModel.popularSessions
-                            )
-                        }
-
-                        // Editor's Picks
-                        if !viewModel.editorsPickSessions.isEmpty {
-                            modernSessionSection(
-                                title: "Editor's Picks",
-                                icon: "hand.thumbsup.fill",
-                                sessions: viewModel.editorsPickSessions
-                            )
-                        }
-
-                        Spacer(minLength: 60)
+                    // Featured Sessions
+                    if !viewModel.featuredSessions.isEmpty {
+                        modernSessionSection(
+                            title: "Featured Today",
+                            icon: "star.fill",
+                            sessions: viewModel.featuredSessions
+                        )
                     }
-                    .padding(.horizontal)
+
+                    // Categories Grid
+                    categoriesGrid
+
+                    // Popular This Week
+                    if !viewModel.popularSessions.isEmpty {
+                        modernSessionSection(
+                            title: "Popular This Week",
+                            icon: "chart.line.uptrend.xyaxis",
+                            sessions: viewModel.popularSessions
+                        )
+                    }
+
+                    // Editor's Picks
+                    if !viewModel.editorsPickSessions.isEmpty {
+                        modernSessionSection(
+                            title: "Editor's Picks",
+                            icon: "hand.thumbsup.fill",
+                            sessions: viewModel.editorsPickSessions
+                        )
+                    }
+
+                    Spacer(minLength: 60)
                 }
+                .padding(.horizontal)
             }
         }
         .onAppear {
