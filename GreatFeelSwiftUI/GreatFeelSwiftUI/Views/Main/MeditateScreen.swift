@@ -330,8 +330,7 @@ struct ModernSessionCard: View {
     let onTap: () -> Void
 
     var body: some View {
-        Button(action: onTap) {
-            VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 12) {
                 // Cover Image with Play Button Overlay
                 ZStack(alignment: .bottomTrailing) {
                     AsyncImage(url: URL(string: session.coverImage ?? "")) { phase in
@@ -395,8 +394,9 @@ struct ModernSessionCard: View {
                 }
                 .foregroundStyle(colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
             }
+        .onTapGesture {
+            onTap()
         }
-        .buttonStyle(.plain)
     }
 }
 
