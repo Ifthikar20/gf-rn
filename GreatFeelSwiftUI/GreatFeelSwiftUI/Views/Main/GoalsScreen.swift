@@ -160,7 +160,7 @@ struct GoalsScreen: View {
                 // Completed Today
                 StatItem(
                     icon: "checkmark.circle.fill",
-                    value: "\(viewModel.completedToday)",
+                    value: "\(viewModel.completedCount)",
                     label: "Completed",
                     color: AppColors.Category.relax,
                     colorScheme: colorScheme
@@ -186,7 +186,7 @@ struct GoalsScreen: View {
                 // Total
                 StatItem(
                     icon: "target",
-                    value: "\(viewModel.totalGoals)",
+                    value: "\(viewModel.totalCount)",
                     label: "Total Goals",
                     color: AppColors.primary(for: colorScheme),
                     colorScheme: colorScheme
@@ -294,52 +294,34 @@ struct ModernGoalCard: View {
     let onTap: () -> Void
     let onToggleComplete: () -> Void
 
+    // Helper computed properties to break up complex expressions
+    private var completionCircleColor: Color {
+        if goal.isCompleted {
+            return AppColors.Category.relax
+        } else {
+            return colorScheme == .dark
+                ? Color.white.opacity(0.05)
+                : Color.black.opacity(0.03)
+        }
+    }
+
+    private var strokeColor: Color {
+        colorScheme == .dark
+            ? Color.white.opacity(0.2)
+            : Color.black.opacity(0.1)
+    }
+
     var body: some View {
         Button(action: onTap) {
             VStack(alignment: .leading, spacing: 12) {
                 HStack(alignment: .top) {
                     // Icon
-                    ZStack {
-                        Circle()
-                            .fill(goal.category.color.opacity(0.15))
-                            .frame(width: 44, height: 44)
-
-                        Image(systemName: goal.category.icon)
-                            .font(.system(size: 20))
-                            .foregroundStyle(goal.category.color)
-                    }
+                    iconView
 
                     Spacer()
 
                     // Completion Button
-                    Button(action: onToggleComplete) {
-                        ZStack {
-                            Circle()
-                                .fill(
-                                    goal.isCompleted
-                                        ? AppColors.Category.relax
-                                        : (colorScheme == .dark
-                                            ? Color.white.opacity(0.05)
-                                            : Color.black.opacity(0.03))
-                                )
-                                .frame(width: 28, height: 28)
-
-                            if goal.isCompleted {
-                                Image(systemName: "checkmark")
-                                    .font(.system(size: 14, weight: .bold))
-                                    .foregroundStyle(.white)
-                            } else {
-                                Circle()
-                                    .stroke(
-                                        colorScheme == .dark
-                                            ? Color.white.opacity(0.2)
-                                            : Color.black.opacity(0.1),
-                                        lineWidth: 2
-                                    )
-                                    .frame(width: 24, height: 24)
-                            }
-                        }
-                    }
+                    completionButton
                 }
 
                 VStack(alignment: .leading, spacing: 6) {
@@ -385,6 +367,39 @@ struct ModernGoalCard: View {
             )
         }
         .buttonStyle(.plain)
+    }
+
+    // Helper views to break up complex expressions
+    private var iconView: some View {
+        ZStack {
+            Circle()
+                .fill(goal.category.color.opacity(0.15))
+                .frame(width: 44, height: 44)
+
+            Image(systemName: goal.category.icon)
+                .font(.system(size: 20))
+                .foregroundStyle(goal.category.color)
+        }
+    }
+
+    private var completionButton: some View {
+        Button(action: onToggleComplete) {
+            ZStack {
+                Circle()
+                    .fill(completionCircleColor)
+                    .frame(width: 28, height: 28)
+
+                if goal.isCompleted {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(.white)
+                } else {
+                    Circle()
+                        .stroke(strokeColor, lineWidth: 2)
+                        .frame(width: 24, height: 24)
+                }
+            }
+        }
     }
 }
 
