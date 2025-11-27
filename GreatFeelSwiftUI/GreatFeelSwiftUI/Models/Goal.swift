@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 // MARK: - Goal
 struct Goal: Codable, Identifiable {
@@ -56,6 +57,30 @@ enum GoalCategory: String, Codable, CaseIterable {
 
     var displayName: String {
         rawValue.capitalized
+    }
+
+    var icon: String {
+        switch self {
+        case .breath: return "wind"
+        case .meditation: return "figure.mind.and.body"
+        case .sleep: return "moon.stars.fill"
+        case .relax: return "music.note"
+        case .mindfulness: return "sparkles"
+        case .stress: return "exclamationmark.triangle.fill"
+        case .anxiety: return "heart.fill"
+        }
+    }
+
+    var color: Color {
+        switch self {
+        case .breath: return AppColors.Category.breath
+        case .meditation: return AppColors.Category.meditation
+        case .sleep: return AppColors.Category.sleep
+        case .relax: return AppColors.Category.relax
+        case .mindfulness: return AppColors.Category.mindfulness
+        case .stress: return AppColors.Category.stress
+        case .anxiety: return AppColors.Category.anxiety
+        }
     }
 }
 

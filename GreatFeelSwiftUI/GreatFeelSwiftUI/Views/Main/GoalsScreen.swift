@@ -313,60 +313,79 @@ struct ModernGoalCard: View {
 
     var body: some View {
         Button(action: onTap) {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack(alignment: .top) {
-                    // Icon
-                    iconView
-
-                    Spacer()
-
-                    // Completion Button
-                    completionButton
-                }
-
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(goal.title)
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(colorScheme == .dark ? AppColors.Dark.textPrimary : AppColors.Light.textPrimary)
-                        .lineLimit(2)
-
-                    HStack(spacing: 6) {
-                        Image(systemName: "clock.fill")
-                            .font(.system(size: 11))
-                        Text("\(goal.targetDuration) min")
-                            .font(.system(size: 13, weight: .medium))
-                    }
-                    .foregroundStyle(colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
-                }
-            }
-            .padding(16)
-            .background(.ultraThinMaterial)
-            .background(
-                colorScheme == .dark
-                    ? AppColors.Dark.surface.opacity(0.6)
-                    : AppColors.Light.surface.opacity(0.8)
-            )
-            .cornerRadius(16)
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(
-                        goal.isCompleted
-                            ? AppColors.Category.relax.opacity(0.3)
-                            : (colorScheme == .dark
-                                ? Color.white.opacity(0.05)
-                                : Color.black.opacity(0.03)),
-                        lineWidth: 1
-                    )
-            )
-            .shadow(
-                color: colorScheme == .dark
-                    ? Color.black.opacity(0.3)
-                    : Color.black.opacity(0.05),
-                radius: 8,
-                y: 4
-            )
+            cardContent
         }
         .buttonStyle(.plain)
+    }
+
+    // Break up the view to avoid type-checking timeout
+    private var cardContent: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top) {
+                iconView
+                Spacer()
+                completionButton
+            }
+
+            goalInfo
+        }
+        .padding(16)
+        .background(.ultraThinMaterial)
+        .background(backgroundColorForScheme)
+        .cornerRadius(16)
+        .overlay(cardBorder)
+        .shadow(color: shadowColor, radius: 8, y: 4)
+    }
+
+    private var goalInfo: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(goal.title)
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(textPrimaryColor)
+                .lineLimit(2)
+
+            HStack(spacing: 6) {
+                Image(systemName: "clock.fill")
+                    .font(.system(size: 11))
+                Text("\(goal.targetDuration) min")
+                    .font(.system(size: 13, weight: .medium))
+            }
+            .foregroundStyle(textSecondaryColor)
+        }
+    }
+
+    private var cardBorder: some View {
+        RoundedRectangle(cornerRadius: 16)
+            .stroke(borderColor, lineWidth: 1)
+    }
+
+    // Helper computed properties
+    private var backgroundColorForScheme: Color {
+        colorScheme == .dark
+            ? AppColors.Dark.surface.opacity(0.6)
+            : AppColors.Light.surface.opacity(0.8)
+    }
+
+    private var borderColor: Color {
+        goal.isCompleted
+            ? AppColors.Category.relax.opacity(0.3)
+            : (colorScheme == .dark
+                ? Color.white.opacity(0.05)
+                : Color.black.opacity(0.03))
+    }
+
+    private var shadowColor: Color {
+        colorScheme == .dark
+            ? Color.black.opacity(0.3)
+            : Color.black.opacity(0.05)
+    }
+
+    private var textPrimaryColor: Color {
+        colorScheme == .dark ? AppColors.Dark.textPrimary : AppColors.Light.textPrimary
+    }
+
+    private var textSecondaryColor: Color {
+        colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary
     }
 
     // Helper views to break up complex expressions
