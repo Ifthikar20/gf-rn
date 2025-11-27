@@ -475,7 +475,7 @@ struct ModernSessionCard: View {
 
                     if let category = session.category {
                         Text("•")
-                        Text(category)
+                        Text("\(category)")
                             .font(.system(size: 13))
                     }
                 }
