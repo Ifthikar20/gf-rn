@@ -347,7 +347,7 @@ struct ModernGoalCard: View {
             HStack(spacing: 6) {
                 Image(systemName: "clock.fill")
                     .font(.system(size: 11))
-                Text("\(goal.targetDuration) min")
+                Text("\(goal.duration) min")
                     .font(.system(size: 13, weight: .medium))
             }
             .foregroundStyle(textSecondaryColor)
