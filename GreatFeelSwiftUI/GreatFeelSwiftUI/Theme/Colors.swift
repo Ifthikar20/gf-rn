@@ -168,4 +168,8 @@ extension AppColors {
     static func border(for colorScheme: ColorScheme) -> Color {
         colorScheme == .dark ? Dark.border : Light.border
     }
+
+    static func textTertiary(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? Dark.textTertiary : Light.textTertiary
+    }
 }

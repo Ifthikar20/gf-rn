@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 // MARK: - Mood
 enum Mood: String, Codable, CaseIterable, Identifiable {

@@ -55,6 +55,7 @@ enum ContentCategory: String, Codable, CaseIterable {
     case productivity = "Productivity"
     case relationships = "Relationships"
     case selfCare = "Self-care"
+    case meditation = "Meditation"
 
     var displayName: String {
         rawValue
