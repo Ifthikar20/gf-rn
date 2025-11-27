@@ -7,16 +7,122 @@
 
 import SwiftUI
 import AVKit
+import AVFoundation
 
+// MARK: - Audio Player Manager
+class AudioPlayerManager: ObservableObject {
+    @Published var isPlaying = false
+    @Published var currentTime: Double = 0
+    @Published var duration: Double = 0
+
+    private var player: AVAudioPlayer?
+    private var timer: Timer?
+
+    func loadAudio(named fileName: String, withExtension ext: String = "mp3") {
+        guard let url = Bundle.main.url(forResource: fileName, withExtension: ext) else {
+            print("❌ Audio file not found: \(fileName).\(ext)")
+            // Try playing default ocean sounds as fallback
+            loadDefaultAudio()
+            return
+        }
+
+        do {
+            player = try AVAudioPlayer(contentsOf: url)
+            player?.prepareToPlay()
+            duration = player?.duration ?? 0
+            print("✅ Audio loaded: \(fileName).\(ext) - Duration: \(duration)s")
+        } catch {
+            print("❌ Error loading audio: \(error.localizedDescription)")
+            loadDefaultAudio()
+        }
+    }
+
+    func loadAudioFromURL(_ urlString: String?) {
+        guard let urlString = urlString, let url = URL(string: urlString) else {
+            loadDefaultAudio()
+            return
+        }
+
+        // For remote URLs, you'd use AVPlayer instead of AVAudioPlayer
+        print("Loading from URL: \(urlString)")
+        loadDefaultAudio()
+    }
+
+    private func loadDefaultAudio() {
+        // Try to load sea-mp3 as default
+        if let url = Bundle.main.url(forResource: "sea-mp3", withExtension: "mp3") {
+            do {
+                player = try AVAudioPlayer(contentsOf: url)
+                player?.prepareToPlay()
+                duration = player?.duration ?? 180
+            } catch {
+                duration = 180 // Default 3 minutes
+            }
+        } else {
+            duration = 180 // Default 3 minutes
+        }
+    }
+
+    func play() {
+        player?.play()
+        isPlaying = true
+        startTimer()
+    }
+
+    func pause() {
+        player?.pause()
+        isPlaying = false
+        stopTimer()
+    }
+
+    func togglePlayPause() {
+        if isPlaying {
+            pause()
+        } else {
+            play()
+        }
+    }
+
+    func seek(to time: Double) {
+        player?.currentTime = time
+        currentTime = time
+    }
+
+    func setVolume(_ volume: Float) {
+        player?.volume = volume
+    }
+
+    private func startTimer() {
+        timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            self.currentTime = self.player?.currentTime ?? 0
+
+            // Auto-stop when finished
+            if self.currentTime >= self.duration {
+                self.pause()
+            }
+        }
+    }
+
+    private func stopTimer() {
+        timer?.invalidate()
+        timer = nil
+    }
+
+    func cleanup() {
+        stopTimer()
+        player?.stop()
+        player = nil
+    }
+}
+
+// MARK: - Media Player Screen
 struct MediaPlayerScreen: View {
     let session: MeditationSession
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
     @State private var triggerTreeWind = false
-
-    @State private var isPlaying = false
-    @State private var currentTime: Double = 0
-    @State private var duration: Double = 180 // Default 3 minutes
+    @StateObject private var audioPlayer = AudioPlayerManager()
     @State private var volume: Double = 0.7
 
     var body: some View {
@@ -40,7 +146,10 @@ struct MediaPlayerScreen: View {
             VStack(spacing: 0) {
                 // Top Bar
                 HStack {
-                    Button(action: { dismiss() }) {
+                    Button(action: {
+                        audioPlayer.cleanup()
+                        dismiss()
+                    }) {
                         Image(systemName: "chevron.down")
                             .font(.title3)
                             .foregroundColor(colorScheme == .dark ? .white : AppColors.Light.textPrimary)
@@ -99,6 +208,7 @@ struct MediaPlayerScreen: View {
                             .font(.title)
                             .fontWeight(.bold)
                             .foregroundColor(colorScheme == .dark ? .white : AppColors.Light.textPrimary)
+                            .multilineTextAlignment(.center)
 
                         if let instructor = session.instructor {
                             Text(instructor)
@@ -110,6 +220,7 @@ struct MediaPlayerScreen: View {
                                 .foregroundColor(colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
                         }
                     }
+                    .padding(.horizontal, 20)
                 }
 
                 Spacer()
@@ -117,18 +228,21 @@ struct MediaPlayerScreen: View {
                 // Progress Bar
                 VStack(spacing: 8) {
                     // Slider
-                    Slider(value: $currentTime, in: 0...duration)
+                    Slider(value: Binding(
+                        get: { audioPlayer.currentTime },
+                        set: { audioPlayer.seek(to: $0) }
+                    ), in: 0...max(audioPlayer.duration, 1))
                         .tint(AppColors.primary(for: colorScheme))
 
                     // Time Labels
                     HStack {
-                        Text(formatTime(currentTime))
+                        Text(formatTime(audioPlayer.currentTime))
                             .font(.caption)
                             .foregroundColor(colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
 
                         Spacer()
 
-                        Text(formatTime(duration))
+                        Text(formatTime(audioPlayer.duration))
                             .font(.caption)
                             .foregroundColor(colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
                     }
@@ -147,7 +261,9 @@ struct MediaPlayerScreen: View {
                     }
 
                     // Previous
-                    Button(action: {}) {
+                    Button(action: {
+                        audioPlayer.seek(to: 0)
+                    }) {
                         Image(systemName: "backward.fill")
                             .font(.title)
                             .foregroundColor(colorScheme == .dark ? .white : AppColors.Light.textPrimary)
@@ -155,7 +271,7 @@ struct MediaPlayerScreen: View {
 
                     // Play/Pause
                     Button(action: {
-                        isPlaying.toggle()
+                        audioPlayer.togglePlayPause()
                         triggerTreeWind.toggle()
                     }) {
                         ZStack {
@@ -164,7 +280,7 @@ struct MediaPlayerScreen: View {
                                 .frame(width: 70, height: 70)
                                 .shadow(color: .black.opacity(0.2), radius: 10)
 
-                            Image(systemName: isPlaying ? "pause.fill" : "play.fill")
+                            Image(systemName: audioPlayer.isPlaying ? "pause.fill" : "play.fill")
                                 .font(.title)
                                 .foregroundColor(.black)
                         }
@@ -192,7 +308,9 @@ struct MediaPlayerScreen: View {
                         .font(.caption)
                         .foregroundColor(colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
 
-                    Slider(value: $volume, in: 0...1)
+                    Slider(value: $volume, in: 0...1, onEditingChanged: { _ in
+                        audioPlayer.setVolume(Float(volume))
+                    })
                         .tint(AppColors.primary(for: colorScheme))
 
                     Image(systemName: "speaker.wave.3.fill")
@@ -206,7 +324,17 @@ struct MediaPlayerScreen: View {
         }
         .navigationBarHidden(true)
         .onAppear {
-            duration = Double(session.duration * 60) // Convert minutes to seconds
+            // Try to load audio from session URL or use default
+            if let audioUrl = session.audioUrl {
+                audioPlayer.loadAudioFromURL(audioUrl)
+            } else {
+                // Load default sea-mp3 audio
+                audioPlayer.loadAudio(named: "sea-mp3", withExtension: "mp3")
+            }
+            audioPlayer.setVolume(Float(volume))
+        }
+        .onDisappear {
+            audioPlayer.cleanup()
         }
     }
 
