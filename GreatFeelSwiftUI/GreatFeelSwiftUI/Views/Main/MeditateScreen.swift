@@ -241,9 +241,12 @@ struct MeditateScreen: View {
                 HStack(spacing: 16) {
                     ForEach(sessions) { session in
                         ModernSessionCard(session: session, colorScheme: colorScheme) {
+                            print("🎵 Card tapped: \(session.title)")
                             selectedSession = session
                             showPlayer = true
                             triggerTreeWind.toggle()
+                            print("🎵 showPlayer set to: \(showPlayer)")
+                            print("🎵 selectedSession: \(selectedSession?.title ?? "nil")")
                         }
                     }
                 }
