@@ -12,12 +12,9 @@ struct MeditateScreen: View {
     @StateObject private var viewModel = MeditationViewModel()
     @Environment(\.colorScheme) var colorScheme
     @State private var triggerTreeWind = false
-    @State private var selectedSession: MeditationSession?
-    @State private var showPlayer = false
 
     var body: some View {
-        NavigationStack {
-            ZStack {
+        ZStack {
                 // Background Gradient
                 LinearGradient(
                     colors: colorScheme == .dark
@@ -77,11 +74,6 @@ struct MeditateScreen: View {
                         Spacer(minLength: 60)
                     }
                     .padding(.horizontal)
-                }
-            }
-            .navigationDestination(isPresented: $showPlayer) {
-                if let session = selectedSession {
-                    MediaPlayerScreen(session: session)
                 }
             }
         }
@@ -241,8 +233,8 @@ struct MeditateScreen: View {
                 HStack(spacing: 16) {
                     ForEach(sessions) { session in
                         ModernSessionCard(session: session, colorScheme: colorScheme) {
-                            selectedSession = session
-                            showPlayer = true
+                            // TODO: Navigate to MediaPlayerScreen
+                            // Add MediaPlayerScreen.swift to Xcode project first
                             triggerTreeWind.toggle()
                         }
                     }

@@ -39,11 +39,20 @@ class GoalsViewModel: ObservableObject {
     // MARK: - Toggle Goal Completion
     func toggleGoalCompletion(_ goalId: String) {
         if let index = goals.firstIndex(where: { $0.id == goalId }) {
-            var updatedGoal = goals[index]
-            // Since Goal is a struct, we need to create a new instance with updated values
-            // For now, we'll just reload from mock data
-            // In a real app, you would update the backend and local state
-            loadGoals()
+            // Toggle completion status
+            goals[index] = Goal(
+                id: goals[index].id,
+                title: goals[index].title,
+                description: goals[index].description,
+                type: goals[index].type,
+                category: goals[index].category,
+                duration: goals[index].duration,
+                thumbnail: goals[index].thumbnail,
+                timeOfDay: goals[index].timeOfDay,
+                isLocked: goals[index].isLocked,
+                isCompleted: !goals[index].isCompleted,
+                streak: goals[index].streak
+            )
         }
     }
 
