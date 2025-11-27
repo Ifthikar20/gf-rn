@@ -71,6 +71,10 @@ struct AppColors {
         static let backgroundSecondary = Color(hex: "0A0A0A")
         static let backgroundTertiary = Color(hex: "141414")
 
+        // Discovery Page Theme Colors
+        static let discoverBackground = Color(hex: "0F172A")  // Deep Midnight
+        static let discoverSurface = Color(hex: "1E293B")     // Card Background
+
         // Surface Colors
         static let surface = Color(hex: "1A1A1A")
         static let surfaceSecondary = Color(hex: "262626")
@@ -79,6 +83,7 @@ struct AppColors {
         static let textPrimary = Color(hex: "F9FAFB")
         static let textSecondary = Color(hex: "D1D5DB")
         static let textTertiary = Color(hex: "9CA3AF")
+        static let textMuted = Color(hex: "94A3B8")          // Muted Gray for placeholders
         static let textDisabled = Color(hex: "4B5563")
 
         // Border Colors

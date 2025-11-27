@@ -34,6 +34,7 @@ enum GoalType: String, Codable, CaseIterable {
     case meditation = "Meditation"
     case sleep = "Sleep story"
     case relax = "Relax music"
+    case video = "Watch video"
 
     var icon: String {
         switch self {
@@ -41,6 +42,7 @@ enum GoalType: String, Codable, CaseIterable {
         case .meditation: return "figure.mind.and.body"
         case .sleep: return "moon.stars.fill"
         case .relax: return "music.note"
+        case .video: return "play.rectangle.fill"
         }
     }
 }
@@ -54,6 +56,7 @@ enum GoalCategory: String, Codable, CaseIterable {
     case mindfulness
     case stress
     case anxiety
+    case video
 
     var displayName: String {
         rawValue.capitalized
@@ -68,6 +71,7 @@ enum GoalCategory: String, Codable, CaseIterable {
         case .mindfulness: return "sparkles"
         case .stress: return "exclamationmark.triangle.fill"
         case .anxiety: return "heart.fill"
+        case .video: return "play.rectangle.fill"
         }
     }
 
@@ -80,6 +84,7 @@ enum GoalCategory: String, Codable, CaseIterable {
         case .mindfulness: return AppColors.Category.mindfulness
         case .stress: return AppColors.Category.stress
         case .anxiety: return AppColors.Category.anxiety
+        case .video: return AppColors.Category.productivity
         }
     }
 }
@@ -200,6 +205,32 @@ extension Goal {
             isLocked: false,
             isCompleted: false,
             streak: 2
+        ),
+        Goal(
+            id: "8",
+            title: "Morning Wellness Video",
+            description: "Watch a guided wellness session",
+            type: .video,
+            category: .video,
+            duration: 15,
+            thumbnail: "women-cudly-3",
+            timeOfDay: .morning,
+            isLocked: false,
+            isCompleted: false,
+            streak: nil
+        ),
+        Goal(
+            id: "9",
+            title: "Mindfulness Tutorial",
+            description: "Learn mindfulness techniques",
+            type: .video,
+            category: .video,
+            duration: 10,
+            thumbnail: "women-cudly-4",
+            timeOfDay: .day,
+            isLocked: false,
+            isCompleted: false,
+            streak: 4
         )
     ]
 }
