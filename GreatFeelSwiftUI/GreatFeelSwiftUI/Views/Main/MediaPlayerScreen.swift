@@ -38,7 +38,7 @@ class AudioPlayerManager: ObservableObject {
     }
 
     func loadAudioFromURL(_ urlString: String?) {
-        guard let urlString = urlString, let url = URL(string: urlString) else {
+        guard let urlString = urlString, let _ = URL(string: urlString) else {
             loadDefaultAudio()
             return
         }
