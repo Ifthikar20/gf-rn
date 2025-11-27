@@ -75,6 +75,13 @@ struct AppColors {
         static let discoverBackground = Color(hex: "0F172A")  // Deep Midnight
         static let discoverSurface = Color(hex: "1E293B")     // Card Background
 
+        // Goals Page Theme Colors
+        static let deepNightStart = Color(hex: "0F1035")      // Deep Midnight Blue
+        static let deepNightEnd = Color(hex: "2B1C40")        // Dark Purple
+        static let cardGradientStart = Color(hex: "2C2C54")
+        static let cardGradientEnd = Color(hex: "1B1B33")
+        static let accentPurple = Color(hex: "7D5FFF")
+
         // Surface Colors
         static let surface = Color(hex: "1A1A1A")
         static let surfaceSecondary = Color(hex: "262626")
