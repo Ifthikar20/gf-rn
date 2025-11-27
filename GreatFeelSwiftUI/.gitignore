@@ -1,7 +1,5 @@
-# OSX
-.DS_Store
-
 # Xcode
+.DS_Store
 build/
 *.pbxuser
 !default.pbxuser
@@ -14,24 +12,29 @@ build/
 xcuserdata/
 *.xccheckout
 *.moved-aside
-DerivedData/
+DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
-*.dSYM.zip
-*.dSYM
-ios/.xcode.env.local
-
-# Xcode workspace
-*.xcworkspace/xcuserdata/
+*.xcworkspace
+!default.xcworkspace
 
 # Swift Package Manager
-.build/
 .swiftpm/
+.build/
+Packages/
+Package.pins
 Package.resolved
 
 # CocoaPods
 Pods/
+
+# Carthage
+Carthage/Build/
+
+# Accio
+Dependencies/
+.accio/
 
 # fastlane
 fastlane/report.xml
@@ -39,19 +42,5 @@ fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
 
-# node.js
-node_modules/
-npm-debug.log
-yarn-error.log
-
-# Ruby / CocoaPods
-/ios/Pods/
-/vendor/bundle/
-
-# Temporary files
-*.swp
-*.swo
-*~
-
-# Metro
-.metro-health-check*
+# Code Injection
+iOSInjectionProject/
