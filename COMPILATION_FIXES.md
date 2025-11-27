@@ -165,7 +165,7 @@ open GreatFeelSwiftUI.xcodeproj
 
 ## Success! 🚀
 
-Your complete React Native to SwiftUI migration is now **100% ready** to build and run!
+Your SwiftUI project is now **100% ready** to build and run!
 
 The app includes:
 - ✅ Full authentication flow (Login, Register, Forgot Password)
