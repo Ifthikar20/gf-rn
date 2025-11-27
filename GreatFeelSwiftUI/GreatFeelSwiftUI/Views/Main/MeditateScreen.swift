@@ -473,11 +473,9 @@ struct ModernSessionCard: View {
                     Text("\(session.duration) min")
                         .font(.system(size: 13, weight: .medium))
 
-                    if let category = session.category {
-                        Text("•")
-                        Text("\(category)")
-                            .font(.system(size: 13))
-                    }
+                    Text("•")
+                    Text(session.category.rawValue)
+                        .font(.system(size: 13))
                 }
                 .foregroundStyle(colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
             }
