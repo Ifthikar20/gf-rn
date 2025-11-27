@@ -1,8 +1,6 @@
 # 🚀 Quick Start Guide - GreatFeel SwiftUI
 
-## ✅ React Native Cleanup Complete!
-
-All React Native files have been removed. Your project is now **100% Swift/SwiftUI**.
+**GreatFeel** is a native iOS wellness app built entirely in SwiftUI. Zero dependencies. Pure Swift.
 
 ---
 
@@ -32,27 +30,7 @@ Then in Xcode:
 
 ---
 
-### **Option 2: Command Line Build**
-
-```bash
-cd /path/to/gf-rn/GreatFeelSwiftUI
-
-# Build for simulator
-xcodebuild -project GreatFeelSwiftUI.xcodeproj \
-  -scheme GreatFeelSwiftUI \
-  -destination 'platform=iOS Simulator,name=iPhone 15 Pro' \
-  build
-
-# Run in simulator
-xcodebuild -project GreatFeelSwiftUI.xcodeproj \
-  -scheme GreatFeelSwiftUI \
-  -destination 'platform=iOS Simulator,name=iPhone 15 Pro' \
-  run
-```
-
----
-
-### **Option 3: Use Setup Script**
+### **Option 2: Complete Setup Script**
 
 ```bash
 cd /path/to/gf-rn/GreatFeelSwiftUI
@@ -61,36 +39,58 @@ cd /path/to/gf-rn/GreatFeelSwiftUI
 
 This script will:
 - Validate project structure
-- Fix common issues
-- Build the project
-- Launch in simulator
+- Generate/check Xcode project
+- Attempt build to find errors
+- Open in Xcode
+
+---
+
+### **Option 3: Rebuild Xcode Project**
+
+If you need to regenerate the Xcode project from scratch:
+
+```bash
+cd /path/to/gf-rn/GreatFeelSwiftUI
+./rebuild_project.sh
+```
+
+This will:
+- Delete existing Xcode project
+- Regenerate from Python script
+- Open in Xcode
 
 ---
 
 ## 🗂️ Project Structure
 
 ```
-GreatFeelSwiftUI/
-├── GreatFeelSwiftUI.xcodeproj    # Xcode project (ready to use!)
-├── GreatFeelSwiftUI/              # Source code
-│   ├── App/                       # App entry point
-│   │   └── GreatFeelSwiftUIApp.swift
-│   ├── Models/                    # Data models (5 files)
-│   │   ├── User.swift
-│   │   ├── Goal.swift
-│   │   ├── Content.swift
-│   │   ├── Meditation.swift
-│   │   └── Mood.swift
-│   ├── ViewModels/                # State management (5 files)
-│   ├── Views/                     # UI screens (15+ files)
-│   │   ├── Auth/
-│   │   ├── Main/
-│   │   ├── Components/
-│   │   └── Shared/
-│   ├── Services/                  # Networking, storage, audio
-│   └── Theme/                     # Colors, typography, spacing
-├── Info.plist                     # App configuration
-└── Documentation files
+gf-rn/
+├── GreatFeelSwiftUI/
+│   ├── GreatFeelSwiftUI.xcodeproj    # Xcode project (ready to use!)
+│   ├── GreatFeelSwiftUI/              # Source code
+│   │   ├── App/                       # App entry point
+│   │   │   └── GreatFeelSwiftUIApp.swift
+│   │   ├── Models/                    # Data models (5 files)
+│   │   │   ├── User.swift
+│   │   │   ├── Goal.swift
+│   │   │   ├── Content.swift
+│   │   │   ├── Meditation.swift
+│   │   │   └── Mood.swift
+│   │   ├── ViewModels/                # State management (5 files)
+│   │   ├── Views/                     # UI screens (15+ files)
+│   │   │   ├── Auth/
+│   │   │   ├── Main/
+│   │   │   ├── Components/
+│   │   │   └── Shared/
+│   │   ├── Services/                  # Networking, storage, audio
+│   │   └── Theme/                     # Colors, typography, spacing
+│   ├── Info.plist                     # App configuration
+│   ├── rebuild_project.sh             # Regenerate project script
+│   ├── setup_and_build.sh             # Complete setup script
+│   └── Documentation files
+├── BUILD_AND_RUN.md                   # Detailed guide
+├── QUICK_START.md                     # This file
+└── README.md                          # Project overview
 ```
 
 ---
@@ -115,17 +115,19 @@ GreatFeelSwiftUI/
 
 ### **Build Error: "No such file or directory"**
 
-**Fix:**
-```bash
-cd /path/to/gf-rn/GreatFeelSwiftUI
-./fix_xcode_project.sh
-```
+Files not added to target correctly.
 
-Or manually:
+**Fix:**
 1. Open Xcode project
 2. Select any `.swift` file
 3. Open File Inspector (right sidebar)
 4. Check **Target Membership** → Ensure "GreatFeelSwiftUI" is checked
+
+Or regenerate:
+```bash
+cd GreatFeelSwiftUI
+./rebuild_project.sh
+```
 
 ---
 
@@ -150,14 +152,14 @@ Or manually:
 
 ### **Clean Build (Nuclear Option)**
 
-```bash
-# In Xcode
-# Press: ⌘ + Shift + K (Clean Build Folder)
+In Xcode:
+- Press: **⌘ + Shift + K** (Clean Build Folder)
 
-# Or from command line:
+Or from command line:
+```bash
 cd /path/to/gf-rn/GreatFeelSwiftUI
 rm -rf ~/Library/Developer/Xcode/DerivedData/GreatFeelSwiftUI-*
-xcodebuild clean -project GreatFeelSwiftUI.xcodeproj
+./rebuild_project.sh
 ```
 
 ---
@@ -181,17 +183,17 @@ Your SwiftUI app is now running with:
 - ✅ Zero external dependencies
 - ✅ 100% Swift code
 - ✅ Native iOS performance
-- ✅ No React Native complexity
 - ✅ Clean, maintainable codebase
+- ✅ 45+ Swift files in MVVM architecture
 
 ---
 
 ## 📚 Additional Documentation
 
-- **BUILD_AND_RUN.md** - Detailed build guide
-- **FIX_BUILD_ERROR.md** - Common errors and solutions
-- **QUICKSTART.md** - Quick setup reference
-- **README.md** - Project overview
+- **BUILD_AND_RUN.md** - Detailed build guide with manual steps
+- **COMPILATION_FIXES.md** - Swift compilation fixes documentation
+- **GreatFeelSwiftUI/README.md** - SwiftUI project details
+- **GreatFeelSwiftUI/FIX_BUILD_ERROR.md** - Common error solutions
 
 ---
 
@@ -206,18 +208,18 @@ Your SwiftUI app is now running with:
 
 ---
 
-## 💡 Tips
+## 💡 Quick Tips
 
-- **Hot Reload**: In simulator, press **⌘R** to rebuild
+- **Hot Reload**: Press **⌘R** in Xcode to rebuild
 - **Console Logs**: **View** → **Debug Area** → **Show Debug Area** (⌘⇧Y)
-- **Inspect UI**: Click the **View Hierarchy** button when running
-- **Breakpoints**: Click line numbers to add breakpoints for debugging
+- **Inspect UI**: Click **View Hierarchy** button when running
+- **Breakpoints**: Click line numbers to add breakpoints
 
 ---
 
 ## 📞 Need Help?
 
-Check the documentation files in the project or visit:
+Check the documentation or visit:
 - [Apple SwiftUI Tutorials](https://developer.apple.com/tutorials/swiftui)
 - [Xcode Documentation](https://developer.apple.com/xcode/)
 

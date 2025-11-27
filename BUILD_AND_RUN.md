@@ -2,7 +2,7 @@
 
 ## 🎯 Complete Step-by-Step Guide
 
-This guide assumes you've already cleaned up the React Native files and are starting fresh with only the SwiftUI project.
+This guide walks you through building and running the native SwiftUI app from scratch.
 
 ---
 
