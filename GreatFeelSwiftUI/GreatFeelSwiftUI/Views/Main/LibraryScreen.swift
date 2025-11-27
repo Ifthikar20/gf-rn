@@ -129,7 +129,7 @@ struct LibraryScreen: View {
                             .font(AppTypography.caption())
                             .foregroundColor(.white)
                             .padding(.horizontal, AppSpacing.xs)
-                            .padding(.vertical: 2)
+                            .padding(.vertical, 2)
                             .background(Color.black.opacity(0.6))
                             .cornerRadius(AppSpacing.Radius.sm)
                             .padding(AppSpacing.xs)

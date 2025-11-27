@@ -2,7 +2,7 @@
 //  MeditateScreen.swift
 //  GreatFeelSwiftUI
 //
-//  Meditation and relaxation screen
+//  Modern, vibrant Spotify-style relaxation screen
 //
 
 import SwiftUI
@@ -11,42 +11,92 @@ struct MeditateScreen: View {
     @EnvironmentObject var themeViewModel: ThemeViewModel
     @StateObject private var viewModel = MeditationViewModel()
     @Environment(\.colorScheme) var colorScheme
+    @State private var selectedMood: String = "Calm"
+
+    // Dynamic vibrant gradient background
+    private var backgroundGradient: LinearGradient {
+        LinearGradient(
+            colors: colorScheme == .dark
+                ? [Color(hex: "0F172A"), Color(hex: "1E1B4B"), Color(hex: "312E81")]
+                : [Color(hex: "EEF2FF"), Color(hex: "E0E7FF"), Color(hex: "C7D2FE")],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
 
     var body: some View {
-        NavigationStack {
-            ThemedBackground(opacity: 0.7) {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: AppSpacing.xl) {
-                        // Hero Section
-                        heroSection
+        ZStack {
+            // Vibrant Background
+            backgroundGradient
+                .ignoresSafeArea()
 
-                        // Featured Sessions
-                        if !viewModel.featuredSessions.isEmpty {
-                            sessionSection(
-                                title: "Featured Sessions",
-                                sessions: viewModel.featuredSessions
-                            )
-                        }
+            // Floating gradient orbs for depth
+            GeometryReader { proxy in
+                Circle()
+                    .fill(AppColors.primary(for: colorScheme).opacity(colorScheme == .dark ? 0.15 : 0.2))
+                    .frame(width: 300, height: 300)
+                    .blur(radius: 60)
+                    .offset(x: -100, y: -50)
 
-                        // Popular This Week
-                        if !viewModel.popularSessions.isEmpty {
-                            sessionSection(
-                                title: "Popular This Week",
-                                sessions: viewModel.popularSessions
-                            )
-                        }
+                Circle()
+                    .fill(AppColors.secondary(for: colorScheme).opacity(colorScheme == .dark ? 0.15 : 0.2))
+                    .frame(width: 250, height: 250)
+                    .blur(radius: 60)
+                    .offset(x: proxy.size.width - 150, y: proxy.size.height - 200)
 
-                        // Editor's Picks
-                        if !viewModel.editorsPickSessions.isEmpty {
-                            sessionSection(
-                                title: "Editor's Picks",
-                                sessions: viewModel.editorsPickSessions
-                            )
-                        }
+                Circle()
+                    .fill(AppColors.Category.relax.opacity(colorScheme == .dark ? 0.1 : 0.15))
+                    .frame(width: 200, height: 200)
+                    .blur(radius: 50)
+                    .offset(x: proxy.size.width / 2, y: 100)
+            }
 
-                        Spacer(minLength: AppSpacing.xl)
+            // Main Content
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 24) {
+                    // Header with greeting and stats
+                    headerView
+                        .padding(.top, 10)
+
+                    // Mood Selector
+                    MoodSelectorView(selectedMood: $selectedMood, colorScheme: colorScheme)
+
+                    // Daily Inspiration Card
+                    inspirationCard
+
+                    // Featured Sessions
+                    if !viewModel.featuredSessions.isEmpty {
+                        modernSessionSection(
+                            title: "Featured Today",
+                            icon: "star.fill",
+                            sessions: viewModel.featuredSessions
+                        )
                     }
+
+                    // Categories Grid
+                    categoriesGrid
+
+                    // Popular This Week
+                    if !viewModel.popularSessions.isEmpty {
+                        modernSessionSection(
+                            title: "Popular This Week",
+                            icon: "chart.line.uptrend.xyaxis",
+                            sessions: viewModel.popularSessions
+                        )
+                    }
+
+                    // Editor's Picks
+                    if !viewModel.editorsPickSessions.isEmpty {
+                        modernSessionSection(
+                            title: "Editor's Picks",
+                            icon: "hand.thumbsup.fill",
+                            sessions: viewModel.editorsPickSessions
+                        )
+                    }
+
+                    Spacer(minLength: 60)
                 }
+                .padding(.horizontal)
             }
         }
         .onAppear {
@@ -54,104 +104,383 @@ struct MeditateScreen: View {
         }
     }
 
-    // MARK: - Hero Section
-    private var heroSection: some View {
-        ZStack(alignment: .topLeading) {
-            // Background Image
-            AsyncImage(url: URL(string: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600")) { phase in
-                switch phase {
-                case .success(let image):
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                case .empty, .failure, _:
-                    AppColors.surface(for: colorScheme)
+    // MARK: - Header View
+    private var headerView: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(greetingText())
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundStyle(colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
+                    .textCase(.uppercase)
+                    .kerning(0.5)
+
+                Text("Ready to Relax?")
+                    .font(.system(size: 28, weight: .bold))
+                    .foregroundStyle(colorScheme == .dark ? AppColors.Dark.textPrimary : AppColors.Light.textPrimary)
+            }
+
+            Spacer()
+
+            // Streak indicator with progress
+            ZStack {
+                Circle()
+                    .stroke(
+                        colorScheme == .dark
+                            ? Color.white.opacity(0.1)
+                            : Color.black.opacity(0.05),
+                        lineWidth: 4
+                    )
+                    .frame(width: 56, height: 56)
+
+                Circle()
+                    .trim(from: 0, to: 0.7)
+                    .stroke(
+                        AngularGradient(
+                            colors: [AppColors.primary(for: colorScheme), AppColors.secondary(for: colorScheme)],
+                            center: .center
+                        ),
+                        style: StrokeStyle(lineWidth: 4, lineCap: .round)
+                    )
+                    .frame(width: 56, height: 56)
+                    .rotationEffect(.degrees(-90))
+
+                VStack(spacing: 0) {
+                    Text("7")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(AppColors.primary(for: colorScheme))
+                    Text("days")
+                        .font(.system(size: 8, weight: .medium))
+                        .foregroundStyle(colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
                 }
             }
-            .frame(height: 300)
-            .clipped()
-
-            // Gradient Overlay
-            LinearGradient(
-                colors: [Color.black.opacity(0.6), Color.clear],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .frame(height: 300)
-
-            // Content
-            VStack(alignment: .leading, spacing: AppSpacing.sm) {
-                Text("Relax & Meditate")
-                    .font(AppTypography.heading2())
-                    .foregroundColor(.white)
-
-                Text("Find your inner peace")
-                    .font(AppTypography.body())
-                    .foregroundColor(.white.opacity(0.9))
-            }
-            .padding(AppSpacing.xl)
         }
-        .frame(height: 300)
     }
 
-    // MARK: - Session Section
-    private func sessionSection(title: String, sessions: [MeditationSession]) -> some View {
-        VStack(alignment: .leading, spacing: AppSpacing.md) {
-            Text(title)
-                .font(AppTypography.heading5())
-                .foregroundColor(AppColors.textPrimary(for: colorScheme))
-                .padding(.horizontal, AppSpacing.md)
+    // MARK: - Inspiration Card
+    private var inspirationCard: some View {
+        HStack(spacing: 16) {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 6) {
+                    Image(systemName: "flame.fill")
+                        .foregroundStyle(.orange)
+                    Text("7 Day Streak!")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(.white)
+                }
+
+                Text("Amazing! Keep your streak going with a morning meditation.")
+                    .font(.system(size: 14))
+                    .foregroundStyle(.white.opacity(0.9))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            Spacer()
+
+            Image(systemName: "trophy.fill")
+                .font(.system(size: 40))
+                .foregroundStyle(.yellow)
+                .shadow(color: .yellow.opacity(0.5), radius: 10)
+        }
+        .padding(20)
+        .background(
+            LinearGradient(
+                colors: [
+                    AppColors.primary(for: colorScheme),
+                    AppColors.secondary(for: colorScheme)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        )
+        .cornerRadius(20)
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(Color.white.opacity(0.2), lineWidth: 1)
+        )
+        .shadow(color: AppColors.primary(for: colorScheme).opacity(0.3), radius: 15, y: 8)
+    }
+
+    // MARK: - Categories Grid
+    private var categoriesGrid: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Image(systemName: "square.grid.2x2.fill")
+                    .foregroundStyle(AppColors.primary(for: colorScheme))
+                Text("Browse by Category")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundStyle(colorScheme == .dark ? AppColors.Dark.textPrimary : AppColors.Light.textPrimary)
+            }
+
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                CategoryCard(
+                    title: "Meditation",
+                    icon: "figure.mind.and.body",
+                    color: AppColors.Category.meditation,
+                    colorScheme: colorScheme
+                )
+                CategoryCard(
+                    title: "Sleep",
+                    icon: "moon.stars.fill",
+                    color: AppColors.Category.sleep,
+                    colorScheme: colorScheme
+                )
+                CategoryCard(
+                    title: "Breathing",
+                    icon: "wind",
+                    color: AppColors.Category.breath,
+                    colorScheme: colorScheme
+                )
+                CategoryCard(
+                    title: "Relax",
+                    icon: "music.note",
+                    color: AppColors.Category.relax,
+                    colorScheme: colorScheme
+                )
+            }
+        }
+    }
+
+    // MARK: - Modern Session Section
+    private func modernSessionSection(title: String, icon: String, sessions: [MeditationSession]) -> some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Image(systemName: icon)
+                    .foregroundStyle(AppColors.primary(for: colorScheme))
+                Text(title)
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundStyle(colorScheme == .dark ? AppColors.Dark.textPrimary : AppColors.Light.textPrimary)
+            }
 
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: AppSpacing.md) {
+                HStack(spacing: 16) {
                     ForEach(sessions) { session in
-                        sessionCard(session: session)
+                        ModernSessionCard(session: session, colorScheme: colorScheme) {
+                            if session.audioUrl != nil {
+                                viewModel.playSession(session)
+                            }
+                        }
                     }
                 }
-                .padding(.horizontal, AppSpacing.md)
             }
         }
     }
 
-    private func sessionCard(session: MeditationSession) -> some View {
-        Button(action: {
-            // Navigate to audio player or play here
-            if let audioUrl = session.audioUrl {
-                viewModel.playSession(session)
-            }
-        }) {
-            VStack(alignment: .leading, spacing: AppSpacing.xs) {
-                // Cover Image
-                AsyncImage(url: URL(string: session.coverImage ?? "")) { phase in
-                    switch phase {
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    case .empty, .failure, _:
-                        AppColors.surface(for: colorScheme)
+    // Helper function for greeting
+    private func greetingText() -> String {
+        let hour = Calendar.current.component(.hour, from: Date())
+        switch hour {
+        case 0..<12: return "Good Morning"
+        case 12..<17: return "Good Afternoon"
+        default: return "Good Evening"
+        }
+    }
+}
+
+// MARK: - Mood Selector Component
+struct MoodSelectorView: View {
+    @Binding var selectedMood: String
+    let colorScheme: ColorScheme
+
+    let moods = [
+        (emoji: "😊", name: "Happy", color: Color.yellow),
+        (emoji: "😌", name: "Calm", color: Color(hex: "8B5CF6")),
+        (emoji: "⚡", name: "Energetic", color: Color.orange),
+        (emoji: "😰", name: "Anxious", color: Color.blue),
+        (emoji: "😢", name: "Sad", color: Color.gray)
+    ]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("How are you feeling today?")
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundStyle(colorScheme == .dark ? AppColors.Dark.textPrimary : AppColors.Light.textPrimary)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 16) {
+                    ForEach(moods, id: \.name) { mood in
+                        VStack(spacing: 8) {
+                            ZStack {
+                                Circle()
+                                    .fill(
+                                        selectedMood == mood.name
+                                            ? mood.color
+                                            : (colorScheme == .dark
+                                                ? AppColors.Dark.surface
+                                                : AppColors.Light.surface)
+                                    )
+                                    .frame(width: 64, height: 64)
+                                    .overlay(
+                                        Circle()
+                                            .stroke(
+                                                colorScheme == .dark
+                                                    ? Color.white.opacity(0.1)
+                                                    : Color.black.opacity(0.05),
+                                                lineWidth: 1
+                                            )
+                                    )
+                                    .shadow(
+                                        color: selectedMood == mood.name
+                                            ? mood.color.opacity(0.4)
+                                            : .clear,
+                                        radius: 12
+                                    )
+
+                                Text(mood.emoji)
+                                    .font(.system(size: 30))
+                            }
+
+                            Text(mood.name)
+                                .font(.system(size: 13, weight: selectedMood == mood.name ? .semibold : .regular))
+                                .foregroundStyle(
+                                    selectedMood == mood.name
+                                        ? (colorScheme == .dark ? Color.white : Color.black)
+                                        : (colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
+                                )
+                        }
+                        .onTapGesture {
+                            withAnimation(.spring(response: 0.3)) {
+                                selectedMood = mood.name
+                            }
+                        }
                     }
                 }
-                .frame(width: 160, height: 160)
-                .cornerRadius(AppSpacing.Radius.md)
+            }
+        }
+    }
+}
+
+// MARK: - Category Card Component
+struct CategoryCard: View {
+    let title: String
+    let icon: String
+    let color: Color
+    let colorScheme: ColorScheme
+
+    var body: some View {
+        Button(action: {}) {
+            HStack(spacing: 12) {
+                ZStack {
+                    Circle()
+                        .fill(color.opacity(0.2))
+                        .frame(width: 48, height: 48)
+
+                    Image(systemName: icon)
+                        .font(.system(size: 20))
+                        .foregroundStyle(color)
+                }
+
+                Text(title)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(colorScheme == .dark ? AppColors.Dark.textPrimary : AppColors.Light.textPrimary)
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14))
+                    .foregroundStyle(colorScheme == .dark ? AppColors.Dark.textTertiary : AppColors.Light.textTertiary)
+            }
+            .padding(16)
+            .background(.ultraThinMaterial)
+            .background(
+                colorScheme == .dark
+                    ? AppColors.Dark.surface.opacity(0.6)
+                    : AppColors.Light.surface.opacity(0.8)
+            )
+            .cornerRadius(16)
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(
+                        colorScheme == .dark
+                            ? Color.white.opacity(0.05)
+                            : Color.black.opacity(0.03),
+                        lineWidth: 1
+                    )
+            )
+            .shadow(
+                color: colorScheme == .dark
+                    ? Color.black.opacity(0.3)
+                    : Color.black.opacity(0.05),
+                radius: 8,
+                y: 4
+            )
+        }
+    }
+}
+
+// MARK: - Modern Session Card
+struct ModernSessionCard: View {
+    let session: MeditationSession
+    let colorScheme: ColorScheme
+    let onTap: () -> Void
+
+    var body: some View {
+        Button(action: onTap) {
+            VStack(alignment: .leading, spacing: 12) {
+                // Cover Image with Play Button Overlay
+                ZStack(alignment: .bottomTrailing) {
+                    AsyncImage(url: URL(string: session.coverImage ?? "")) { phase in
+                        switch phase {
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                        case .empty, .failure, _:
+                            LinearGradient(
+                                colors: [
+                                    AppColors.primary(for: colorScheme).opacity(0.6),
+                                    AppColors.secondary(for: colorScheme).opacity(0.6)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        }
+                    }
+                    .frame(width: 180, height: 180)
+                    .cornerRadius(16)
+                    .overlay(
+                        LinearGradient(
+                            colors: [Color.clear, Color.black.opacity(0.3)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .cornerRadius(16)
+                    )
+
+                    // Play Button
+                    ZStack {
+                        Circle()
+                            .fill(.ultraThinMaterial)
+                            .frame(width: 40, height: 40)
+
+                        Image(systemName: "play.fill")
+                            .font(.system(size: 16))
+                            .foregroundStyle(.white)
+                    }
+                    .padding(10)
+                }
 
                 // Title
                 Text(session.title)
-                    .font(AppTypography.smallMedium())
-                    .foregroundColor(AppColors.textPrimary(for: colorScheme))
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(colorScheme == .dark ? AppColors.Dark.textPrimary : AppColors.Light.textPrimary)
                     .lineLimit(2)
-                    .frame(width: 160, alignment: .leading)
+                    .frame(width: 180, alignment: .leading)
 
-                // Duration
-                HStack(spacing: 4) {
-                    Image(systemName: "clock")
-                        .font(.system(size: AppSpacing.IconSize.xs))
+                // Duration & Category
+                HStack(spacing: 6) {
+                    Image(systemName: "clock.fill")
+                        .font(.system(size: 12))
                     Text("\(session.duration) min")
-                        .font(AppTypography.caption())
+                        .font(.system(size: 13, weight: .medium))
+
+                    Text("•")
+                    Text(session.category.rawValue)
+                        .font(.system(size: 13))
                 }
-                .foregroundColor(AppColors.textSecondary(for: colorScheme))
+                .foregroundStyle(colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
             }
         }
+        .buttonStyle(.plain)
     }
 }
 
@@ -159,4 +488,5 @@ struct MeditateScreen: View {
 #Preview {
     MeditateScreen()
         .environmentObject(ThemeViewModel())
+        .preferredColorScheme(.dark)
 }

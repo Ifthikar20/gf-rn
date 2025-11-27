@@ -469,7 +469,7 @@ def create_pbxproj(swift_files):
 \t\t\t\t);
 \t\t\t\tMARKETING_VERSION = 1.0;
 \t\t\t\tPRODUCT_BUNDLE_IDENTIFIER = com.greatfeel.GreatFeelSwiftUI;
-\t\t\t\tPRODUCT_NAME = "$$(TARGET_NAME)";
+\t\t\t\tPRODUCT_NAME = "GreatFeelSwiftUI";
 \t\t\t\tSWIFT_EMIT_LOC_STRINGS = YES;
 \t\t\t\tSWIFT_VERSION = 5.0;
 \t\t\t\tTARGETED_DEVICE_FAMILY = "1,2";
@@ -498,7 +498,7 @@ def create_pbxproj(swift_files):
 \t\t\t\t);
 \t\t\t\tMARKETING_VERSION = 1.0;
 \t\t\t\tPRODUCT_BUNDLE_IDENTIFIER = com.greatfeel.GreatFeelSwiftUI;
-\t\t\t\tPRODUCT_NAME = "$$(TARGET_NAME)";
+\t\t\t\tPRODUCT_NAME = "GreatFeelSwiftUI";
 \t\t\t\tSWIFT_EMIT_LOC_STRINGS = YES;
 \t\t\t\tSWIFT_VERSION = 5.0;
 \t\t\t\tTARGETED_DEVICE_FAMILY = "1,2";
