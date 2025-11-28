@@ -82,11 +82,23 @@ struct MeditateScreen: View {
         }
         .fullScreenCover(isPresented: $showPlayer) {
             if let session = selectedSession {
+                print("🎵 fullScreenCover presenting MediaPlayerScreen for: \(session.title)")
                 MediaPlayerScreen(session: session)
+            } else {
+                print("❌ fullScreenCover called but selectedSession is nil")
             }
         }
         .onAppear {
+            print("🎵 MeditateScreen appeared")
             viewModel.loadSessions()
+        }
+        .onChange(of: showPlayer) { newValue in
+            print("🎵 showPlayer changed to: \(newValue)")
+            if let session = selectedSession {
+                print("🎵 selectedSession: \(session.title)")
+            } else {
+                print("❌ selectedSession is nil")
+            }
         }
     }
 
