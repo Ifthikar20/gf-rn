@@ -26,6 +26,7 @@ class MeditationViewModel: ObservableObject {
 
     // MARK: - Load Sessions
     func loadSessions() {
+        print("🎵 MeditationViewModel: loadSessions() called")
         isLoading = true
         errorMessage = nil
 
@@ -34,6 +35,8 @@ class MeditationViewModel: ObservableObject {
             try? await Task.sleep(nanoseconds: 500_000_000)
             sessions = MeditationSession.mockSessions
             isLoading = false
+            print("🎵 MeditationViewModel: Loaded \(sessions.count) sessions")
+            print("   Featured: \(featuredSessions.count), Popular: \(popularSessions.count), Editors: \(editorsPickSessions.count)")
         }
     }
 

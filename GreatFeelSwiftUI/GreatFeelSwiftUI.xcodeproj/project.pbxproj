@@ -41,6 +41,7 @@
 		F5A010170EEA1E9420AF9F3A /* LibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE5AE3E9B31D93782DE81E0 /* LibraryViewModel.swift */; };
 		FBEFDFC404DA47CDEF35F8F2 /* ForgotPasswordScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA42C4CCD297EBEF1B0A354D /* ForgotPasswordScreen.swift */; };
 		FD364A527563C675B0B71A1A /* MoodSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93C617265C8D3D34D320098F /* MoodSelector.swift */; };
+	59FE927DDE2B4386B5BC9316 /* MoodBackgrounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E1CCDAFE9F24179AEACAEF5 /* MoodBackgrounds.swift */; };
 		FDA36BC6F46F67A2DED7632E /* ThemedBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F98BF5F6AEDF4322B42B5AB /* ThemedBackground.swift */; };
 /* End PBXBuildFile section */
 
@@ -52,13 +53,14 @@
 		118D2DEE77A5DE0BD95656FC /* Meditation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Meditation.swift; sourceTree = "<group>"; };
 		1532ED7867FA2A14F83FF47E /* Typography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
 		1D865327CE1C10B2256A5449 /* LoginScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginScreen.swift; sourceTree = "<group>"; };
-		1F1234567890ABCDEF000005 /* $(TARGET_NAME).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "$(TARGET_NAME).app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1F1234567890ABCDEF000005 /* GreatFeelSwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GreatFeelSwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F98BF5F6AEDF4322B42B5AB /* ThemedBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemedBackground.swift; sourceTree = "<group>"; };
 		3367E572158C78F088CBFB19 /* LibraryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryScreen.swift; sourceTree = "<group>"; };
 		3BED04F8908430DE142DEA79 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		3F023F2EEDEFE102DE111376 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		4CFC2BF7663892E63806C6E4 /* GoalsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsScreen.swift; sourceTree = "<group>"; };
 		4D229321A769139BD82B0AE2 /* GoalCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalCard.swift; sourceTree = "<group>"; };
+	7E1CCDAFE9F24179AEACAEF5 /* MoodBackgrounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodBackgrounds.swift; sourceTree = "<group>"; };
 		57CAC786CCFC7A1FFEDD733D /* GoalsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsViewModel.swift; sourceTree = "<group>"; };
 		5F443F39CFF6FC321DCA906A /* GreatFeelSwiftUIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreatFeelSwiftUIApp.swift; sourceTree = "<group>"; };
 		831A8E9656AF9AD444656656 /* MeditateScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeditateScreen.swift; sourceTree = "<group>"; };
@@ -116,7 +118,7 @@
 		1F1234567890ABCDEF000003 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1F1234567890ABCDEF000005 /* $(TARGET_NAME).app */,
+				1F1234567890ABCDEF000005 /* GreatFeelSwiftUI.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -146,6 +148,7 @@
 			isa = PBXGroup;
 			children = (
 				4D229321A769139BD82B0AE2 /* GoalCard.swift */,
+				7E1CCDAFE9F24179AEACAEF5 /* MoodBackgrounds.swift */,
 				93C617265C8D3D34D320098F /* MoodSelector.swift */,
 				90A192A3BBAF6394E7E704A8 /* PrimaryButton.swift */,
 				1095C62D692F927E1AAC4081 /* PrimaryInput.swift */,
@@ -346,6 +349,7 @@
 				FBEFDFC404DA47CDEF35F8F2 /* ForgotPasswordScreen.swift in Sources */,
 				CD50A436426E26A022496283 /* LoginScreen.swift in Sources */,
 				9A387E865EDC961F4ABB8110 /* RegisterScreen.swift in Sources */,
+			59FE927DDE2B4386B5BC9316 /* MoodBackgrounds.swift in Sources */,
 				55FA631B8F733C971B5C04B7 /* GoalCard.swift in Sources */,
 				FD364A527563C675B0B71A1A /* MoodSelector.swift in Sources */,
 				76400918AA14BE7DF1D90243 /* PrimaryButton.swift in Sources */,
@@ -507,7 +511,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.greatfeel.GreatFeelSwiftUI;
-				PRODUCT_NAME = "$$(TARGET_NAME)";
+				PRODUCT_NAME = GreatFeelSwiftUI;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -537,7 +541,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.greatfeel.GreatFeelSwiftUI;
-				PRODUCT_NAME = "$$(TARGET_NAME)";
+				PRODUCT_NAME = GreatFeelSwiftUI;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
