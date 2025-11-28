@@ -18,21 +18,50 @@ class AudioPlayerManager: ObservableObject {
     private var player: AVAudioPlayer?
     private var timer: Timer?
 
+    init() {
+        setupAudioSession()
+    }
+
+    private func setupAudioSession() {
+        do {
+            try AVAudioSession.sharedInstance().setCategory(
+                .playback,
+                mode: .default,
+                options: []
+            )
+            try AVAudioSession.sharedInstance().setActive(true)
+            print("✅ AudioPlayerManager: Audio session setup successful")
+        } catch {
+            print("❌ AudioPlayerManager: Failed to setup audio session: \(error)")
+        }
+    }
+
     func loadAudio(named fileName: String, withExtension ext: String = "mp3") {
+        print("🎵 AudioPlayerManager: Attempting to load audio: \(fileName).\(ext)")
+
         guard let url = Bundle.main.url(forResource: fileName, withExtension: ext) else {
-            print("❌ Audio file not found: \(fileName).\(ext)")
-            // Try playing default ocean sounds as fallback
+            print("❌ AudioPlayerManager: Audio file not found in bundle: \(fileName).\(ext)")
+            print("   Searching in all bundle resources...")
+
+            // List all mp3 files in bundle for debugging
+            if let resourcePath = Bundle.main.resourcePath {
+                print("   Resource path: \(resourcePath)")
+            }
+
             loadDefaultAudio()
             return
         }
+
+        print("✅ AudioPlayerManager: Found audio file at: \(url.path)")
 
         do {
             player = try AVAudioPlayer(contentsOf: url)
             player?.prepareToPlay()
             duration = player?.duration ?? 0
-            print("✅ Audio loaded: \(fileName).\(ext) - Duration: \(duration)s")
+            print("✅ AudioPlayerManager: Audio loaded successfully - Duration: \(duration)s")
+            print("   Ready to play. Press the play button to start audio.")
         } catch {
-            print("❌ Error loading audio: \(error.localizedDescription)")
+            print("❌ AudioPlayerManager: Error loading audio: \(error.localizedDescription)")
             loadDefaultAudio()
         }
     }
@@ -64,15 +93,28 @@ class AudioPlayerManager: ObservableObject {
     }
 
     func play() {
-        player?.play()
-        isPlaying = true
-        startTimer()
+        guard let player = player else {
+            print("❌ AudioPlayerManager: No audio player available")
+            return
+        }
+
+        let success = player.play()
+        if success {
+            isPlaying = true
+            startTimer()
+            print("✅ AudioPlayerManager: Playback started successfully")
+            print("   🔊 You should now hear audio from your simulator/device")
+            print("   📱 Make sure your Mac volume is up and simulator audio is enabled")
+        } else {
+            print("❌ AudioPlayerManager: Failed to start playback")
+        }
     }
 
     func pause() {
         player?.pause()
         isPlaying = false
         stopTimer()
+        print("⏸️  AudioPlayerManager: Playback paused")
     }
 
     func togglePlayPause() {
