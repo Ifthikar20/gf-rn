@@ -121,9 +121,15 @@ struct MediaPlayerScreen: View {
     let session: MeditationSession
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
+    @StateObject private var meditationViewModel = MeditationViewModel()
     @State private var triggerTreeWind = false
     @StateObject private var audioPlayer = AudioPlayerManager()
     @State private var volume: Double = 0.7
+    @State private var showSavedAnimation = false
+
+    private var isSaved: Bool {
+        meditationViewModel.isSaved(session.id)
+    }
 
     var body: some View {
         ZStack {
@@ -144,7 +150,7 @@ struct MediaPlayerScreen: View {
             }
 
             VStack(spacing: 0) {
-                // Top Bar
+                // Top Bar with Save to Library Button
                 HStack {
                     Button(action: {
                         audioPlayer.cleanup()
@@ -160,13 +166,42 @@ struct MediaPlayerScreen: View {
 
                     Spacer()
 
-                    Button(action: {}) {
-                        Image(systemName: "ellipsis")
-                            .font(.title3)
-                            .foregroundColor(colorScheme == .dark ? .white : AppColors.Light.textPrimary)
-                            .padding(12)
-                            .background(Color.white.opacity(0.1))
-                            .clipShape(Circle())
+                    // Save to Library Button
+                    Button(action: {
+                        meditationViewModel.toggleSaveSession(session.id)
+                        showSavedAnimation = true
+
+                        // Hide animation after 2 seconds
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            showSavedAnimation = false
+                        }
+                    }) {
+                        HStack(spacing: 8) {
+                            Image(systemName: isSaved ? "bookmark.fill" : "bookmark")
+                                .font(.system(size: 18))
+                            Text(isSaved ? "Saved" : "Save")
+                                .font(.system(size: 16, weight: .semibold))
+                        }
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 12)
+                        .background(
+                            LinearGradient(
+                                colors: isSaved
+                                    ? [AppColors.primary(for: colorScheme), AppColors.secondary(for: colorScheme)]
+                                    : [Color.white.opacity(0.2), Color.white.opacity(0.1)],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .cornerRadius(25)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 25)
+                                .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                        )
+                        .shadow(color: isSaved ? AppColors.primary(for: colorScheme).opacity(0.5) : .clear, radius: 10)
+                        .scaleEffect(showSavedAnimation ? 1.1 : 1.0)
+                        .animation(.spring(response: 0.3, dampingFraction: 0.6), value: showSavedAnimation)
                     }
                 }
                 .padding(.horizontal, 20)
@@ -324,7 +359,8 @@ struct MediaPlayerScreen: View {
         }
         .navigationBarHidden(true)
         .onAppear {
-            // Try to load audio from session URL or use default
+            // Load audio but DON'T auto-play
+            // User must manually press play button
             if let audioUrl = session.audioUrl {
                 audioPlayer.loadAudioFromURL(audioUrl)
             } else {
@@ -332,6 +368,7 @@ struct MediaPlayerScreen: View {
                 audioPlayer.loadAudio(named: "sea-mp3", withExtension: "mp3")
             }
             audioPlayer.setVolume(Float(volume))
+            print("🎵 MediaPlayerScreen: Audio loaded, ready for manual playback")
         }
         .onDisappear {
             audioPlayer.cleanup()

@@ -37,10 +37,15 @@ class ThemeViewModel: ObservableObject {
     private let audioService = AudioPlayerService.shared
 
     init() {
+        print("🎨 ThemeViewModel initializing...")
         self.themeMode = userDefaultsService.themeMode
         self.selectedMood = userDefaultsService.selectedMood
         self.isAudioMuted = userDefaultsService.isAudioMuted
-        updateBackgroundAudio()
+        print("   Theme mode: \(themeMode), Mood: \(selectedMood), Audio muted: \(isAudioMuted)")
+
+        // Audio is now only played manually via MediaPlayerScreen
+        // No auto-play on app launch
+        print("✅ ThemeViewModel initialized (audio auto-play disabled)")
     }
 
     // MARK: - Theme Mode
@@ -63,6 +68,8 @@ class ThemeViewModel: ObservableObject {
     // MARK: - Mood
     func selectMood(_ mood: Mood) {
         selectedMood = mood
+        // Note: Audio no longer auto-plays on mood selection
+        // Users must manually play audio via MediaPlayerScreen
     }
 
     // MARK: - Audio
