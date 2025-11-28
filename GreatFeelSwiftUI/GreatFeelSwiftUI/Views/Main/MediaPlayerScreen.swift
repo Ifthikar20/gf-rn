@@ -119,6 +119,7 @@ class AudioPlayerManager: ObservableObject {
 // MARK: - Media Player Screen
 struct MediaPlayerScreen: View {
     let session: MeditationSession
+    let mood: Mood?
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
     @StateObject private var meditationViewModel = MeditationViewModel()
@@ -133,13 +134,13 @@ struct MediaPlayerScreen: View {
 
     var body: some View {
         ZStack {
-            // Background Gradient (matching other screens)
+            // Background Gradient based on mood
             LinearGradient(
-                colors: colorScheme == .dark
+                colors: mood?.gradientColors ?? (colorScheme == .dark
                     ? [AppColors.Dark.deepNightStart, AppColors.Dark.deepNightEnd]
-                    : [Color(hex: "EEF2FF"), Color(hex: "E0E7FF")],
-                startPoint: .top,
-                endPoint: .bottom
+                    : [Color(hex: "EEF2FF"), Color(hex: "E0E7FF")]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
             )
             .ignoresSafeArea()
 
@@ -150,67 +151,47 @@ struct MediaPlayerScreen: View {
             }
 
             VStack(spacing: 0) {
-                // Top Bar with Save to Library Button
+                // Top Bar with minimal Save button
                 HStack {
                     Button(action: {
                         audioPlayer.cleanup()
                         dismiss()
                     }) {
                         Image(systemName: "chevron.down")
-                            .font(.title3)
-                            .foregroundColor(colorScheme == .dark ? .white : AppColors.Light.textPrimary)
-                            .padding(12)
-                            .background(Color.white.opacity(0.1))
+                            .font(.system(size: 16))
+                            .foregroundColor(.white.opacity(0.9))
+                            .padding(8)
+                            .background(Color.white.opacity(0.15))
                             .clipShape(Circle())
                     }
 
                     Spacer()
 
-                    // Save to Library Button
+                    // Minimal Save Button
                     Button(action: {
                         meditationViewModel.toggleSaveSession(session.id)
                         showSavedAnimation = true
-
-                        // Hide animation after 2 seconds
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                             showSavedAnimation = false
                         }
                     }) {
-                        HStack(spacing: 8) {
-                            Image(systemName: isSaved ? "bookmark.fill" : "bookmark")
-                                .font(.system(size: 18))
-                            Text(isSaved ? "Saved" : "Save")
-                                .font(.system(size: 16, weight: .semibold))
-                        }
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 12)
-                        .background(
-                            LinearGradient(
-                                colors: isSaved
-                                    ? [AppColors.primary(for: colorScheme), AppColors.secondary(for: colorScheme)]
-                                    : [Color.white.opacity(0.2), Color.white.opacity(0.1)],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .cornerRadius(25)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 25)
-                                .stroke(Color.white.opacity(0.3), lineWidth: 1)
-                        )
-                        .shadow(color: isSaved ? AppColors.primary(for: colorScheme).opacity(0.5) : .clear, radius: 10)
-                        .scaleEffect(showSavedAnimation ? 1.1 : 1.0)
-                        .animation(.spring(response: 0.3, dampingFraction: 0.6), value: showSavedAnimation)
+                        Image(systemName: isSaved ? "bookmark.fill" : "bookmark")
+                            .font(.system(size: 16))
+                            .foregroundColor(.white.opacity(0.9))
+                            .padding(8)
+                            .background(isSaved ? Color.white.opacity(0.25) : Color.white.opacity(0.15))
+                            .clipShape(Circle())
+                            .scaleEffect(showSavedAnimation ? 1.15 : 1.0)
+                            .animation(.spring(response: 0.3, dampingFraction: 0.6), value: showSavedAnimation)
                     }
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 10)
+                .padding(.horizontal, 24)
+                .padding(.top, 16)
 
                 Spacer()
 
-                // Album Art / Cover
-                VStack(spacing: 30) {
+                // Album Art / Cover (Minimal)
+                VStack(spacing: 24) {
                     AsyncImage(url: URL(string: session.coverImage ?? "")) { phase in
                         switch phase {
                         case .success(let image):
@@ -219,7 +200,7 @@ struct MediaPlayerScreen: View {
                                 .aspectRatio(contentMode: .fill)
                         case .empty, .failure, _:
                             LinearGradient(
-                                colors: [
+                                colors: mood?.gradientColors ?? [
                                     AppColors.primary(for: colorScheme),
                                     AppColors.secondary(for: colorScheme)
                                 ],
@@ -228,133 +209,119 @@ struct MediaPlayerScreen: View {
                             )
                             .overlay(
                                 Image(systemName: categoryIcon(for: session.category))
-                                    .font(.system(size: 80))
-                                    .foregroundColor(.white.opacity(0.3))
+                                    .font(.system(size: 60))
+                                    .foregroundColor(.white.opacity(0.4))
                             )
                         }
                     }
-                    .frame(width: 300, height: 300)
-                    .cornerRadius(20)
-                    .shadow(color: .black.opacity(0.3), radius: 20, y: 10)
+                    .frame(width: 280, height: 280)
+                    .cornerRadius(16)
+                    .shadow(color: .black.opacity(0.2), radius: 15, y: 8)
 
-                    // Song Info
-                    VStack(spacing: 8) {
+                    // Song Info (Minimal)
+                    VStack(spacing: 6) {
                         Text(session.title)
-                            .font(.title)
-                            .fontWeight(.bold)
-                            .foregroundColor(colorScheme == .dark ? .white : AppColors.Light.textPrimary)
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
                             .multilineTextAlignment(.center)
 
                         if let instructor = session.instructor {
                             Text(instructor)
-                                .font(.body)
-                                .foregroundColor(colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
+                                .font(.subheadline)
+                                .foregroundColor(.white.opacity(0.7))
                         } else {
                             Text(session.category.rawValue)
-                                .font(.body)
-                                .foregroundColor(colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
+                                .font(.subheadline)
+                                .foregroundColor(.white.opacity(0.7))
                         }
                     }
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, 24)
                 }
 
                 Spacer()
 
-                // Progress Bar
-                VStack(spacing: 8) {
+                // Progress Bar (Minimal)
+                VStack(spacing: 6) {
                     // Slider
                     Slider(value: Binding(
                         get: { audioPlayer.currentTime },
                         set: { audioPlayer.seek(to: $0) }
                     ), in: 0...max(audioPlayer.duration, 1))
-                        .tint(AppColors.primary(for: colorScheme))
+                        .tint(.white.opacity(0.9))
 
                     // Time Labels
                     HStack {
                         Text(formatTime(audioPlayer.currentTime))
-                            .font(.caption)
-                            .foregroundColor(colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
+                            .font(.caption2)
+                            .foregroundColor(.white.opacity(0.6))
 
                         Spacer()
 
                         Text(formatTime(audioPlayer.duration))
-                            .font(.caption)
-                            .foregroundColor(colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
+                            .font(.caption2)
+                            .foregroundColor(.white.opacity(0.6))
                     }
                 }
-                .padding(.horizontal, 30)
+                .padding(.horizontal, 32)
 
-                Spacer().frame(height: 20)
+                Spacer().frame(height: 24)
 
-                // Playback Controls
-                HStack(spacing: 40) {
-                    // Shuffle
-                    Button(action: {}) {
-                        Image(systemName: "shuffle")
-                            .font(.title3)
-                            .foregroundColor(colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
-                    }
-
+                // Playback Controls (Minimal)
+                HStack(spacing: 50) {
                     // Previous
                     Button(action: {
                         audioPlayer.seek(to: 0)
                     }) {
                         Image(systemName: "backward.fill")
-                            .font(.title)
-                            .foregroundColor(colorScheme == .dark ? .white : AppColors.Light.textPrimary)
+                            .font(.system(size: 20))
+                            .foregroundColor(.white.opacity(0.9))
                     }
 
-                    // Play/Pause
+                    // Play/Pause (Minimal)
                     Button(action: {
                         audioPlayer.togglePlayPause()
                         triggerTreeWind.toggle()
                     }) {
                         ZStack {
                             Circle()
-                                .fill(Color.white)
-                                .frame(width: 70, height: 70)
-                                .shadow(color: .black.opacity(0.2), radius: 10)
+                                .fill(Color.white.opacity(0.95))
+                                .frame(width: 56, height: 56)
+                                .shadow(color: .black.opacity(0.15), radius: 8)
 
                             Image(systemName: audioPlayer.isPlaying ? "pause.fill" : "play.fill")
-                                .font(.title)
-                                .foregroundColor(.black)
+                                .font(.system(size: 20))
+                                .foregroundColor(.black.opacity(0.85))
                         }
                     }
 
                     // Next
                     Button(action: {}) {
                         Image(systemName: "forward.fill")
-                            .font(.title)
-                            .foregroundColor(colorScheme == .dark ? .white : AppColors.Light.textPrimary)
-                    }
-
-                    // Repeat
-                    Button(action: {}) {
-                        Image(systemName: "repeat")
-                            .font(.title3)
-                            .foregroundColor(colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
+                            .font(.system(size: 20))
+                            .foregroundColor(.white.opacity(0.9))
                     }
                 }
-                .padding(.vertical, 20)
+                .padding(.vertical, 16)
 
-                // Volume Control
-                HStack(spacing: 12) {
+                // Volume Control (Minimal)
+                HStack(spacing: 10) {
                     Image(systemName: "speaker.fill")
-                        .font(.caption)
-                        .foregroundColor(colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
+                        .font(.system(size: 12))
+                        .foregroundColor(.white.opacity(0.6))
 
                     Slider(value: $volume, in: 0...1, onEditingChanged: { _ in
                         audioPlayer.setVolume(Float(volume))
                     })
-                        .tint(AppColors.primary(for: colorScheme))
+                        .tint(.white.opacity(0.8))
 
                     Image(systemName: "speaker.wave.3.fill")
-                        .font(.caption)
-                        .foregroundColor(colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
+                        .font(.system(size: 12))
+                        .foregroundColor(.white.opacity(0.6))
                 }
-                .padding(.horizontal, 30)
+                .padding(.horizontal, 32)
 
-                Spacer().frame(height: 40)
+                Spacer().frame(height: 32)
             }
         }
         .navigationBarHidden(true)
@@ -401,5 +368,5 @@ struct MediaPlayerScreen: View {
 
 // MARK: - Preview
 #Preview {
-    MediaPlayerScreen(session: MeditationSession.mockSessions[0])
+    MediaPlayerScreen(session: MeditationSession.mockSessions[0], mood: .cozy)
 }

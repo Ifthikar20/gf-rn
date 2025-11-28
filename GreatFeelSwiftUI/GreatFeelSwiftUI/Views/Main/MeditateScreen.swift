@@ -82,7 +82,7 @@ struct MeditateScreen: View {
         }
         .fullScreenCover(isPresented: $showPlayer) {
             if let session = selectedSession {
-                MediaPlayerScreen(session: session)
+                MediaPlayerScreen(session: session, mood: themeViewModel.selectedMood)
                     .onAppear {
                         print("🎵 MediaPlayerScreen appeared for: \(session.title)")
                     }
