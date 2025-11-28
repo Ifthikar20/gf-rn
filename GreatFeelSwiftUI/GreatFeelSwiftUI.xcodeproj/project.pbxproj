@@ -43,6 +43,7 @@
 		FD364A527563C675B0B71A1A /* MoodSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93C617265C8D3D34D320098F /* MoodSelector.swift */; };
 	59FE927DDE2B4386B5BC9316 /* MoodBackgrounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E1CCDAFE9F24179AEACAEF5 /* MoodBackgrounds.swift */; };
 	8A2BBCCDEFF35280BFBDBDA7 /* EnhancedMoodBackgrounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F3EEFACD0215391CFCDBE68 /* EnhancedMoodBackgrounds.swift */; };
+	B3C4D5E6F7A8B9C0D1E2F3A4 /* VideoPlayerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F3E2D1C0B9A8F7E6D5C4B3 /* VideoPlayerScreen.swift */; };
 		FDA36BC6F46F67A2DED7632E /* ThemedBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F98BF5F6AEDF4322B42B5AB /* ThemedBackground.swift */; };
 /* End PBXBuildFile section */
 
@@ -63,6 +64,7 @@
 		4D229321A769139BD82B0AE2 /* GoalCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalCard.swift; sourceTree = "<group>"; };
 	7E1CCDAFE9F24179AEACAEF5 /* MoodBackgrounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodBackgrounds.swift; sourceTree = "<group>"; };
 	9F3EEFACD0215391CFCDBE68 /* EnhancedMoodBackgrounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnhancedMoodBackgrounds.swift; sourceTree = "<group>"; };
+	A4F3E2D1C0B9A8F7E6D5C4B3 /* VideoPlayerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerScreen.swift; sourceTree = "<group>"; };
 		57CAC786CCFC7A1FFEDD733D /* GoalsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsViewModel.swift; sourceTree = "<group>"; };
 		5F443F39CFF6FC321DCA906A /* GreatFeelSwiftUIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreatFeelSwiftUIApp.swift; sourceTree = "<group>"; };
 		831A8E9656AF9AD444656656 /* MeditateScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeditateScreen.swift; sourceTree = "<group>"; };
@@ -194,6 +196,7 @@
 				3367E572158C78F088CBFB19 /* LibraryScreen.swift */,
 				831A8E9656AF9AD444656656 /* MeditateScreen.swift */,
 				F2E1D0C9B8A7F6E5D4C3B2A1 /* MediaPlayerScreen.swift */,
+				A4F3E2D1C0B9A8F7E6D5C4B3 /* VideoPlayerScreen.swift */,
 				0246DC390DF1629D4AB84CBA /* ProfileScreen.swift */,
 			);
 			path = Main;
@@ -354,6 +357,7 @@
 				9A387E865EDC961F4ABB8110 /* RegisterScreen.swift in Sources */,
 			59FE927DDE2B4386B5BC9316 /* MoodBackgrounds.swift in Sources */,
 			8A2BBCCDEFF35280BFBDBDA7 /* EnhancedMoodBackgrounds.swift in Sources */,
+			B3C4D5E6F7A8B9C0D1E2F3A4 /* VideoPlayerScreen.swift in Sources */,
 				55FA631B8F733C971B5C04B7 /* GoalCard.swift in Sources */,
 				FD364A527563C675B0B71A1A /* MoodSelector.swift in Sources */,
 				76400918AA14BE7DF1D90243 /* PrimaryButton.swift in Sources */,
