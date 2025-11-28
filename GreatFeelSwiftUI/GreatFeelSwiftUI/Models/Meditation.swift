@@ -16,6 +16,8 @@ struct MeditationSession: Codable, Identifiable {
     let duration: Int // in minutes
     let coverImage: String?
     let audioUrl: String?
+    let videoUrl: String?
+    let contentType: SessionContentType
     let instructor: String?
     let isFeatured: Bool
     let isPopular: Bool
@@ -23,8 +25,21 @@ struct MeditationSession: Codable, Identifiable {
 
     enum CodingKeys: String, CodingKey {
         case id, title, description, category, duration
-        case coverImage, audioUrl, instructor
+        case coverImage, audioUrl, videoUrl, contentType, instructor
         case isFeatured, isPopular, isEditorsPick
+    }
+}
+
+// MARK: - Session Content Type
+enum SessionContentType: String, Codable {
+    case audio = "Audio"
+    case video = "Video"
+
+    var displayLabel: String {
+        switch self {
+        case .audio: return "Relaxation"
+        case .video: return "Discover"
+        }
     }
 }
 
@@ -73,6 +88,8 @@ extension MeditationSession {
             duration: 30,
             coverImage: "https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=400",
             audioUrl: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3",
+            videoUrl: nil,
+            contentType: .audio,
             instructor: nil,
             isFeatured: true,
             isPopular: false,
@@ -86,6 +103,8 @@ extension MeditationSession {
             duration: 45,
             coverImage: "https://images.unsplash.com/photo-1428908728789-d2de25dbd4e2?w=400",
             audioUrl: "https://cdn.pixabay.com/download/audio/2022/03/10/audio_c610232532.mp3",
+            videoUrl: nil,
+            contentType: .audio,
             instructor: nil,
             isFeatured: true,
             isPopular: true,
@@ -99,6 +118,8 @@ extension MeditationSession {
             duration: 20,
             coverImage: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400",
             audioUrl: nil,
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+            contentType: .video,
             instructor: nil,
             isFeatured: true,
             isPopular: false,
@@ -113,6 +134,8 @@ extension MeditationSession {
             duration: 15,
             coverImage: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400",
             audioUrl: nil,
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+            contentType: .video,
             instructor: "Sarah Mitchell",
             isFeatured: false,
             isPopular: true,
@@ -126,6 +149,8 @@ extension MeditationSession {
             duration: 10,
             coverImage: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400",
             audioUrl: nil,
+            videoUrl: nil,
+            contentType: .audio,
             instructor: "Michael Chen",
             isFeatured: false,
             isPopular: true,
@@ -139,6 +164,8 @@ extension MeditationSession {
             duration: 60,
             coverImage: "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=400",
             audioUrl: nil,
+            videoUrl: nil,
+            contentType: .audio,
             instructor: nil,
             isFeatured: false,
             isPopular: true,
@@ -153,6 +180,8 @@ extension MeditationSession {
             duration: 25,
             coverImage: "https://images.unsplash.com/photo-1588286840104-8957b019727f?w=400",
             audioUrl: nil,
+            videoUrl: nil,
+            contentType: .audio,
             instructor: "Emma Wilson",
             isFeatured: false,
             isPopular: false,
@@ -166,6 +195,8 @@ extension MeditationSession {
             duration: 30,
             coverImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400",
             audioUrl: nil,
+            videoUrl: nil,
+            contentType: .audio,
             instructor: nil,
             isFeatured: false,
             isPopular: false,
@@ -179,6 +210,8 @@ extension MeditationSession {
             duration: 40,
             coverImage: "https://images.unsplash.com/photo-1431440869543-efaf3388c585?w=400",
             audioUrl: nil,
+            videoUrl: nil,
+            contentType: .audio,
             instructor: nil,
             isFeatured: false,
             isPopular: false,

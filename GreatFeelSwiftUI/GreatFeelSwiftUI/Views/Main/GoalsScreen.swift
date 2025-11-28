@@ -14,39 +14,57 @@ struct AnimatedTreeView: View {
     var body: some View {
         GeometryReader { proxy in
             ZStack(alignment: .topTrailing) {
-                // Main Branch
+                // Main Branch (Thicker, more prominent)
                 Path { path in
                     let w = proxy.size.width
                     let h = proxy.size.height
-
-                    // Draw a stylistic branch coming from top right
-                    path.move(to: CGPoint(x: w + 50, y: -50))
+                    path.move(to: CGPoint(x: w + 60, y: -60))
                     path.addCurve(
-                        to: CGPoint(x: w * 0.4, y: h * 0.4),
-                        control1: CGPoint(x: w * 0.8, y: h * 0.1),
-                        control2: CGPoint(x: w * 0.6, y: h * 0.2)
+                        to: CGPoint(x: w * 0.35, y: h * 0.45),
+                        control1: CGPoint(x: w * 0.8, y: h * 0.15),
+                        control2: CGPoint(x: w * 0.5, y: h * 0.25)
                     )
                 }
-                .stroke(Color.black.opacity(0.3), style: StrokeStyle(lineWidth: 15, lineCap: .round))
+                .stroke(Color.black.opacity(0.25), style: StrokeStyle(lineWidth: 18, lineCap: .round))
 
-                // Secondary Branch
+                // Secondary Branch (Right)
                 Path { path in
                     let w = proxy.size.width
                     let h = proxy.size.height
-                    path.move(to: CGPoint(x: w * 0.7, y: h * 0.15))
-                    path.addQuadCurve(to: CGPoint(x: w * 0.5, y: h * 0.6), control: CGPoint(x: w * 0.5, y: h * 0.3))
+                    path.move(to: CGPoint(x: w * 0.75, y: h * 0.2))
+                    path.addQuadCurve(to: CGPoint(x: w * 0.6, y: h * 0.65), control: CGPoint(x: w * 0.6, y: h * 0.4))
                 }
-                .stroke(Color.black.opacity(0.3), style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                .stroke(Color.black.opacity(0.25), style: StrokeStyle(lineWidth: 10, lineCap: .round))
 
-                // Leaves (Animated)
-                LeafGroup(triggerWind: triggerWind, x: 0.4, y: 0.4)
-                LeafGroup(triggerWind: triggerWind, x: 0.5, y: 0.6)
-                LeafGroup(triggerWind: triggerWind, x: 0.6, y: 0.2)
-                LeafGroup(triggerWind: triggerWind, x: 0.8, y: 0.3)
-                LeafGroup(triggerWind: triggerWind, x: 0.3, y: 0.5)
+                // Tertiary Branch (Top)
+                Path { path in
+                    let w = proxy.size.width
+                    let h = proxy.size.height
+                    path.move(to: CGPoint(x: w * 0.55, y: h * 0.1))
+                    path.addQuadCurve(to: CGPoint(x: w * 0.2, y: h * 0.3), control: CGPoint(x: w * 0.3, y: h * 0.1))
+                }
+                .stroke(Color.black.opacity(0.25), style: StrokeStyle(lineWidth: 8, lineCap: .round))
+
+                // More Leaves for richer content
+                // Group 1: Main Cluster
+                LeafGroup(triggerWind: triggerWind, x: 0.35, y: 0.45, delay: 0)
+                LeafGroup(triggerWind: triggerWind, x: 0.40, y: 0.42, delay: 0.2)
+                LeafGroup(triggerWind: triggerWind, x: 0.30, y: 0.48, delay: 0.4)
+
+                // Group 2: Right Cluster
+                LeafGroup(triggerWind: triggerWind, x: 0.6, y: 0.65, delay: 0.1)
+                LeafGroup(triggerWind: triggerWind, x: 0.65, y: 0.60, delay: 0.3)
+
+                // Group 3: Top Cluster
+                LeafGroup(triggerWind: triggerWind, x: 0.2, y: 0.3, delay: 0.5)
+                LeafGroup(triggerWind: triggerWind, x: 0.25, y: 0.25, delay: 0.7)
+
+                // Scattered Leaves
+                LeafGroup(triggerWind: triggerWind, x: 0.8, y: 0.3, delay: 0.2)
+                LeafGroup(triggerWind: triggerWind, x: 0.5, y: 0.2, delay: 0.6)
             }
         }
-        .allowsHitTesting(false) // Let touches pass through to the UI
+        .allowsHitTesting(false)
     }
 }
 
@@ -54,33 +72,36 @@ struct LeafGroup: View {
     var triggerWind: Bool
     var x: CGFloat
     var y: CGFloat
+    var delay: Double
     @State private var sway: Double = 0.0
 
     var body: some View {
         GeometryReader { proxy in
             Image(systemName: "leaf.fill")
-                .font(.system(size: 24))
-                .foregroundColor(Color.black.opacity(0.4))
+                .font(.system(size: 22)) // Slightly smaller for subtlety
+                .foregroundColor(Color.black.opacity(0.35)) // More subtle opacity
                 .rotationEffect(.degrees(sway))
                 .position(x: proxy.size.width * x, y: proxy.size.height * y)
                 .onChange(of: triggerWind) { _ in
-                    // Wind gust animation
-                    withAnimation(.easeInOut(duration: 0.2).repeatCount(3, autoreverses: true)) {
-                        sway = Double.random(in: -20...20)
+                    // Wind gust: faster but limited range
+                    withAnimation(.easeInOut(duration: 0.4).repeatCount(2, autoreverses: true).delay(delay)) {
+                        sway = Double.random(in: -15...15)
                     }
-                    // Settle back to gentle sway
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-                        withAnimation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true)) {
-                            sway = 5.0
-                        }
+                    // Return to slow sway
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        startGentleSway()
                     }
                 }
                 .onAppear {
-                    // Initial gentle sway
-                    withAnimation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true)) {
-                        sway = 5.0
-                    }
+                    startGentleSway()
                 }
+        }
+    }
+
+    func startGentleSway() {
+        // Very slow, subtle movement
+        withAnimation(.easeInOut(duration: Double.random(in: 4.0...6.0)).repeatForever(autoreverses: true)) {
+            sway = Double.random(in: -5...5)
         }
     }
 }
@@ -91,31 +112,28 @@ struct MoodSetterSmall: View {
     @Binding var triggerEffect: Bool
 
     var body: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: 15) {
             ForEach(Mood.allCases) { mood in
                 Button(action: {
-                    withAnimation(.easeInOut(duration: 0.5)) {
+                    withAnimation(.easeInOut(duration: 1.0)) {
                         selectedMood = mood
                     }
                     triggerEffect.toggle() // Trigger animation effect
                 }) {
                     Text(mood.emoji)
-                        .font(.title3)
+                        .font(.title2)
                         .grayscale(selectedMood == mood ? 0 : 1)
-                        .opacity(selectedMood == mood ? 1 : 0.5)
-                        .padding(8)
-                        .background(selectedMood == mood ? Color.white.opacity(0.2) : Color.clear)
+                        .opacity(selectedMood == mood ? 1 : 0.4)
+                        .scaleEffect(selectedMood == mood ? 1.2 : 1.0)
+                        .padding(10)
+                        .background(selectedMood == mood ? Color.white.opacity(0.15) : Color.clear)
                         .clipShape(Circle())
-                        .overlay(
-                            Circle()
-                                .stroke(Color.white.opacity(selectedMood == mood ? 0.3 : 0), lineWidth: 1)
-                        )
                 }
             }
         }
         .padding(6)
-        .background(Color.white.opacity(0.1))
-        .cornerRadius(25)
+        .background(Color.black.opacity(0.3))
+        .cornerRadius(35)
     }
 }
 
@@ -287,13 +305,21 @@ struct GoalsScreen: View {
                 )
             }
             .ignoresSafeArea()
-            .animation(.easeInOut(duration: 0.5), value: themeViewModel.selectedMood)
+            .animation(.easeInOut(duration: 1.0), value: themeViewModel.selectedMood)
 
             // 2. Animated Overlay Layer (Switches with fade transition)
             ZStack {
                 switch themeViewModel.selectedMood {
                 case .calm:
-                    AnimatedTreeView(triggerWind: $triggerEffect)
+                    ZStack {
+                        // Layered effects for depth
+                        StarfieldEffect()
+                        AuroraEffect()
+                        AnimatedTreeView(triggerWind: $triggerEffect)
+                        MagicalOrbsEffect()
+                        FirefliesEnhancedEffect()
+                        ShootingStarsEffect()
+                    }
                 case .cozy:
                     CozyWarmBackground()
                 case .sad:
@@ -306,25 +332,43 @@ struct GoalsScreen: View {
                     NervousPulseBackground()
                 }
             }
-            .transition(.opacity.animation(.easeInOut(duration: 0.5)))
+            .transition(.opacity)
+            .animation(.easeInOut(duration: 1.0), value: themeViewModel.selectedMood)
             .id(themeViewModel.selectedMood) // Force redraw on change to trigger transition
 
             VStack(spacing: 0) {
                 // Header
                 HStack(alignment: .top) {
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: 6) {
                         Text("My plan")
                             .font(.largeTitle)
                             .fontWeight(.bold)
                             .foregroundColor(.white)
 
-                        Text(formattedDate)
-                            .font(.subheadline)
-                            .foregroundColor(.white.opacity(0.7))
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(formattedDate)
+                                .font(.subheadline)
+                                .foregroundColor(.white.opacity(0.6))
+
+                            // Wellness Points
+                            HStack(spacing: 6) {
+                                Image(systemName: "leaf.circle.fill")
+                                    .foregroundColor(Color(hex: "7D5FFF"))
+                                    .font(.system(size: 14))
+                                Text("\(viewModel.totalPoints) Wellness Points")
+                                    .font(.caption)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.white.opacity(0.9))
+                            }
+                            .padding(.vertical, 4)
+                            .padding(.horizontal, 10)
+                            .background(Color.white.opacity(0.1))
+                            .cornerRadius(20)
+                        }
 
                         // Mood Setter
                         MoodSetterSmall(selectedMood: $themeViewModel.selectedMood, triggerEffect: $triggerEffect)
-                            .padding(.top, 8)
+                            .padding(.top, 12)
                     }
 
                     Spacer()

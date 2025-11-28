@@ -82,10 +82,17 @@ struct MeditateScreen: View {
         }
         .fullScreenCover(isPresented: $showPlayer) {
             if let session = selectedSession {
-                MediaPlayerScreen(session: session, mood: themeViewModel.selectedMood)
-                    .onAppear {
-                        print("🎵 MediaPlayerScreen appeared for: \(session.title)")
-                    }
+                if session.contentType == .video {
+                    VideoPlayerScreen(session: session, mood: themeViewModel.selectedMood)
+                        .onAppear {
+                            print("🎥 VideoPlayerScreen appeared for: \(session.title)")
+                        }
+                } else {
+                    MediaPlayerScreen(session: session, mood: themeViewModel.selectedMood)
+                        .onAppear {
+                            print("🎵 MediaPlayerScreen appeared for: \(session.title)")
+                        }
+                }
             }
         }
         .onAppear {
@@ -409,6 +416,12 @@ struct ModernSessionCard: View {
                             .font(.system(size: 13))
                     }
                     .foregroundStyle(colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
+
+                    // Type Indicator (tiny)
+                    Text(session.contentType.displayLabel.uppercased())
+                        .font(.system(size: 9, weight: .semibold))
+                        .foregroundStyle(colorScheme == .dark ? AppColors.Dark.textMuted.opacity(0.7) : AppColors.Light.textSecondary.opacity(0.6))
+                        .frame(width: 180, alignment: .leading)
                 }
         }
         .buttonStyle(PlainButtonStyle())
