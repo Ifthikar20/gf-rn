@@ -11,19 +11,19 @@ import SwiftUI
 struct CozyWarmBackground: View {
     var body: some View {
         ZStack {
-            // Warm glow at the bottom
+            // Warm glow gradient base
             VStack {
                 Spacer()
                 LinearGradient(
-                    colors: [.clear, Color(hex: "FF7F50").opacity(0.3)],
+                    colors: [.clear, Color(hex: "FF7F50").opacity(0.2)],
                     startPoint: .top,
                     endPoint: .bottom
                 )
-                .frame(height: 300)
+                .frame(height: 400)
             }
 
             GeometryReader { proxy in
-                ForEach(0..<15, id: \.self) { index in
+                ForEach(0..<25, id: \.self) { index in
                     EmberParticle(bounds: proxy.size, index: index)
                 }
             }
@@ -42,8 +42,8 @@ struct EmberParticle: View {
     var body: some View {
         Circle()
             .fill(Color(hex: "FF9A56"))
-            .frame(width: 8, height: 8)
-            .blur(radius: 2)
+            .frame(width: 6, height: 6) // Smaller particles
+            .blur(radius: 3) // Softer look
             .scaleEffect(scale)
             .position(position)
             .opacity(opacity)
@@ -58,15 +58,19 @@ struct EmberParticle: View {
     func resetAnimation() {
         // Start at random x, near bottom y
         let startX = CGFloat.random(in: 0...bounds.width)
-        let startY = bounds.height + CGFloat.random(in: 10...100)
+        let startY = bounds.height + CGFloat.random(in: 10...50)
         position = CGPoint(x: startX, y: startY)
-        opacity = Double.random(in: 0.3...0.7)
-        scale = CGFloat.random(in: 0.5...1.2)
 
-        let duration = Double.random(in: 4...8)
+        // Lower max opacity for subtlety
+        opacity = Double.random(in: 0.1...0.5)
+        scale = CGFloat.random(in: 0.2...0.8)
+
+        // Slower duration
+        let duration = Double.random(in: 6...12)
 
         withAnimation(.linear(duration: duration)) {
-            position.y = -50 // Float up off screen
+            position.y = bounds.height * 0.4 // Don't fly all the way to top, fade out mid-way
+            position.x += CGFloat.random(in: -20...20) // Slight drift
             opacity = 0
         }
 
@@ -84,9 +88,9 @@ struct RainRiverBackground: View {
 
     var body: some View {
         ZStack {
-            // Rain drops
+            // More rain drops for density
             GeometryReader { proxy in
-                ForEach(0..<30, id: \.self) { index in
+                ForEach(0..<60, id: \.self) { index in
                     RainDrop(bounds: proxy.size, index: index)
                 }
             }
@@ -96,11 +100,11 @@ struct RainRiverBackground: View {
                 .opacity(thunderOpacity)
                 .ignoresSafeArea()
                 .onChange(of: triggerEffect) { _ in
-                    // Flash animation
-                    withAnimation(.easeIn(duration: 0.1)) {
-                        thunderOpacity = 0.4
+                    // Flash animation (less blinding)
+                    withAnimation(.easeIn(duration: 0.15)) {
+                        thunderOpacity = 0.3
                     }
-                    withAnimation(.easeOut(duration: 0.3).delay(0.1)) {
+                    withAnimation(.easeOut(duration: 0.5).delay(0.15)) {
                         thunderOpacity = 0.0
                     }
                 }
@@ -113,12 +117,14 @@ struct RainDrop: View {
     let bounds: CGSize
     let index: Int
     @State private var position: CGPoint = .zero
+    @State private var opacity: Double = 0.0
 
     var body: some View {
         Capsule()
-            .fill(Color.white.opacity(0.3))
-            .frame(width: 2, height: 25)
+            .fill(Color.white)
+            .frame(width: 1, height: CGFloat.random(in: 15...30)) // Thinner
             .position(position)
+            .opacity(opacity)
             .onAppear {
                 // Stagger start times
                 DispatchQueue.main.asyncAfter(deadline: .now() + Double(index) * 0.05) {
@@ -129,13 +135,14 @@ struct RainDrop: View {
 
     func resetAnimation() {
         let startX = CGFloat.random(in: 0...bounds.width)
-        position = CGPoint(x: startX, y: -30)
+        position = CGPoint(x: startX, y: -50)
+        opacity = Double.random(in: 0.05...0.2) // Very subtle opacity
 
-        let duration = Double.random(in: 0.8...1.5)
-        let endX = startX - 20 // slight diagonal fall
+        let duration = Double.random(in: 1.0...2.0) // Slower fall
+        let endX = startX - 10
 
         withAnimation(.linear(duration: duration)) {
-            position = CGPoint(x: endX, y: bounds.height + 30)
+            position = CGPoint(x: endX, y: bounds.height + 50)
         }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
