@@ -129,10 +129,10 @@ struct VideoPlayerScreen: View {
             .fill(
                 LinearGradient(
                     stops: [
-                        .init(color: Color.black.opacity(0), position: 0),
-                        .init(color: Color.black.opacity(0.3), position: 0.3),
-                        .init(color: Color.black.opacity(0.6), position: 0.6),
-                        .init(color: Color.black, position: 1.0)
+                        .init(color: Color.black.opacity(0), location: 0),
+                        .init(color: Color.black.opacity(0.3), location: 0.3),
+                        .init(color: Color.black.opacity(0.6), location: 0.6),
+                        .init(color: Color.black, location: 1.0)
                     ],
                     startPoint: .top,
                     endPoint: .bottom
