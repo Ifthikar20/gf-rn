@@ -330,73 +330,76 @@ struct ModernSessionCard: View {
     let onTap: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-                // Cover Image with Play Button Overlay
-                ZStack(alignment: .bottomTrailing) {
-                    AsyncImage(url: URL(string: session.coverImage ?? "")) { phase in
-                        switch phase {
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                        case .empty, .failure, _:
-                            LinearGradient(
-                                colors: [
-                                    AppColors.primary(for: colorScheme).opacity(0.6),
-                                    AppColors.secondary(for: colorScheme).opacity(0.6)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        }
-                    }
-                    .frame(width: 180, height: 180)
-                    .cornerRadius(16)
-                    .overlay(
-                        LinearGradient(
-                            colors: [Color.clear, Color.black.opacity(0.3)],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                        .cornerRadius(16)
-                    )
-
-                    // Play Button
-                    ZStack {
-                        Circle()
-                            .fill(.ultraThinMaterial)
-                            .frame(width: 40, height: 40)
-
-                        Image(systemName: "play.fill")
-                            .font(.system(size: 16))
-                            .foregroundStyle(.white)
-                    }
-                    .padding(10)
-                }
-
-                // Title
-                Text(session.title)
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(colorScheme == .dark ? AppColors.Dark.textPrimary : AppColors.Light.textPrimary)
-                    .lineLimit(2)
-                    .frame(width: 180, alignment: .leading)
-
-                // Duration & Category
-                HStack(spacing: 6) {
-                    Image(systemName: "clock.fill")
-                        .font(.system(size: 12))
-                    Text("\(session.duration) min")
-                        .font(.system(size: 13, weight: .medium))
-
-                    Text("•")
-                    Text(session.category.rawValue)
-                        .font(.system(size: 13))
-                }
-                .foregroundStyle(colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
-            }
-        .onTapGesture {
+        Button(action: {
+            print("🎵 ModernSessionCard tapped: \(session.title)")
             onTap()
+        }) {
+            VStack(alignment: .leading, spacing: 12) {
+                    // Cover Image with Play Button Overlay
+                    ZStack(alignment: .bottomTrailing) {
+                        AsyncImage(url: URL(string: session.coverImage ?? "")) { phase in
+                            switch phase {
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                            case .empty, .failure, _:
+                                LinearGradient(
+                                    colors: [
+                                        AppColors.primary(for: colorScheme).opacity(0.6),
+                                        AppColors.secondary(for: colorScheme).opacity(0.6)
+                                    ],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            }
+                        }
+                        .frame(width: 180, height: 180)
+                        .cornerRadius(16)
+                        .overlay(
+                            LinearGradient(
+                                colors: [Color.clear, Color.black.opacity(0.3)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                            .cornerRadius(16)
+                        )
+
+                        // Play Button
+                        ZStack {
+                            Circle()
+                                .fill(.ultraThinMaterial)
+                                .frame(width: 40, height: 40)
+
+                            Image(systemName: "play.fill")
+                                .font(.system(size: 16))
+                                .foregroundStyle(.white)
+                        }
+                        .padding(10)
+                    }
+
+                    // Title
+                    Text(session.title)
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(colorScheme == .dark ? AppColors.Dark.textPrimary : AppColors.Light.textPrimary)
+                        .lineLimit(2)
+                        .frame(width: 180, alignment: .leading)
+
+                    // Duration & Category
+                    HStack(spacing: 6) {
+                        Image(systemName: "clock.fill")
+                            .font(.system(size: 12))
+                        Text("\(session.duration) min")
+                            .font(.system(size: 13, weight: .medium))
+
+                        Text("•")
+                        Text(session.category.rawValue)
+                            .font(.system(size: 13))
+                    }
+                    .foregroundStyle(colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
+                }
         }
+        .buttonStyle(PlainButtonStyle())
     }
 }
 
