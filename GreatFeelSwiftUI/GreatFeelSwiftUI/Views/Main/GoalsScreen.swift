@@ -87,25 +87,29 @@ struct LeafGroup: View {
 
 // MARK: - Mood Setter Component
 struct MoodSetterSmall: View {
-    @Binding var selectedMood: Int
-    @Binding var triggerWind: Bool
-
-    let moods = ["😊", "😐", "😔", "😠"]
+    @Binding var selectedMood: Mood
+    @Binding var triggerEffect: Bool
 
     var body: some View {
         HStack(spacing: 4) {
-            ForEach(0..<moods.count, id: \.self) { index in
+            ForEach(Mood.allCases) { mood in
                 Button(action: {
-                    selectedMood = index
-                    triggerWind.toggle() // Trigger tree animation
+                    withAnimation(.easeInOut(duration: 0.5)) {
+                        selectedMood = mood
+                    }
+                    triggerEffect.toggle() // Trigger animation effect
                 }) {
-                    Text(moods[index])
+                    Text(mood.emoji)
                         .font(.title3)
-                        .grayscale(selectedMood == index ? 0 : 1)
-                        .opacity(selectedMood == index ? 1 : 0.5)
+                        .grayscale(selectedMood == mood ? 0 : 1)
+                        .opacity(selectedMood == mood ? 1 : 0.5)
                         .padding(8)
-                        .background(selectedMood == index ? Color.white.opacity(0.2) : Color.clear)
+                        .background(selectedMood == mood ? Color.white.opacity(0.2) : Color.clear)
                         .clipShape(Circle())
+                        .overlay(
+                            Circle()
+                                .stroke(Color.white.opacity(selectedMood == mood ? 0.3 : 0), lineWidth: 1)
+                        )
                 }
             }
         }
@@ -270,26 +274,40 @@ struct GoalsScreen: View {
     @StateObject private var viewModel = GoalsViewModel()
     @Environment(\.colorScheme) var colorScheme
 
-    @State private var selectedMood = 0
-    @State private var triggerTreeWind = false
+    @State private var triggerEffect = false
 
     var body: some View {
         ZStack {
-            // Background Gradient
-            LinearGradient(
-                colors: colorScheme == .dark
-                    ? [AppColors.Dark.deepNightStart, AppColors.Dark.deepNightEnd]
-                    : [Color(hex: "F0F9FF"), Color(hex: "E0F2FE")],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
-
-            // Animated Tree Overlay (only in dark mode)
-            if colorScheme == .dark {
-                AnimatedTreeView(triggerWind: $triggerTreeWind)
-                    .ignoresSafeArea()
+            // 1. Base Gradient Layer (Changes based on mood)
+            Group {
+                LinearGradient(
+                    colors: themeViewModel.selectedMood.gradientColors,
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
             }
+            .ignoresSafeArea()
+            .animation(.easeInOut(duration: 0.5), value: themeViewModel.selectedMood)
+
+            // 2. Animated Overlay Layer (Switches with fade transition)
+            ZStack {
+                switch themeViewModel.selectedMood {
+                case .calm:
+                    AnimatedTreeView(triggerWind: $triggerEffect)
+                case .cozy:
+                    CozyWarmBackground()
+                case .sad:
+                    RainRiverBackground(triggerEffect: $triggerEffect)
+                case .energetic:
+                    EnergeticSparklesBackground()
+                case .happy:
+                    HappyBubblesBackground()
+                case .nervous:
+                    NervousPulseBackground()
+                }
+            }
+            .transition(.opacity.animation(.easeInOut(duration: 0.5)))
+            .id(themeViewModel.selectedMood) // Force redraw on change to trigger transition
 
             VStack(spacing: 0) {
                 // Header
@@ -298,14 +316,14 @@ struct GoalsScreen: View {
                         Text("My plan")
                             .font(.largeTitle)
                             .fontWeight(.bold)
-                            .foregroundColor(colorScheme == .dark ? .white : AppColors.Light.textPrimary)
+                            .foregroundColor(.white)
 
                         Text(formattedDate)
                             .font(.subheadline)
-                            .foregroundColor(colorScheme == .dark ? AppColors.Dark.textMuted : AppColors.Light.textSecondary)
+                            .foregroundColor(.white.opacity(0.7))
 
                         // Mood Setter
-                        MoodSetterSmall(selectedMood: $selectedMood, triggerWind: $triggerTreeWind)
+                        MoodSetterSmall(selectedMood: $themeViewModel.selectedMood, triggerEffect: $triggerEffect)
                             .padding(.top, 8)
                     }
 
@@ -314,12 +332,7 @@ struct GoalsScreen: View {
                     // Stats Circle
                     ZStack {
                         Circle()
-                            .stroke(
-                                colorScheme == .dark
-                                    ? Color.white.opacity(0.1)
-                                    : Color.black.opacity(0.05),
-                                lineWidth: 4
-                            )
+                            .stroke(Color.white.opacity(0.1), lineWidth: 4)
                             .frame(width: 60, height: 60)
 
                         Circle()
@@ -327,9 +340,9 @@ struct GoalsScreen: View {
                             .stroke(
                                 AngularGradient(
                                     colors: [
-                                        AppColors.primary(for: colorScheme),
-                                        AppColors.secondary(for: colorScheme),
-                                        AppColors.Category.relax
+                                        Color.white.opacity(0.8),
+                                        Color.white.opacity(0.5),
+                                        Color.white.opacity(0.8)
                                     ],
                                     center: .center
                                 ),
@@ -341,10 +354,10 @@ struct GoalsScreen: View {
                         VStack(spacing: 2) {
                             Text("\(Int(viewModel.progressPercentage * 100))")
                                 .font(.system(size: 18, weight: .bold))
-                                .foregroundStyle(AppColors.primary(for: colorScheme))
+                                .foregroundStyle(.white)
                             Text("%")
                                 .font(.system(size: 10, weight: .medium))
-                                .foregroundStyle(colorScheme == .dark ? AppColors.Dark.textSecondary : AppColors.Light.textSecondary)
+                                .foregroundStyle(.white.opacity(0.7))
                         }
                     }
                 }
