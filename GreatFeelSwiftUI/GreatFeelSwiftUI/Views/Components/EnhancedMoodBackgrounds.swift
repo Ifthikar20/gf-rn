@@ -565,19 +565,29 @@ struct HeatWaveLine: View {
     let gradient: LinearGradient
 
     var body: some View {
-        Path { path in
-            let y = bounds.height * (0.5 + CGFloat(index) * 0.1)
-            path.move(to: CGPoint(x: 0, y: y))
+        HeatWaveShape(index: index, phase: phase)
+            .stroke(gradient, lineWidth: 2)
+            .blur(radius: 5)
+    }
+}
 
-            for x in stride(from: 0, through: bounds.width, by: 10) {
-                let relativeX = x / bounds.width
-                let sine = sin((relativeX * .pi * 3) + phase + Double(index) * 0.5)
-                let offsetY = y + sine * 8
-                path.addLine(to: CGPoint(x: x, y: offsetY))
-            }
+struct HeatWaveShape: Shape {
+    let index: Int
+    let phase: Double
+
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        let y = rect.height * (0.5 + CGFloat(index) * 0.1)
+        path.move(to: CGPoint(x: 0, y: y))
+
+        for x in stride(from: 0, through: rect.width, by: 10) {
+            let relativeX = x / rect.width
+            let sine = sin((relativeX * .pi * 3) + phase + Double(index) * 0.5)
+            let offsetY = y + sine * 8
+            path.addLine(to: CGPoint(x: x, y: offsetY))
         }
-        .stroke(gradient, lineWidth: 2)
-        .blur(radius: 5)
+
+        return path
     }
 }
 
