@@ -43,13 +43,9 @@ class ThemeViewModel: ObservableObject {
         self.isAudioMuted = userDefaultsService.isAudioMuted
         print("   Theme mode: \(themeMode), Mood: \(selectedMood), Audio muted: \(isAudioMuted)")
 
-        // Delay audio initialization to avoid crashes during app launch
-        Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 second delay
-            print("🎨 ThemeViewModel: Starting delayed audio initialization...")
-            updateBackgroundAudio()
-        }
-        print("✅ ThemeViewModel initialized")
+        // Audio is now only played manually via MediaPlayerScreen
+        // No auto-play on app launch
+        print("✅ ThemeViewModel initialized (audio auto-play disabled)")
     }
 
     // MARK: - Theme Mode
@@ -72,6 +68,8 @@ class ThemeViewModel: ObservableObject {
     // MARK: - Mood
     func selectMood(_ mood: Mood) {
         selectedMood = mood
+        // Note: Audio no longer auto-plays on mood selection
+        // Users must manually play audio via MediaPlayerScreen
     }
 
     // MARK: - Audio

@@ -14,10 +14,13 @@ class MeditationViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
     @Published var currentlyPlayingSession: MeditationSession?
+    @Published var savedSessionIds: Set<String> = []
 
     private let audioService = AudioPlayerService.shared
+    private let userDefaultsKey = "savedMeditationSessions"
 
     init() {
+        loadSavedSessions()
         loadSessions()
     }
 
@@ -82,5 +85,35 @@ class MeditationViewModel: ObservableObject {
 
     var duration: TimeInterval {
         audioService.duration
+    }
+
+    // MARK: - Save/Unsave Sessions
+    func toggleSaveSession(_ sessionId: String) {
+        if savedSessionIds.contains(sessionId) {
+            savedSessionIds.remove(sessionId)
+            print("🔖 Session unsaved: \(sessionId)")
+        } else {
+            savedSessionIds.insert(sessionId)
+            print("🔖 Session saved: \(sessionId)")
+        }
+        persistSavedSessions()
+    }
+
+    func isSaved(_ sessionId: String) -> Bool {
+        savedSessionIds.contains(sessionId)
+    }
+
+    var savedSessions: [MeditationSession] {
+        sessions.filter { savedSessionIds.contains($0.id) }
+    }
+
+    private func loadSavedSessions() {
+        if let data = UserDefaults.standard.array(forKey: userDefaultsKey) as? [String] {
+            savedSessionIds = Set(data)
+        }
+    }
+
+    private func persistSavedSessions() {
+        UserDefaults.standard.set(Array(savedSessionIds), forKey: userDefaultsKey)
     }
 }
