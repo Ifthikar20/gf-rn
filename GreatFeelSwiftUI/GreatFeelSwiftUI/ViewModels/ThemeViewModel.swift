@@ -37,10 +37,19 @@ class ThemeViewModel: ObservableObject {
     private let audioService = AudioPlayerService.shared
 
     init() {
+        print("🎨 ThemeViewModel initializing...")
         self.themeMode = userDefaultsService.themeMode
         self.selectedMood = userDefaultsService.selectedMood
         self.isAudioMuted = userDefaultsService.isAudioMuted
-        updateBackgroundAudio()
+        print("   Theme mode: \(themeMode), Mood: \(selectedMood), Audio muted: \(isAudioMuted)")
+
+        // Delay audio initialization to avoid crashes during app launch
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 second delay
+            print("🎨 ThemeViewModel: Starting delayed audio initialization...")
+            updateBackgroundAudio()
+        }
+        print("✅ ThemeViewModel initialized")
     }
 
     // MARK: - Theme Mode

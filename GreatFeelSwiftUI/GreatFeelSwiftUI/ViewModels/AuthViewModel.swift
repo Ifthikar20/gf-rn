@@ -20,7 +20,9 @@ class AuthViewModel: ObservableObject {
     private let userDefaultsService = UserDefaultsService.shared
 
     init() {
+        print("🔐 AuthViewModel initializing...")
         checkAuthStatus()
+        print("✅ AuthViewModel initialized")
     }
 
     // MARK: - Check Auth Status

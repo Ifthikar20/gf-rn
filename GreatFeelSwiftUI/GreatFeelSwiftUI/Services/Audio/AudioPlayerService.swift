@@ -35,8 +35,10 @@ class AudioPlayerService: ObservableObject {
                 options: [.mixWithOthers]
             )
             try AVAudioSession.sharedInstance().setActive(true)
+            print("✅ Audio session setup successful")
         } catch {
-            print("Failed to setup audio session: \(error)")
+            print("❌ Failed to setup audio session: \(error)")
+            print("   Error details: \(error.localizedDescription)")
         }
     }
 
@@ -50,32 +52,40 @@ class AudioPlayerService: ObservableObject {
 
     // MARK: - Playback Control
     func play(url: String) {
+        print("🎵 Attempting to play audio from URL: \(url)")
+
         guard let audioURL = URL(string: url) else {
-            print("Invalid audio URL: \(url)")
+            print("❌ Invalid audio URL: \(url)")
             return
         }
 
         // Stop current player if any
         stop()
 
-        // Create new player
-        let playerItem = AVPlayerItem(url: audioURL)
-        player = AVPlayer(playerItem: playerItem)
+        do {
+            // Create new player
+            let playerItem = AVPlayerItem(url: audioURL)
+            player = AVPlayer(playerItem: playerItem)
 
-        // Setup time observer
-        setupTimeObserver()
+            // Setup time observer
+            setupTimeObserver()
 
-        // Get duration
-        playerItem.publisher(for: \.duration)
-            .sink { [weak self] duration in
-                self?.duration = CMTimeGetSeconds(duration)
-            }
-            .store(in: &cancellables)
+            // Get duration
+            playerItem.publisher(for: \.duration)
+                .sink { [weak self] duration in
+                    self?.duration = CMTimeGetSeconds(duration)
+                }
+                .store(in: &cancellables)
 
-        // Play
-        player?.play()
-        isPlaying = true
-        currentTrack = url
+            // Play
+            player?.play()
+            isPlaying = true
+            currentTrack = url
+            print("✅ Audio playback started successfully")
+        } catch {
+            print("❌ Failed to play audio: \(error)")
+            print("   Error details: \(error.localizedDescription)")
+        }
     }
 
     func pause() {
@@ -130,7 +140,10 @@ class AudioPlayerService: ObservableObject {
 
     // MARK: - Background Audio
     func playBackgroundAudio(for mood: Mood, isMuted: Bool = false) {
+        print("🎵 playBackgroundAudio called - Mood: \(mood), isMuted: \(isMuted)")
+
         if isMuted {
+            print("🔇 Audio is muted, stopping playback")
             stop()
             return
         }
