@@ -22,6 +22,10 @@ struct CozyWarmBackground: View {
                 .frame(height: 400)
             }
 
+            // Enhanced effects
+            HeatWaveEffect()
+            SparkleEffect()
+
             GeometryReader { proxy in
                 ForEach(0..<25, id: \.self) { index in
                     EmberParticle(bounds: proxy.size, index: index)
@@ -88,12 +92,19 @@ struct RainRiverBackground: View {
 
     var body: some View {
         ZStack {
+            // Enhanced atmospheric effects
+            MovingCloudsEffect()
+            FogEffect()
+
             // More rain drops for density
             GeometryReader { proxy in
                 ForEach(0..<60, id: \.self) { index in
                     RainDrop(bounds: proxy.size, index: index)
                 }
             }
+
+            // Rain splashes
+            RainSplashEnhancedEffect()
 
             // Thunder flash overlay
             Color.white

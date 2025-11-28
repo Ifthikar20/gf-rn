@@ -311,7 +311,15 @@ struct GoalsScreen: View {
             ZStack {
                 switch themeViewModel.selectedMood {
                 case .calm:
-                    AnimatedTreeView(triggerWind: $triggerEffect)
+                    ZStack {
+                        // Layered effects for depth
+                        StarfieldEffect()
+                        AuroraEffect()
+                        AnimatedTreeView(triggerWind: $triggerEffect)
+                        MagicalOrbsEffect()
+                        FirefliesEnhancedEffect()
+                        ShootingStarsEffect()
+                    }
                 case .cozy:
                     CozyWarmBackground()
                 case .sad:
