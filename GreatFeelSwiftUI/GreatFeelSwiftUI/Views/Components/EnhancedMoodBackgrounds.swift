@@ -72,21 +72,7 @@ struct AuroraEffect: View {
     var body: some View {
         ZStack {
             ForEach(0..<5, id: \.self) { i in
-                WavePath(offset: offset, phase: Double(i) * .pi / 1.2)
-                    .fill(
-                        LinearGradient(
-                            colors: [
-                                Color.auroraBlue.opacity(0.15),
-                                Color.auroraPurple.opacity(0.2),
-                                Color.auroraGreen.opacity(0.15),
-                                Color(hex: "7D5FFF").opacity(0.1)
-                            ],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .blur(radius: 25)
-                    .offset(y: CGFloat(i) * 80)
+                AuroraWave(index: i, offset: offset)
             }
         }
         .onAppear {
@@ -94,6 +80,31 @@ struct AuroraEffect: View {
                 offset = 500
             }
         }
+    }
+}
+
+struct AuroraWave: View {
+    let index: Int
+    let offset: CGFloat
+
+    private var auroraGradient: LinearGradient {
+        LinearGradient(
+            colors: [
+                Color.auroraBlue.opacity(0.15),
+                Color.auroraPurple.opacity(0.2),
+                Color.auroraGreen.opacity(0.15),
+                Color(hex: "7D5FFF").opacity(0.1)
+            ],
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+    }
+
+    var body: some View {
+        WavePath(offset: offset, phase: Double(index) * .pi / 1.2)
+            .fill(auroraGradient)
+            .blur(radius: 25)
+            .offset(y: CGFloat(index) * 80)
     }
 }
 
@@ -330,24 +341,7 @@ struct MovingCloudsEffect: View {
     var body: some View {
         GeometryReader { proxy in
             ForEach(0..<5, id: \.self) { i in
-                CloudShape()
-                    .fill(
-                        LinearGradient(
-                            colors: [
-                                Color.gray.opacity(0.15),
-                                Color.darkGray.opacity(0.25),
-                                Color.gray.opacity(0.15)
-                            ],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .frame(width: CGFloat.random(in: 200...400), height: CGFloat.random(in: 60...100))
-                    .blur(radius: 20)
-                    .offset(
-                        x: offset + CGFloat(i) * 300,
-                        y: CGFloat(i) * 50 + 50
-                    )
+                MovingCloud(index: i, offset: offset)
             }
         }
         .onAppear {
@@ -355,6 +349,34 @@ struct MovingCloudsEffect: View {
                 offset = -1000
             }
         }
+    }
+}
+
+struct MovingCloud: View {
+    let index: Int
+    let offset: CGFloat
+
+    private var cloudGradient: LinearGradient {
+        LinearGradient(
+            colors: [
+                Color.gray.opacity(0.15),
+                Color.darkGray.opacity(0.25),
+                Color.gray.opacity(0.15)
+            ],
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+    }
+
+    var body: some View {
+        CloudShape()
+            .fill(cloudGradient)
+            .frame(width: CGFloat.random(in: 200...400), height: CGFloat.random(in: 60...100))
+            .blur(radius: 20)
+            .offset(
+                x: offset + CGFloat(index) * 300,
+                y: CGFloat(index) * 50 + 50
+            )
     }
 }
 
@@ -375,22 +397,7 @@ struct FogEffect: View {
     var body: some View {
         ZStack {
             ForEach(0..<3, id: \.self) { i in
-                Rectangle()
-                    .fill(
-                        LinearGradient(
-                            colors: [
-                                .clear,
-                                Color.gray.opacity(0.1),
-                                Color.white.opacity(0.05),
-                                .clear
-                            ],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .blur(radius: 40)
-                    .offset(x: i == 0 ? fogOffset1 : fogOffset2)
-                    .offset(y: CGFloat(i) * 150)
+                FogLayer(index: i, offset: i == 0 ? fogOffset1 : fogOffset2)
             }
         }
         .onAppear {
@@ -401,6 +408,32 @@ struct FogEffect: View {
                 fogOffset2 = -500
             }
         }
+    }
+}
+
+struct FogLayer: View {
+    let index: Int
+    let offset: CGFloat
+
+    private var fogGradient: LinearGradient {
+        LinearGradient(
+            colors: [
+                .clear,
+                Color.gray.opacity(0.1),
+                Color.white.opacity(0.05),
+                .clear
+            ],
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+    }
+
+    var body: some View {
+        Rectangle()
+            .fill(fogGradient)
+            .blur(radius: 40)
+            .offset(x: offset)
+            .offset(y: CGFloat(index) * 150)
     }
 }
 
@@ -499,33 +532,22 @@ struct RainSplash: View {
 struct HeatWaveEffect: View {
     @State private var phase: Double = 0
 
+    private var waveGradient: LinearGradient {
+        LinearGradient(
+            colors: [
+                Color.fireYellow.opacity(0.1),
+                Color(hex: "FF7F50").opacity(0.15),
+                Color.fireRed.opacity(0.1)
+            ],
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+    }
+
     var body: some View {
         GeometryReader { proxy in
             ForEach(0..<6, id: \.self) { i in
-                Path { path in
-                    let y = proxy.size.height * (0.5 + CGFloat(i) * 0.1)
-                    path.move(to: CGPoint(x: 0, y: y))
-
-                    for x in stride(from: 0, through: proxy.size.width, by: 10) {
-                        let relativeX = x / proxy.size.width
-                        let sine = sin((relativeX * .pi * 3) + phase + Double(i) * 0.5)
-                        let offsetY = y + sine * 8
-                        path.addLine(to: CGPoint(x: x, y: offsetY))
-                    }
-                }
-                .stroke(
-                    LinearGradient(
-                        colors: [
-                            Color.fireYellow.opacity(0.1),
-                            Color(hex: "FF7F50").opacity(0.15),
-                            Color.fireRed.opacity(0.1)
-                        ],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    ),
-                    lineWidth: 2
-                )
-                .blur(radius: 5)
+                HeatWaveLine(index: i, phase: phase, bounds: proxy.size, gradient: waveGradient)
             }
         }
         .onAppear {
@@ -533,6 +555,29 @@ struct HeatWaveEffect: View {
                 phase = .pi * 2
             }
         }
+    }
+}
+
+struct HeatWaveLine: View {
+    let index: Int
+    let phase: Double
+    let bounds: CGSize
+    let gradient: LinearGradient
+
+    var body: some View {
+        Path { path in
+            let y = bounds.height * (0.5 + CGFloat(index) * 0.1)
+            path.move(to: CGPoint(x: 0, y: y))
+
+            for x in stride(from: 0, through: bounds.width, by: 10) {
+                let relativeX = x / bounds.width
+                let sine = sin((relativeX * .pi * 3) + phase + Double(index) * 0.5)
+                let offsetY = y + sine * 8
+                path.addLine(to: CGPoint(x: x, y: offsetY))
+            }
+        }
+        .stroke(gradient, lineWidth: 2)
+        .blur(radius: 5)
     }
 }
 
