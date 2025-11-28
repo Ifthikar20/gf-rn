@@ -507,7 +507,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.greatfeel.GreatFeelSwiftUI;
-				PRODUCT_NAME = "$$(TARGET_NAME)";
+				PRODUCT_NAME = GreatFeelSwiftUI;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -537,7 +537,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.greatfeel.GreatFeelSwiftUI;
-				PRODUCT_NAME = "$$(TARGET_NAME)";
+				PRODUCT_NAME = GreatFeelSwiftUI;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
