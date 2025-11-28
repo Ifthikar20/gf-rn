@@ -52,7 +52,7 @@
 		118D2DEE77A5DE0BD95656FC /* Meditation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Meditation.swift; sourceTree = "<group>"; };
 		1532ED7867FA2A14F83FF47E /* Typography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
 		1D865327CE1C10B2256A5449 /* LoginScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginScreen.swift; sourceTree = "<group>"; };
-		1F1234567890ABCDEF000005 /* $(TARGET_NAME).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "$(TARGET_NAME).app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1F1234567890ABCDEF000005 /* GreatFeelSwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GreatFeelSwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F98BF5F6AEDF4322B42B5AB /* ThemedBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemedBackground.swift; sourceTree = "<group>"; };
 		3367E572158C78F088CBFB19 /* LibraryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryScreen.swift; sourceTree = "<group>"; };
 		3BED04F8908430DE142DEA79 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
@@ -116,7 +116,7 @@
 		1F1234567890ABCDEF000003 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1F1234567890ABCDEF000005 /* $(TARGET_NAME).app */,
+				1F1234567890ABCDEF000005 /* GreatFeelSwiftUI.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
