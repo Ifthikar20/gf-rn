@@ -131,7 +131,8 @@ struct LoginScreen: View {
     }
 
     private var isFormValid: Bool {
-        !email.isEmpty && !password.isEmpty && email.contains("@")
+        // Allow "admin" username or any email with @
+        !email.isEmpty && !password.isEmpty && (email.lowercased() == "admin" || email.contains("@"))
     }
 }
 
