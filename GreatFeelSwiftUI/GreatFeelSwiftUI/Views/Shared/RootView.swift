@@ -14,8 +14,13 @@ struct RootView: View {
 
     var body: some View {
         Group {
-            // Skip login - go straight to dashboard
-            MainTabView()
+            if authViewModel.isAuthenticated {
+                // User is logged in - show main app
+                MainTabView()
+            } else {
+                // User is not logged in - show login screen
+                LoginScreen()
+            }
         }
         .preferredColorScheme(preferredColorScheme)
     }
