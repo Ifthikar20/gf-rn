@@ -22,6 +22,9 @@ struct VideoPlayerScreen: View {
     @State private var bookmarkPulse = false
     @State private var isLoadingVideo = true
     @State private var loadingError: String?
+    @State private var currentTime: Double = 0
+    @State private var duration: Double = 1
+    @State private var isSeekingLocal = false
 
     // Get screen dimensions
     private var screenHeight: CGFloat {
@@ -50,6 +53,7 @@ struct VideoPlayerScreen: View {
             setupPlayer()
         }
         .onDisappear {
+            removeTimeObserver()
             player?.pause()
             player = nil
         }
@@ -98,7 +102,7 @@ struct VideoPlayerScreen: View {
 
     // MARK: - Video Player Section
     private var videoPlayerSection: some View {
-        ZStack(alignment: .topTrailing) {
+        ZStack(alignment: .bottom) {
             if let error = loadingError {
                 // Error state
                 Rectangle()
@@ -157,22 +161,78 @@ struct VideoPlayerScreen: View {
                     )
             }
 
-            // Fullscreen expand button
-            Button(action: {
-                withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                    isFullscreen = true
-                }
-            }) {
-                Image(systemName: "arrow.up.left.and.arrow.down.right")
-                    .font(.system(size: 16))
-                    .foregroundColor(.white)
-                    .frame(width: 44, height: 44)
-                    .background(Color.black.opacity(0.5))
-                    .clipShape(Circle())
+            // Video controls overlay at bottom
+            if player != nil && !isLoadingVideo {
+                videoControlsOverlay
             }
-            .padding(.top, 60)
-            .padding(.trailing, 16)
         }
+    }
+
+    // MARK: - Video Controls Overlay
+    private var videoControlsOverlay: some View {
+        VStack(spacing: 12) {
+            // Progress slider
+            VStack(spacing: 4) {
+                Slider(
+                    value: Binding(
+                        get: { currentTime },
+                        set: { newValue in
+                            currentTime = newValue
+                            seekToTime(newValue)
+                        }
+                    ),
+                    in: 0...max(duration, 1)
+                )
+                .tint(.white)
+                .padding(.horizontal, 16)
+
+                // Time labels
+                HStack {
+                    Text(formatTime(currentTime))
+                        .font(.system(size: 12))
+                        .foregroundColor(.white.opacity(0.8))
+
+                    Spacer()
+
+                    Text(formatTime(duration))
+                        .font(.system(size: 12))
+                        .foregroundColor(.white.opacity(0.8))
+                }
+                .padding(.horizontal, 20)
+            }
+
+            // Fullscreen expand button at bottom
+            HStack {
+                Spacer()
+
+                Button(action: {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                        isFullscreen = true
+                    }
+                }) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "arrow.up.left.and.arrow.down.right")
+                            .font(.system(size: 14))
+                        Text("Fullscreen")
+                            .font(.system(size: 14, weight: .medium))
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(Color.black.opacity(0.6))
+                    .cornerRadius(20)
+                }
+                .padding(.trailing, 16)
+            }
+        }
+        .padding(.bottom, 16)
+        .background(
+            LinearGradient(
+                colors: [Color.black.opacity(0), Color.black.opacity(0.7)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        )
     }
 
     // MARK: - Blur Transition
@@ -535,6 +595,12 @@ struct VideoPlayerScreen: View {
                     log("Player created successfully", type: "SUCCESS")
                     log("Starting playback...")
 
+                    // Set duration from loaded asset (duration is CMTime from async load)
+                    self.duration = duration.seconds
+
+                    // Add time observer for progress tracking
+                    addTimeObserver()
+
                     // Auto-play
                     player?.play()
                     isPlaying = true
@@ -610,6 +676,59 @@ struct VideoPlayerScreen: View {
     }
 
     @State private var observers: Set<AnyCancellable> = []
+    @State private var timeObserver: Any?
+
+    // MARK: - Progress Slider Helpers
+    private func formatTime(_ seconds: Double) -> String {
+        guard !seconds.isNaN && !seconds.isInfinite else { return "0:00" }
+        let totalSeconds = Int(seconds)
+        let minutes = totalSeconds / 60
+        let secs = totalSeconds % 60
+        return String(format: "%d:%02d", minutes, secs)
+    }
+
+    private func seekToTime(_ seconds: Double) {
+        guard let player = player else { return }
+        let targetTime = CMTime(seconds: seconds, preferredTimescale: 600)
+        player.seek(to: targetTime) { finished in
+            if finished {
+                log("Seeked to \(formatTime(seconds))")
+            }
+        }
+    }
+
+    private func addTimeObserver() {
+        guard let player = player else { return }
+
+        // Remove existing observer if any
+        if let observer = timeObserver {
+            player.removeTimeObserver(observer)
+        }
+
+        // Add periodic time observer (updates every 0.5 seconds)
+        let interval = CMTime(seconds: 0.5, preferredTimescale: 600)
+        timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [self] time in
+            currentTime = time.seconds
+
+            // Update duration if available
+            if let currentItem = player.currentItem {
+                let itemDuration = currentItem.duration.seconds
+                if !itemDuration.isNaN && !itemDuration.isInfinite {
+                    duration = itemDuration
+                }
+            }
+        }
+
+        log("Time observer added for progress tracking")
+    }
+
+    private func removeTimeObserver() {
+        if let observer = timeObserver, let player = player {
+            player.removeTimeObserver(observer)
+            timeObserver = nil
+            log("Time observer removed")
+        }
+    }
 
     private func getRelatedEpisodes() -> [MeditationSession] {
         // Get other video sessions, excluding current one
@@ -624,9 +743,12 @@ struct VideoPlayerScreen: View {
         // Reset state
         isLoadingVideo = true
         loadingError = nil
+        currentTime = 0
+        duration = 1
 
         // Pause and cleanup current player
         log("Cleaning up current player...")
+        removeTimeObserver()
         player?.pause()
         player = nil
         observers.removeAll()
@@ -721,6 +843,13 @@ struct VideoPlayerScreen: View {
                     addPlayerItemObserver(playerItem)
 
                     player = AVPlayer(playerItem: playerItem)
+
+                    // Set duration from loaded asset (duration is CMTime from async load)
+                    self.duration = duration.seconds
+
+                    // Add time observer for progress tracking
+                    addTimeObserver()
+
                     player?.play()
                     isPlaying = true
                     isLoadingVideo = false
