@@ -51,7 +51,8 @@ class GoalsViewModel: ObservableObject {
                 timeOfDay: goals[index].timeOfDay,
                 isLocked: goals[index].isLocked,
                 isCompleted: !goals[index].isCompleted,
-                streak: goals[index].streak
+                streak: goals[index].streak,
+                wellnessPoints: goals[index].wellnessPoints
             )
         }
     }
@@ -83,12 +84,9 @@ class GoalsViewModel: ObservableObject {
     }
 
     var totalPoints: Int {
-        // Calculate wellness points based on completed goals
-        // Each completed goal earns points based on its duration
-        let basePoints = 850
-        let completedPoints = goals.filter { $0.isCompleted }.reduce(0) { sum, goal in
-            sum + (goal.duration * 10) // 10 points per minute
+        // Calculate wellness points from completed goals
+        goals.filter { $0.isCompleted }.reduce(0) { sum, goal in
+            sum + goal.wellnessPoints
         }
-        return basePoints + completedPoints
     }
 }

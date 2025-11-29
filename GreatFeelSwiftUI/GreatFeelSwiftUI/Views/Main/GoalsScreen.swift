@@ -146,27 +146,115 @@ struct TimelineCard: View {
 
     var body: some View {
         Button(action: onTap) {
-            HStack {
-                VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 16) {
+                // Thumbnail Image
+                if let thumbnail = goal.thumbnail {
+                    AsyncImage(url: URL(string: thumbnail)) { phase in
+                        switch phase {
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                        case .empty, .failure, _:
+                            ZStack {
+                                goal.category.color.opacity(0.3)
+                                Image(systemName: goal.type.icon)
+                                    .font(.system(size: 28))
+                                    .foregroundColor(.white.opacity(0.6))
+                            }
+                        }
+                    }
+                    .frame(width: 90, height: 90)
+                    .cornerRadius(16)
+                    .overlay(
+                        // Play icon for video content
+                        goal.type == .video ?
+                        Image(systemName: "play.circle.fill")
+                            .font(.system(size: 32))
+                            .foregroundColor(.white)
+                            .shadow(color: .black.opacity(0.3), radius: 4)
+                        : nil
+                    )
+                } else {
+                    // Fallback gradient thumbnail
+                    ZStack {
+                        LinearGradient(
+                            colors: [goal.category.color.opacity(0.6), goal.category.color.opacity(0.3)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                        Image(systemName: goal.type.icon)
+                            .font(.system(size: 28))
+                            .foregroundColor(.white.opacity(0.8))
+                    }
+                    .frame(width: 90, height: 90)
+                    .cornerRadius(16)
+                }
+
+                // Content
+                VStack(alignment: .leading, spacing: 8) {
                     // Category Tag
                     HStack(spacing: 6) {
                         Image(systemName: goal.category.icon)
+                            .font(.system(size: 10))
                         Text(goal.type.rawValue)
+                            .font(.caption)
                     }
-                    .font(.caption)
-                    .fontWeight(.bold)
+                    .fontWeight(.semibold)
                     .foregroundColor(goal.category.color)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(goal.category.color.opacity(0.15))
+                    .cornerRadius(8)
 
-                    // Title & Subtitle
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(goal.title)
-                            .font(.title3)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
+                    // Title
+                    Text(goal.title)
+                        .font(.system(size: 17, weight: .bold))
+                        .foregroundColor(.white)
+                        .lineLimit(2)
 
-                        Text("\(goal.duration) min")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
+                    // Description (if available)
+                    if let description = goal.description {
+                        Text(description)
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.7))
+                            .lineLimit(2)
+                    }
+
+                    // Info Row (Duration, Points, Streak)
+                    HStack(spacing: 12) {
+                        // Duration
+                        HStack(spacing: 4) {
+                            Image(systemName: "clock")
+                                .font(.system(size: 11))
+                            Text("\(goal.duration) min")
+                                .font(.caption)
+                        }
+                        .foregroundColor(.white.opacity(0.6))
+
+                        // Wellness Points
+                        HStack(spacing: 4) {
+                            Image(systemName: "leaf.circle.fill")
+                                .font(.system(size: 11))
+                                .foregroundColor(Color(hex: "7D5FFF"))
+                            Text("+\(goal.wellnessPoints)")
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                        }
+                        .foregroundColor(.white.opacity(0.9))
+
+                        // Streak (if available)
+                        if let streak = goal.streak {
+                            HStack(spacing: 4) {
+                                Image(systemName: "flame.fill")
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.orange)
+                                Text("\(streak)")
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                            }
+                            .foregroundColor(.white.opacity(0.9))
+                        }
                     }
                 }
 
@@ -174,20 +262,27 @@ struct TimelineCard: View {
 
                 // Lock or Completion Icon
                 if goal.isLocked {
-                    Image(systemName: "lock.fill")
-                        .foregroundColor(.white.opacity(0.5))
-                        .padding()
-                        .background(Color.black.opacity(0.2))
-                        .clipShape(Circle())
+                    VStack {
+                        Image(systemName: "lock.fill")
+                            .font(.system(size: 20))
+                            .foregroundColor(.white.opacity(0.5))
+                            .padding(12)
+                            .background(Color.black.opacity(0.2))
+                            .clipShape(Circle())
+                        Spacer()
+                    }
                 } else {
-                    Button(action: onToggleComplete) {
-                        Image(systemName: goal.isCompleted ? "checkmark.circle.fill" : "circle")
-                            .font(.system(size: 30))
-                            .foregroundColor(goal.isCompleted ? .green : .white.opacity(0.3))
+                    VStack {
+                        Button(action: onToggleComplete) {
+                            Image(systemName: goal.isCompleted ? "checkmark.circle.fill" : "circle")
+                                .font(.system(size: 32))
+                                .foregroundColor(goal.isCompleted ? Color(hex: "7D5FFF") : .white.opacity(0.3))
+                        }
+                        Spacer()
                     }
                 }
             }
-            .padding(20)
+            .padding(16)
             .background(
                 LinearGradient(
                     colors: [AppColors.Dark.cardGradientStart, AppColors.Dark.cardGradientEnd],
@@ -204,17 +299,10 @@ struct TimelineCard: View {
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         ),
-                        lineWidth: 1
+                        lineWidth: 1.5
                     )
             )
-            .background(
-                RadialGradient(
-                    colors: [goal.category.color.opacity(0.15), .clear],
-                    center: .center,
-                    startRadius: 0,
-                    endRadius: 100
-                )
-            )
+            .shadow(color: goal.category.color.opacity(0.2), radius: 8, y: 4)
         }
         .buttonStyle(.plain)
     }
