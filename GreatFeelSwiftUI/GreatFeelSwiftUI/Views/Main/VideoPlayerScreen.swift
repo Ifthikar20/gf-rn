@@ -448,7 +448,7 @@ struct VideoPlayerScreen: View {
         log("Video URL String: \(videoUrlString)")
 
         // Determine if this is a local or remote video
-        let url: URL
+        let asset: AVAsset
         if videoUrlString.hasPrefix("http://") || videoUrlString.hasPrefix("https://") {
             // Remote URL
             guard let remoteUrl = URL(string: videoUrlString) else {
@@ -457,25 +457,49 @@ struct VideoPlayerScreen: View {
                 isLoadingVideo = false
                 return
             }
-            url = remoteUrl
             log("Loading remote video from: \(videoUrlString)")
+            asset = AVAsset(url: remoteUrl)
         } else {
-            // Local video file (from Assets.xcassets)
-            guard let localUrl = Bundle.main.url(forResource: videoUrlString, withExtension: "mp4") else {
-                log("Local video file not found: \(videoUrlString).mp4", type: "ERROR")
-                loadingError = "Video file not found in app bundle"
-                isLoadingVideo = false
-                return
+            // Local video from Assets.xcassets - use NSDataAsset
+            log("Attempting to load local video from Assets.xcassets: \(videoUrlString)")
+
+            if let dataAsset = NSDataAsset(name: videoUrlString) {
+                // Successfully loaded from Assets.xcassets
+                log("NSDataAsset loaded, size: \(dataAsset.data.count) bytes", type: "SUCCESS")
+
+                let tempDirectory = FileManager.default.temporaryDirectory
+                let tempFileURL = tempDirectory.appendingPathComponent("\(videoUrlString).mp4")
+
+                do {
+                    // Write to temp file for AVPlayer to access
+                    try dataAsset.data.write(to: tempFileURL)
+                    log("Wrote video data to temp file: \(tempFileURL.lastPathComponent)", type: "SUCCESS")
+                    asset = AVAsset(url: tempFileURL)
+                } catch {
+                    log("Failed to write video data to temp file: \(error.localizedDescription)", type: "ERROR")
+                    loadingError = "Failed to prepare video for playback"
+                    isLoadingVideo = false
+                    return
+                }
+            } else {
+                // Fallback: try loading from bundle
+                log("Local video not found in Assets.xcassets: \(videoUrlString)", type: "WARNING")
+                log("Trying Bundle.main as fallback...")
+
+                if let bundleUrl = Bundle.main.url(forResource: videoUrlString, withExtension: "mp4") {
+                    log("Found video in bundle: \(bundleUrl.lastPathComponent)", type: "SUCCESS")
+                    asset = AVAsset(url: bundleUrl)
+                } else {
+                    log("Video not found in bundle either", type: "ERROR")
+                    loadingError = "Video file '\(videoUrlString)' not found in app resources"
+                    isLoadingVideo = false
+                    return
+                }
             }
-            url = localUrl
-            log("Loading local video from bundle: \(videoUrlString).mp4")
         }
 
-        log("Video URL resolved: \(url.absoluteString)")
+        log("AVAsset created successfully")
         log("Creating AVAsset for async loading...")
-
-        // Create AVAsset and load properties asynchronously
-        let asset = AVAsset(url: url)
 
         // Load asset properties asynchronously to avoid blocking main thread
         Task {
@@ -619,7 +643,7 @@ struct VideoPlayerScreen: View {
         log("Episode Video URL String: \(videoUrlString)")
 
         // Determine if this is a local or remote video
-        let url: URL
+        let asset: AVAsset
         if videoUrlString.hasPrefix("http://") || videoUrlString.hasPrefix("https://") {
             // Remote URL
             guard let remoteUrl = URL(string: videoUrlString) else {
@@ -628,25 +652,49 @@ struct VideoPlayerScreen: View {
                 isLoadingVideo = false
                 return
             }
-            url = remoteUrl
             log("Loading remote video from: \(videoUrlString)")
+            asset = AVAsset(url: remoteUrl)
         } else {
-            // Local video file (from Assets.xcassets)
-            guard let localUrl = Bundle.main.url(forResource: videoUrlString, withExtension: "mp4") else {
-                log("Local video file not found: \(videoUrlString).mp4", type: "ERROR")
-                loadingError = "Video file not found in app bundle"
-                isLoadingVideo = false
-                return
+            // Local video from Assets.xcassets - use NSDataAsset
+            log("Attempting to load local video from Assets.xcassets: \(videoUrlString)")
+
+            if let dataAsset = NSDataAsset(name: videoUrlString) {
+                // Successfully loaded from Assets.xcassets
+                log("NSDataAsset loaded, size: \(dataAsset.data.count) bytes", type: "SUCCESS")
+
+                let tempDirectory = FileManager.default.temporaryDirectory
+                let tempFileURL = tempDirectory.appendingPathComponent("\(videoUrlString).mp4")
+
+                do {
+                    // Write to temp file for AVPlayer to access
+                    try dataAsset.data.write(to: tempFileURL)
+                    log("Wrote video data to temp file: \(tempFileURL.lastPathComponent)", type: "SUCCESS")
+                    asset = AVAsset(url: tempFileURL)
+                } catch {
+                    log("Failed to write video data to temp file: \(error.localizedDescription)", type: "ERROR")
+                    loadingError = "Failed to prepare video for playback"
+                    isLoadingVideo = false
+                    return
+                }
+            } else {
+                // Fallback: try loading from bundle
+                log("Local video not found in Assets.xcassets: \(videoUrlString)", type: "WARNING")
+                log("Trying Bundle.main as fallback...")
+
+                if let bundleUrl = Bundle.main.url(forResource: videoUrlString, withExtension: "mp4") {
+                    log("Found video in bundle: \(bundleUrl.lastPathComponent)", type: "SUCCESS")
+                    asset = AVAsset(url: bundleUrl)
+                } else {
+                    log("Video not found in bundle either", type: "ERROR")
+                    loadingError = "Video file '\(videoUrlString)' not found in app resources"
+                    isLoadingVideo = false
+                    return
+                }
             }
-            url = localUrl
-            log("Loading local video from bundle: \(videoUrlString).mp4")
         }
 
-        log("Episode Video URL resolved: \(url.absoluteString)")
+        log("AVAsset created successfully")
         log("Creating AVAsset for async loading...")
-
-        // Create AVAsset and load properties asynchronously
-        let asset = AVAsset(url: url)
 
         Task {
             do {
