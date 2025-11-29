@@ -11,19 +11,49 @@ struct LibraryScreen: View {
     @EnvironmentObject var themeViewModel: ThemeViewModel
     @StateObject private var viewModel = LibraryViewModel()
     @Environment(\.colorScheme) var colorScheme
+    @State private var triggerEffect = false
 
     var body: some View {
         NavigationStack {
             ZStack {
-                // Background Gradient similar to Discovery
-                LinearGradient(
-                    colors: colorScheme == .dark
-                        ? [AppColors.Dark.discoverBackground, Color(hex: "1E1B4B")]
-                        : [Color(hex: "F0F9FF"), Color(hex: "E0F2FE")],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
+                // 1. Base Gradient Layer (Changes based on mood)
+                Group {
+                    LinearGradient(
+                        colors: themeViewModel.selectedMood.gradientColors,
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                }
                 .ignoresSafeArea()
+                .animation(.easeInOut(duration: 1.0), value: themeViewModel.selectedMood)
+
+                // 2. Animated Overlay Layer (Switches with fade transition)
+                ZStack {
+                    switch themeViewModel.selectedMood {
+                    case .calm:
+                        ZStack {
+                            StarfieldEffect()
+                            AuroraEffect()
+                            AnimatedTreeView(triggerWind: $triggerEffect)
+                            MagicalOrbsEffect()
+                            FirefliesEnhancedEffect()
+                            ShootingStarsEffect()
+                        }
+                    case .cozy:
+                        CozyWarmBackground()
+                    case .sad:
+                        RainRiverBackground(triggerEffect: $triggerEffect)
+                    case .energetic:
+                        EnergeticSparklesBackground()
+                    case .happy:
+                        HappyBubblesBackground()
+                    case .nervous:
+                        NervousPulseBackground()
+                    }
+                }
+                .transition(.opacity)
+                .animation(.easeInOut(duration: 1.0), value: themeViewModel.selectedMood)
+                .id(themeViewModel.selectedMood)
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: AppSpacing.xl) {

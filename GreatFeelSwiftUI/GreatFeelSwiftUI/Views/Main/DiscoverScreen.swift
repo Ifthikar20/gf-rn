@@ -21,21 +21,44 @@ struct DiscoverScreen: View {
 
     var body: some View {
         ZStack {
-            // Background Gradient
-            LinearGradient(
-                colors: colorScheme == .dark
-                    ? [AppColors.Dark.discoverBackground, Color(hex: "1E1B4B")]
-                    : [Color(hex: "F0F9FF"), Color(hex: "E0F2FE")],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
-
-            // Animated Tree Overlay (only in dark mode)
-            if colorScheme == .dark {
-                AnimatedTreeView(triggerWind: $triggerTreeWind)
-                    .ignoresSafeArea()
+            // 1. Base Gradient Layer (Changes based on mood)
+            Group {
+                LinearGradient(
+                    colors: themeViewModel.selectedMood.gradientColors,
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
             }
+            .ignoresSafeArea()
+            .animation(.easeInOut(duration: 1.0), value: themeViewModel.selectedMood)
+
+            // 2. Animated Overlay Layer (Switches with fade transition)
+            ZStack {
+                switch themeViewModel.selectedMood {
+                case .calm:
+                    ZStack {
+                        StarfieldEffect()
+                        AuroraEffect()
+                        AnimatedTreeView(triggerWind: $triggerTreeWind)
+                        MagicalOrbsEffect()
+                        FirefliesEnhancedEffect()
+                        ShootingStarsEffect()
+                    }
+                case .cozy:
+                    CozyWarmBackground()
+                case .sad:
+                    RainRiverBackground(triggerEffect: $triggerTreeWind)
+                case .energetic:
+                    EnergeticSparklesBackground()
+                case .happy:
+                    HappyBubblesBackground()
+                case .nervous:
+                    NervousPulseBackground()
+                }
+            }
+            .transition(.opacity)
+            .animation(.easeInOut(duration: 1.0), value: themeViewModel.selectedMood)
+            .id(themeViewModel.selectedMood)
 
             VStack(spacing: 0) {
                 // --- Header ---
