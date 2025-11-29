@@ -504,10 +504,10 @@ struct VideoPlayerScreen: View {
                         forName: .AVPlayerItemDidPlayToEndTime,
                         object: playerItem,
                         queue: .main
-                    ) { [weak self] _ in
-                        self?.log("Video playback completed", type: "SUCCESS")
-                        self?.player?.seek(to: .zero)
-                        self?.isPlaying = false
+                    ) { _ in
+                        log("Video playback completed", type: "SUCCESS")
+                        player?.seek(to: .zero)
+                        isPlaying = false
                     }
 
                     // Observe playback errors
@@ -515,11 +515,11 @@ struct VideoPlayerScreen: View {
                         forName: .AVPlayerItemFailedToPlayToEndTime,
                         object: playerItem,
                         queue: .main
-                    ) { [weak self] notification in
+                    ) { notification in
                         if let error = notification.userInfo?[AVPlayerItemFailedToPlayToEndTimeErrorKey] as? Error {
-                            self?.log("Playback failed: \(error.localizedDescription)", type: "ERROR")
-                            self?.loadingError = error.localizedDescription
-                            self?.isLoadingVideo = false
+                            log("Playback failed: \(error.localizedDescription)", type: "ERROR")
+                            loadingError = error.localizedDescription
+                            isLoadingVideo = false
                         }
                     }
                 }
@@ -545,22 +545,22 @@ struct VideoPlayerScreen: View {
 
         // Observe status changes
         playerItem.publisher(for: \.status)
-            .sink { [weak self] status in
-                self?.log("Player item status changed: \(status.rawValue)")
+            .sink { status in
+                log("Player item status changed: \(status.rawValue)")
 
                 switch status {
                 case .readyToPlay:
-                    self?.log("Player item ready to play", type: "SUCCESS")
+                    log("Player item ready to play", type: "SUCCESS")
                 case .failed:
                     if let error = playerItem.error {
-                        self?.log("Player item failed: \(error.localizedDescription)", type: "ERROR")
-                        self?.loadingError = error.localizedDescription
-                        self?.isLoadingVideo = false
+                        log("Player item failed: \(error.localizedDescription)", type: "ERROR")
+                        loadingError = error.localizedDescription
+                        isLoadingVideo = false
                     }
                 case .unknown:
-                    self?.log("Player item status unknown", type: "WARNING")
+                    log("Player item status unknown", type: "WARNING")
                 @unknown default:
-                    self?.log("Player item unknown status: \(status.rawValue)", type: "WARNING")
+                    log("Player item unknown status: \(status.rawValue)", type: "WARNING")
                 }
             }
             .store(in: &observers)
@@ -645,10 +645,10 @@ struct VideoPlayerScreen: View {
                         forName: .AVPlayerItemDidPlayToEndTime,
                         object: playerItem,
                         queue: .main
-                    ) { [weak self] _ in
-                        self?.log("Episode playback completed", type: "SUCCESS")
-                        self?.player?.seek(to: .zero)
-                        self?.isPlaying = false
+                    ) { _ in
+                        log("Episode playback completed", type: "SUCCESS")
+                        player?.seek(to: .zero)
+                        isPlaying = false
                     }
                 }
 
