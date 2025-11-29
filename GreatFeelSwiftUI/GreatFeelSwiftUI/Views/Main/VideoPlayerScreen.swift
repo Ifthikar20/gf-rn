@@ -445,14 +445,33 @@ struct VideoPlayerScreen: View {
             return
         }
 
-        guard let url = URL(string: videoUrlString) else {
-            log("Invalid video URL: \(videoUrlString)", type: "ERROR")
-            loadingError = "Invalid video URL format"
-            isLoadingVideo = false
-            return
+        log("Video URL String: \(videoUrlString)")
+
+        // Determine if this is a local or remote video
+        let url: URL
+        if videoUrlString.hasPrefix("http://") || videoUrlString.hasPrefix("https://") {
+            // Remote URL
+            guard let remoteUrl = URL(string: videoUrlString) else {
+                log("Invalid remote video URL: \(videoUrlString)", type: "ERROR")
+                loadingError = "Invalid video URL format"
+                isLoadingVideo = false
+                return
+            }
+            url = remoteUrl
+            log("Loading remote video from: \(videoUrlString)")
+        } else {
+            // Local video file (from Assets.xcassets)
+            guard let localUrl = Bundle.main.url(forResource: videoUrlString, withExtension: "mp4") else {
+                log("Local video file not found: \(videoUrlString).mp4", type: "ERROR")
+                loadingError = "Video file not found in app bundle"
+                isLoadingVideo = false
+                return
+            }
+            url = localUrl
+            log("Loading local video from bundle: \(videoUrlString).mp4")
         }
 
-        log("Video URL: \(videoUrlString)")
+        log("Video URL resolved: \(url.absoluteString)")
         log("Creating AVAsset for async loading...")
 
         // Create AVAsset and load properties asynchronously
@@ -597,14 +616,33 @@ struct VideoPlayerScreen: View {
             return
         }
 
-        guard let url = URL(string: videoUrlString) else {
-            log("Invalid video URL: \(videoUrlString)", type: "ERROR")
-            loadingError = "Invalid video URL format"
-            isLoadingVideo = false
-            return
+        log("Episode Video URL String: \(videoUrlString)")
+
+        // Determine if this is a local or remote video
+        let url: URL
+        if videoUrlString.hasPrefix("http://") || videoUrlString.hasPrefix("https://") {
+            // Remote URL
+            guard let remoteUrl = URL(string: videoUrlString) else {
+                log("Invalid remote video URL: \(videoUrlString)", type: "ERROR")
+                loadingError = "Invalid video URL format"
+                isLoadingVideo = false
+                return
+            }
+            url = remoteUrl
+            log("Loading remote video from: \(videoUrlString)")
+        } else {
+            // Local video file (from Assets.xcassets)
+            guard let localUrl = Bundle.main.url(forResource: videoUrlString, withExtension: "mp4") else {
+                log("Local video file not found: \(videoUrlString).mp4", type: "ERROR")
+                loadingError = "Video file not found in app bundle"
+                isLoadingVideo = false
+                return
+            }
+            url = localUrl
+            log("Loading local video from bundle: \(videoUrlString).mp4")
         }
 
-        log("Video URL: \(videoUrlString)")
+        log("Episode Video URL resolved: \(url.absoluteString)")
         log("Creating AVAsset for async loading...")
 
         // Create AVAsset and load properties asynchronously

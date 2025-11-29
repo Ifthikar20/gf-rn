@@ -79,7 +79,114 @@ enum MeditationCategory: String, Codable, CaseIterable {
 // MARK: - Mock Meditation Sessions
 extension MeditationSession {
     static let mockSessions: [MeditationSession] = [
-        // Featured
+        // Featured - Local Video Content
+        MeditationSession(
+            id: "m_local_1",
+            title: "Cozy Comfort Session",
+            description: "Embrace warmth and comfort with gentle movements and soothing guidance",
+            category: .mindfulness,
+            duration: 12,
+            coverImage: "women-cudly-1",
+            audioUrl: nil,
+            videoUrl: "women-cudly-video",
+            contentType: .video,
+            instructor: "Emma Thompson",
+            isFeatured: true,
+            isPopular: true,
+            isEditorsPick: true
+        ),
+        MeditationSession(
+            id: "m_local_2",
+            title: "Peaceful Evening Ritual",
+            description: "Wind down your day with this calming evening meditation practice",
+            category: .sleepSounds,
+            duration: 15,
+            coverImage: "women-cudly-2",
+            audioUrl: nil,
+            videoUrl: "women-cudly-video-1",
+            contentType: .video,
+            instructor: "Emma Thompson",
+            isFeatured: true,
+            isPopular: true,
+            isEditorsPick: false
+        ),
+        MeditationSession(
+            id: "m_local_3",
+            title: "Gentle Morning Stretch",
+            description: "Start your day with gentle stretches and mindful breathing",
+            category: .breathingExercises,
+            duration: 10,
+            coverImage: "women-cudly-3",
+            audioUrl: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3",
+            videoUrl: nil,
+            contentType: .audio,
+            instructor: "Emma Thompson",
+            isFeatured: true,
+            isPopular: false,
+            isEditorsPick: true
+        ),
+        MeditationSession(
+            id: "m_local_4",
+            title: "Afternoon Reset",
+            description: "Take a midday break to reset and recharge your energy",
+            category: .mindfulness,
+            duration: 8,
+            coverImage: "women-cudly-4",
+            audioUrl: "https://cdn.pixabay.com/download/audio/2022/03/10/audio_c610232532.mp3",
+            videoUrl: nil,
+            contentType: .audio,
+            instructor: "Emma Thompson",
+            isFeatured: false,
+            isPopular: true,
+            isEditorsPick: false
+        ),
+        MeditationSession(
+            id: "m_local_5",
+            title: "Deep Relaxation",
+            description: "Release tension and find complete relaxation in this guided session",
+            category: .guidedMeditation,
+            duration: 20,
+            coverImage: "women-cudly-5",
+            audioUrl: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3",
+            videoUrl: nil,
+            contentType: .audio,
+            instructor: "Emma Thompson",
+            isFeatured: false,
+            isPopular: true,
+            isEditorsPick: true
+        ),
+        MeditationSession(
+            id: "m_local_6",
+            title: "Stress Relief Flow",
+            description: "Let go of daily stress with this flowing meditation practice",
+            category: .mindfulness,
+            duration: 14,
+            coverImage: "women-cudly-6",
+            audioUrl: "https://cdn.pixabay.com/download/audio/2022/03/10/audio_c610232532.mp3",
+            videoUrl: nil,
+            contentType: .audio,
+            instructor: "Emma Thompson",
+            isFeatured: false,
+            isPopular: false,
+            isEditorsPick: true
+        ),
+        MeditationSession(
+            id: "m_local_7",
+            title: "Bedtime Serenity",
+            description: "Prepare for restful sleep with this peaceful evening meditation",
+            category: .sleepSounds,
+            duration: 18,
+            coverImage: "women-cudly-7",
+            audioUrl: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3",
+            videoUrl: nil,
+            contentType: .audio,
+            instructor: "Emma Thompson",
+            isFeatured: false,
+            isPopular: true,
+            isEditorsPick: false
+        ),
+
+        // Original Sessions
         MeditationSession(
             id: "m1",
             title: "Ocean Waves at Sunset",
