@@ -18,21 +18,44 @@ struct MeditateScreen: View {
     var body: some View {
         NavigationStack {
             ZStack {
-            // Background Gradient
-            LinearGradient(
-                colors: colorScheme == .dark
-                    ? [AppColors.Dark.deepNightStart, AppColors.Dark.deepNightEnd]
-                    : [Color(hex: "EEF2FF"), Color(hex: "E0E7FF")],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
-
-            // Animated Tree Overlay (only in dark mode)
-            if colorScheme == .dark {
-                AnimatedTreeView(triggerWind: $triggerTreeWind)
-                    .ignoresSafeArea()
+            // 1. Base Gradient Layer (Changes based on mood)
+            Group {
+                LinearGradient(
+                    colors: themeViewModel.selectedMood.gradientColors,
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
             }
+            .ignoresSafeArea()
+            .animation(.easeInOut(duration: 1.0), value: themeViewModel.selectedMood)
+
+            // 2. Animated Overlay Layer (Switches with fade transition)
+            ZStack {
+                switch themeViewModel.selectedMood {
+                case .calm:
+                    ZStack {
+                        StarfieldEffect()
+                        AuroraEffect()
+                        AnimatedTreeView(triggerWind: $triggerTreeWind)
+                        MagicalOrbsEffect()
+                        FirefliesEnhancedEffect()
+                        ShootingStarsEffect()
+                    }
+                case .cozy:
+                    CozyWarmBackground()
+                case .sad:
+                    RainRiverBackground(triggerEffect: $triggerTreeWind)
+                case .energetic:
+                    EnergeticSparklesBackground()
+                case .happy:
+                    HappyBubblesBackground()
+                case .nervous:
+                    NervousPulseBackground()
+                }
+            }
+            .transition(.opacity)
+            .animation(.easeInOut(duration: 1.0), value: themeViewModel.selectedMood)
+            .id(themeViewModel.selectedMood)
 
             // Main Content
             ScrollView(.vertical, showsIndicators: false) {
@@ -356,33 +379,44 @@ struct ModernSessionCard: View {
             VStack(alignment: .leading, spacing: 12) {
                     // Cover Image with Play Button Overlay
                     ZStack(alignment: .bottomTrailing) {
-                        AsyncImage(url: URL(string: session.coverImage ?? "")) { phase in
-                            switch phase {
-                            case .success(let image):
-                                image
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                            case .empty, .failure, _:
-                                LinearGradient(
-                                    colors: [
-                                        AppColors.primary(for: colorScheme).opacity(0.6),
-                                        AppColors.secondary(for: colorScheme).opacity(0.6)
-                                    ],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
+                        // Detect if cover image is local (from Assets.xcassets) or remote URL
+                        if let coverImage = session.coverImage,
+                           coverImage.hasPrefix("http://") || coverImage.hasPrefix("https://") {
+                            // Remote image - use AsyncImage
+                            AsyncImage(url: URL(string: coverImage)) { phase in
+                                switch phase {
+                                case .success(let image):
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                case .empty, .failure, _:
+                                    placeholderGradient
+                                }
                             }
+                            .frame(width: 180, height: 180)
+                            .cornerRadius(16)
+                        } else if let coverImage = session.coverImage {
+                            // Local image from Assets.xcassets - use Image
+                            Image(coverImage)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 180, height: 180)
+                                .cornerRadius(16)
+                        } else {
+                            // No cover image - show placeholder
+                            placeholderGradient
+                                .frame(width: 180, height: 180)
+                                .cornerRadius(16)
                         }
+
+                        // Overlay gradient
+                        LinearGradient(
+                            colors: [Color.clear, Color.black.opacity(0.3)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
                         .frame(width: 180, height: 180)
                         .cornerRadius(16)
-                        .overlay(
-                            LinearGradient(
-                                colors: [Color.clear, Color.black.opacity(0.3)],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                            .cornerRadius(16)
-                        )
 
                         // Play Button
                         ZStack {
@@ -425,6 +459,18 @@ struct ModernSessionCard: View {
                 }
         }
         .buttonStyle(PlainButtonStyle())
+    }
+
+    // Placeholder gradient for missing images
+    private var placeholderGradient: some View {
+        LinearGradient(
+            colors: [
+                AppColors.primary(for: colorScheme).opacity(0.6),
+                AppColors.secondary(for: colorScheme).opacity(0.6)
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
     }
 }
 

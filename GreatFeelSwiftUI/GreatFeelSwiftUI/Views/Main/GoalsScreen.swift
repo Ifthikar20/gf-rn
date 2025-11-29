@@ -146,48 +146,120 @@ struct TimelineCard: View {
 
     var body: some View {
         Button(action: onTap) {
-            HStack {
-                VStack(alignment: .leading, spacing: 10) {
-                    // Category Tag
-                    HStack(spacing: 6) {
-                        Image(systemName: goal.category.icon)
-                        Text(goal.type.rawValue)
+            HStack(spacing: 12) {
+                // Smaller Thumbnail Image
+                if let thumbnail = goal.thumbnail {
+                    // Detect local vs remote images
+                    if thumbnail.hasPrefix("http://") || thumbnail.hasPrefix("https://") {
+                        // Remote image - use AsyncImage
+                        AsyncImage(url: URL(string: thumbnail)) { phase in
+                            switch phase {
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                            case .empty, .failure, _:
+                                ZStack {
+                                    goal.category.color.opacity(0.3)
+                                    Image(systemName: goal.type.icon)
+                                        .font(.system(size: 20))
+                                        .foregroundColor(.white.opacity(0.6))
+                                }
+                            }
+                        }
+                        .frame(width: 60, height: 60)
+                        .cornerRadius(12)
+                        .overlay(
+                            goal.type == .video ?
+                            Image(systemName: "play.circle.fill")
+                                .font(.system(size: 24))
+                                .foregroundColor(.white)
+                                .shadow(color: .black.opacity(0.3), radius: 2)
+                            : nil
+                        )
+                    } else {
+                        // Local image - use Image() for Assets.xcassets
+                        Image(thumbnail)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 60, height: 60)
+                            .cornerRadius(12)
+                            .overlay(
+                                goal.type == .video ?
+                                Image(systemName: "play.circle.fill")
+                                    .font(.system(size: 24))
+                                    .foregroundColor(.white)
+                                    .shadow(color: .black.opacity(0.3), radius: 2)
+                                : nil
+                            )
                     }
-                    .font(.caption)
-                    .fontWeight(.bold)
-                    .foregroundColor(goal.category.color)
+                } else {
+                    // Fallback gradient thumbnail
+                    ZStack {
+                        LinearGradient(
+                            colors: [goal.category.color.opacity(0.6), goal.category.color.opacity(0.3)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                        Image(systemName: goal.type.icon)
+                            .font(.system(size: 20))
+                            .foregroundColor(.white.opacity(0.8))
+                    }
+                    .frame(width: 60, height: 60)
+                    .cornerRadius(12)
+                }
 
-                    // Title & Subtitle
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(goal.title)
-                            .font(.title3)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
+                // Simplified Content
+                VStack(alignment: .leading, spacing: 6) {
+                    // Title
+                    Text(goal.title)
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(.white)
+                        .lineLimit(1)
 
-                        Text("\(goal.duration) min")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
+                    // Simplified Info Row (Duration & Points only)
+                    HStack(spacing: 10) {
+                        // Duration
+                        HStack(spacing: 3) {
+                            Image(systemName: "clock")
+                                .font(.system(size: 10))
+                            Text("\(goal.duration)m")
+                                .font(.caption2)
+                        }
+                        .foregroundColor(.white.opacity(0.6))
+
+                        // Wellness Points
+                        HStack(spacing: 3) {
+                            Image(systemName: "leaf.circle.fill")
+                                .font(.system(size: 10))
+                                .foregroundColor(Color(hex: "7D5FFF"))
+                            Text("+\(goal.wellnessPoints)")
+                                .font(.caption2)
+                                .fontWeight(.semibold)
+                        }
+                        .foregroundColor(.white.opacity(0.9))
                     }
                 }
 
                 Spacer()
 
-                // Lock or Completion Icon
+                // Compact Completion Icon
                 if goal.isLocked {
                     Image(systemName: "lock.fill")
+                        .font(.system(size: 18))
                         .foregroundColor(.white.opacity(0.5))
-                        .padding()
+                        .padding(8)
                         .background(Color.black.opacity(0.2))
                         .clipShape(Circle())
                 } else {
                     Button(action: onToggleComplete) {
                         Image(systemName: goal.isCompleted ? "checkmark.circle.fill" : "circle")
-                            .font(.system(size: 30))
-                            .foregroundColor(goal.isCompleted ? .green : .white.opacity(0.3))
+                            .font(.system(size: 26))
+                            .foregroundColor(goal.isCompleted ? Color(hex: "7D5FFF") : .white.opacity(0.3))
                     }
                 }
             }
-            .padding(20)
+            .padding(12)
             .background(
                 LinearGradient(
                     colors: [AppColors.Dark.cardGradientStart, AppColors.Dark.cardGradientEnd],
@@ -204,17 +276,10 @@ struct TimelineCard: View {
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         ),
-                        lineWidth: 1
+                        lineWidth: 1.5
                     )
             )
-            .background(
-                RadialGradient(
-                    colors: [goal.category.color.opacity(0.15), .clear],
-                    center: .center,
-                    startRadius: 0,
-                    endRadius: 100
-                )
-            )
+            .shadow(color: goal.category.color.opacity(0.2), radius: 8, y: 4)
         }
         .buttonStyle(.plain)
     }
