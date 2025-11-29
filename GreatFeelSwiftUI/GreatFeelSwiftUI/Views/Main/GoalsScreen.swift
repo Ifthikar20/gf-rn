@@ -149,32 +149,52 @@ struct TimelineCard: View {
             HStack(spacing: 16) {
                 // Thumbnail Image
                 if let thumbnail = goal.thumbnail {
-                    AsyncImage(url: URL(string: thumbnail)) { phase in
-                        switch phase {
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                        case .empty, .failure, _:
-                            ZStack {
-                                goal.category.color.opacity(0.3)
-                                Image(systemName: goal.type.icon)
-                                    .font(.system(size: 28))
-                                    .foregroundColor(.white.opacity(0.6))
+                    // Detect local vs remote images
+                    if thumbnail.hasPrefix("http://") || thumbnail.hasPrefix("https://") {
+                        // Remote image - use AsyncImage
+                        AsyncImage(url: URL(string: thumbnail)) { phase in
+                            switch phase {
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                            case .empty, .failure, _:
+                                ZStack {
+                                    goal.category.color.opacity(0.3)
+                                    Image(systemName: goal.type.icon)
+                                        .font(.system(size: 28))
+                                        .foregroundColor(.white.opacity(0.6))
+                                }
                             }
                         }
+                        .frame(width: 90, height: 90)
+                        .cornerRadius(16)
+                        .overlay(
+                            // Play icon for video content
+                            goal.type == .video ?
+                            Image(systemName: "play.circle.fill")
+                                .font(.system(size: 32))
+                                .foregroundColor(.white)
+                                .shadow(color: .black.opacity(0.3), radius: 4)
+                            : nil
+                        )
+                    } else {
+                        // Local image - use Image() for Assets.xcassets
+                        Image(thumbnail)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 90, height: 90)
+                            .cornerRadius(16)
+                            .overlay(
+                                // Play icon for video content
+                                goal.type == .video ?
+                                Image(systemName: "play.circle.fill")
+                                    .font(.system(size: 32))
+                                    .foregroundColor(.white)
+                                    .shadow(color: .black.opacity(0.3), radius: 4)
+                                : nil
+                            )
                     }
-                    .frame(width: 90, height: 90)
-                    .cornerRadius(16)
-                    .overlay(
-                        // Play icon for video content
-                        goal.type == .video ?
-                        Image(systemName: "play.circle.fill")
-                            .font(.system(size: 32))
-                            .foregroundColor(.white)
-                            .shadow(color: .black.opacity(0.3), radius: 4)
-                        : nil
-                    )
                 } else {
                     // Fallback gradient thumbnail
                     ZStack {
