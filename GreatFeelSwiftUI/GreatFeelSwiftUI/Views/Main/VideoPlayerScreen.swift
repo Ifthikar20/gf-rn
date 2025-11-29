@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AVKit
+import Combine
 
 struct VideoPlayerScreen: View {
     let session: MeditationSession
@@ -19,6 +20,8 @@ struct VideoPlayerScreen: View {
     @State private var isSaved = false
     @State private var isFullscreen = false
     @State private var bookmarkPulse = false
+    @State private var isLoadingVideo = true
+    @State private var loadingError: String?
 
     // Get screen dimensions
     private var screenHeight: CGFloat {
@@ -27,6 +30,12 @@ struct VideoPlayerScreen: View {
 
     private var videoHeight: CGFloat {
         screenHeight * 0.5 // 50% of screen height
+    }
+
+    // Logging helper
+    private func log(_ message: String, type: String = "INFO") {
+        let emoji = type == "ERROR" ? "❌" : type == "SUCCESS" ? "✅" : type == "WARNING" ? "⚠️" : "ℹ️"
+        print("[\(emoji) VideoPlayer] \(message)")
     }
 
     var body: some View {
@@ -90,7 +99,43 @@ struct VideoPlayerScreen: View {
     // MARK: - Video Player Section
     private var videoPlayerSection: some View {
         ZStack(alignment: .topTrailing) {
-            if let player = player {
+            if let error = loadingError {
+                // Error state
+                Rectangle()
+                    .fill(Color.black)
+                    .frame(height: videoHeight)
+                    .overlay(
+                        VStack(spacing: 16) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(.system(size: 48))
+                                .foregroundColor(.red)
+
+                            Text("Failed to load video")
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundColor(.white)
+
+                            Text(error)
+                                .font(.system(size: 14))
+                                .foregroundColor(.white.opacity(0.7))
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 40)
+
+                            Button(action: {
+                                loadingError = nil
+                                isLoadingVideo = true
+                                setupPlayer()
+                            }) {
+                                Text("Retry")
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 24)
+                                    .padding(.vertical, 12)
+                                    .background(Color.blue)
+                                    .cornerRadius(12)
+                            }
+                        }
+                    )
+            } else if let player = player, !isLoadingVideo {
                 VideoPlayer(player: player)
                     .frame(height: videoHeight)
                     .background(Color.black)
@@ -100,8 +145,15 @@ struct VideoPlayerScreen: View {
                     .fill(Color.black)
                     .frame(height: videoHeight)
                     .overlay(
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        VStack(spacing: 16) {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                .scaleEffect(1.5)
+
+                            Text("Loading video...")
+                                .font(.system(size: 16))
+                                .foregroundColor(.white.opacity(0.8))
+                        }
                     )
             }
 
@@ -380,32 +432,141 @@ struct VideoPlayerScreen: View {
 
     // MARK: - Helper Methods
     private func setupPlayer() {
-        guard let videoUrlString = session.videoUrl,
-              let url = URL(string: videoUrlString) else {
-            print("❌ Invalid video URL")
+        log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        log("Starting video player setup")
+        log("Session: \(session.title)")
+        log("Session ID: \(session.id)")
+        log("Content Type: \(session.contentType.rawValue)")
+
+        guard let videoUrlString = session.videoUrl else {
+            log("Video URL is nil for session: \(session.title)", type: "ERROR")
+            loadingError = "No video URL available"
+            isLoadingVideo = false
             return
         }
 
-        print("🎥 Setting up video player for: \(session.title)")
-        print("🎥 Video URL: \(videoUrlString)")
+        guard let url = URL(string: videoUrlString) else {
+            log("Invalid video URL: \(videoUrlString)", type: "ERROR")
+            loadingError = "Invalid video URL format"
+            isLoadingVideo = false
+            return
+        }
 
-        player = AVPlayer(url: url)
+        log("Video URL: \(videoUrlString)")
+        log("Creating AVAsset for async loading...")
 
-        // Auto-play
-        player?.play()
-        isPlaying = true
+        // Create AVAsset and load properties asynchronously
+        let asset = AVAsset(url: url)
 
-        // Observe playback status
-        NotificationCenter.default.addObserver(
-            forName: .AVPlayerItemDidPlayToEndTime,
-            object: player?.currentItem,
-            queue: .main
-        ) { _ in
-            print("✅ Video finished playing")
-            player?.seek(to: .zero)
-            isPlaying = false
+        // Load asset properties asynchronously to avoid blocking main thread
+        Task {
+            do {
+                log("Loading asset properties asynchronously...")
+
+                // Load required properties
+                let (isPlayable, duration) = try await asset.load(.isPlayable, .duration)
+
+                log("Asset properties loaded successfully", type: "SUCCESS")
+                log("  - Is Playable: \(isPlayable)")
+                log("  - Duration: \(duration.seconds) seconds")
+
+                if !isPlayable {
+                    log("Asset is not playable", type: "ERROR")
+                    await MainActor.run {
+                        loadingError = "Video format not supported"
+                        isLoadingVideo = false
+                    }
+                    return
+                }
+
+                // Create player item and player on main thread
+                await MainActor.run {
+                    log("Creating AVPlayerItem and AVPlayer...")
+                    let playerItem = AVPlayerItem(asset: asset)
+
+                    // Observe player item status
+                    addPlayerItemObserver(playerItem)
+
+                    player = AVPlayer(playerItem: playerItem)
+
+                    log("Player created successfully", type: "SUCCESS")
+                    log("Starting playback...")
+
+                    // Auto-play
+                    player?.play()
+                    isPlaying = true
+                    isLoadingVideo = false
+
+                    log("Playback started", type: "SUCCESS")
+
+                    // Observe playback completion
+                    NotificationCenter.default.addObserver(
+                        forName: .AVPlayerItemDidPlayToEndTime,
+                        object: playerItem,
+                        queue: .main
+                    ) { [weak self] _ in
+                        self?.log("Video playback completed", type: "SUCCESS")
+                        self?.player?.seek(to: .zero)
+                        self?.isPlaying = false
+                    }
+
+                    // Observe playback errors
+                    NotificationCenter.default.addObserver(
+                        forName: .AVPlayerItemFailedToPlayToEndTime,
+                        object: playerItem,
+                        queue: .main
+                    ) { [weak self] notification in
+                        if let error = notification.userInfo?[AVPlayerItemFailedToPlayToEndTimeErrorKey] as? Error {
+                            self?.log("Playback failed: \(error.localizedDescription)", type: "ERROR")
+                            self?.loadingError = error.localizedDescription
+                            self?.isLoadingVideo = false
+                        }
+                    }
+                }
+
+                log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+
+            } catch {
+                log("Failed to load asset properties: \(error.localizedDescription)", type: "ERROR")
+                log("Error details: \(error)", type: "ERROR")
+
+                await MainActor.run {
+                    loadingError = "Failed to load video: \(error.localizedDescription)"
+                    isLoadingVideo = false
+                }
+
+                log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+            }
         }
     }
+
+    private func addPlayerItemObserver(_ playerItem: AVPlayerItem) {
+        log("Adding player item status observer...")
+
+        // Observe status changes
+        playerItem.publisher(for: \.status)
+            .sink { [weak self] status in
+                self?.log("Player item status changed: \(status.rawValue)")
+
+                switch status {
+                case .readyToPlay:
+                    self?.log("Player item ready to play", type: "SUCCESS")
+                case .failed:
+                    if let error = playerItem.error {
+                        self?.log("Player item failed: \(error.localizedDescription)", type: "ERROR")
+                        self?.loadingError = error.localizedDescription
+                        self?.isLoadingVideo = false
+                    }
+                case .unknown:
+                    self?.log("Player item status unknown", type: "WARNING")
+                @unknown default:
+                    self?.log("Player item unknown status: \(status.rawValue)", type: "WARNING")
+                }
+            }
+            .store(in: &observers)
+    }
+
+    @State private var observers: Set<AnyCancellable> = []
 
     private func getRelatedEpisodes() -> [MeditationSession] {
         // Get other video sessions, excluding current one
@@ -414,19 +575,96 @@ struct VideoPlayerScreen: View {
     }
 
     private func switchToEpisode(_ episode: MeditationSession) {
-        // Pause current player
+        log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        log("Switching to new episode: \(episode.title)")
+
+        // Reset state
+        isLoadingVideo = true
+        loadingError = nil
+
+        // Pause and cleanup current player
+        log("Cleaning up current player...")
         player?.pause()
         player = nil
+        observers.removeAll()
 
-        // Setup new episode
-        guard let videoUrlString = episode.videoUrl,
-              let url = URL(string: videoUrlString) else {
+        log("Setting up new episode...")
+
+        guard let videoUrlString = episode.videoUrl else {
+            log("Video URL is nil for episode: \(episode.title)", type: "ERROR")
+            loadingError = "No video URL available"
+            isLoadingVideo = false
             return
         }
 
-        player = AVPlayer(url: url)
-        player?.play()
-        isPlaying = true
+        guard let url = URL(string: videoUrlString) else {
+            log("Invalid video URL: \(videoUrlString)", type: "ERROR")
+            loadingError = "Invalid video URL format"
+            isLoadingVideo = false
+            return
+        }
+
+        log("Video URL: \(videoUrlString)")
+        log("Creating AVAsset for async loading...")
+
+        // Create AVAsset and load properties asynchronously
+        let asset = AVAsset(url: url)
+
+        Task {
+            do {
+                log("Loading asset properties asynchronously...")
+
+                let (isPlayable, duration) = try await asset.load(.isPlayable, .duration)
+
+                log("Asset properties loaded", type: "SUCCESS")
+                log("  - Is Playable: \(isPlayable)")
+                log("  - Duration: \(duration.seconds) seconds")
+
+                if !isPlayable {
+                    log("Asset is not playable", type: "ERROR")
+                    await MainActor.run {
+                        loadingError = "Video format not supported"
+                        isLoadingVideo = false
+                    }
+                    return
+                }
+
+                await MainActor.run {
+                    log("Creating player for new episode...")
+                    let playerItem = AVPlayerItem(asset: asset)
+                    addPlayerItemObserver(playerItem)
+
+                    player = AVPlayer(playerItem: playerItem)
+                    player?.play()
+                    isPlaying = true
+                    isLoadingVideo = false
+
+                    log("New episode playback started", type: "SUCCESS")
+
+                    NotificationCenter.default.addObserver(
+                        forName: .AVPlayerItemDidPlayToEndTime,
+                        object: playerItem,
+                        queue: .main
+                    ) { [weak self] _ in
+                        self?.log("Episode playback completed", type: "SUCCESS")
+                        self?.player?.seek(to: .zero)
+                        self?.isPlaying = false
+                    }
+                }
+
+                log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+
+            } catch {
+                log("Failed to load asset: \(error.localizedDescription)", type: "ERROR")
+
+                await MainActor.run {
+                    loadingError = "Failed to load video: \(error.localizedDescription)"
+                    isLoadingVideo = false
+                }
+
+                log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+            }
+        }
     }
 }
 
