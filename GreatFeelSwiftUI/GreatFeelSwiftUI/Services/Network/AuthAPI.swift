@@ -34,7 +34,8 @@ class AuthAPI {
                 name: "Admin User",
                 email: "admin@greatfeel.com",
                 avatar: nil,
-                createdAt: Date()
+                createdAt: Date(),
+                updatedAt: Date()
             )
 
             return AuthResponse(user: adminUser, tokens: mockTokens)
@@ -82,7 +83,8 @@ class AuthAPI {
             name: credentials.name,
             email: credentials.email,
             avatar: nil,
-            createdAt: Date()
+            createdAt: Date(),
+            updatedAt: Date()
         )
 
         return AuthResponse(user: newUser, tokens: mockTokens)
