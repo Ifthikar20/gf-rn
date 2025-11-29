@@ -31,8 +31,8 @@ class AuthAPI {
             // Create admin user
             let adminUser = User(
                 id: UUID().uuidString,
-                name: "Admin User",
                 email: "admin@greatfeel.com",
+                name: "Admin User",
                 avatar: nil,
                 createdAt: Date(),
                 updatedAt: Date()
@@ -80,8 +80,8 @@ class AuthAPI {
 
         let newUser = User(
             id: UUID().uuidString,
-            name: credentials.name,
             email: credentials.email,
+            name: credentials.name,
             avatar: nil,
             createdAt: Date(),
             updatedAt: Date()
