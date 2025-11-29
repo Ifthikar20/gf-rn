@@ -12,37 +12,88 @@ class AuthAPI {
 
     // MARK: - Login
     func login(credentials: LoginCredentials) async throws -> AuthResponse {
-        // For now, return mock data for testing
-        // In production, uncomment the real API call
+        // HARDCODED LOGIN FOR DEVELOPMENT
+        // TODO: Replace with real API call when backend is ready
+        // Endpoint: POST /auth/login
+        // Request: { email, password }
+        // Response: { user, tokens }
 
-        // Real API call:
+        try await Task.sleep(nanoseconds: 1_000_000_000) // Simulate network delay
+
+        // Validate hardcoded credentials
+        if credentials.email.lowercased() == "admin" && credentials.password == "admin" {
+            let mockTokens = AuthTokens(
+                accessToken: "mock_access_token_\(UUID().uuidString)",
+                refreshToken: "mock_refresh_token_\(UUID().uuidString)",
+                expiresIn: 3600
+            )
+
+            // Create admin user
+            let adminUser = User(
+                id: UUID().uuidString,
+                name: "Admin User",
+                email: "admin@greatfeel.com",
+                avatar: nil,
+                createdAt: Date()
+            )
+
+            return AuthResponse(user: adminUser, tokens: mockTokens)
+        } else {
+            throw AuthError.invalidCredentials
+        }
+
+        // Real API call (commented out for now):
         // return try await client.request(
         //     endpoint: "/auth/login",
         //     method: .post,
         //     body: credentials,
         //     requiresAuth: false
         // )
+    }
 
-        // Mock response for testing
+    // MARK: - Register
+    func register(credentials: RegisterCredentials) async throws -> AuthResponse {
+        // HARDCODED REGISTRATION FOR DEVELOPMENT
+        // TODO: Replace with real API call when backend is ready
+        // Endpoint: POST /auth/register
+        // Request: { email, password, full_name }
+        // Response: { user, tokens }
+
         try await Task.sleep(nanoseconds: 1_000_000_000) // Simulate network delay
 
+        // Basic validation
+        guard credentials.password == credentials.confirmPassword else {
+            throw AuthError.passwordMismatch
+        }
+
+        guard credentials.password.count >= 6 else {
+            throw AuthError.weakPassword
+        }
+
+        // Create mock user from registration data
         let mockTokens = AuthTokens(
             accessToken: "mock_access_token_\(UUID().uuidString)",
             refreshToken: "mock_refresh_token_\(UUID().uuidString)",
             expiresIn: 3600
         )
 
-        return AuthResponse(user: User.mock, tokens: mockTokens)
-    }
-
-    // MARK: - Register
-    func register(credentials: RegisterCredentials) async throws -> AuthResponse {
-        return try await client.request(
-            endpoint: "/auth/register",
-            method: .post,
-            body: credentials,
-            requiresAuth: false
+        let newUser = User(
+            id: UUID().uuidString,
+            name: credentials.name,
+            email: credentials.email,
+            avatar: nil,
+            createdAt: Date()
         )
+
+        return AuthResponse(user: newUser, tokens: mockTokens)
+
+        // Real API call (commented out for now):
+        // return try await client.request(
+        //     endpoint: "/auth/register",
+        //     method: .post,
+        //     body: credentials,
+        //     requiresAuth: false
+        // )
     }
 
     // MARK: - Logout

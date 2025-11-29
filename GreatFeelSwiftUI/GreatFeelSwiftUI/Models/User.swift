@@ -64,6 +64,39 @@ struct AuthResponse: Codable {
     let tokens: AuthTokens
 }
 
+// MARK: - Auth Errors
+enum AuthError: LocalizedError {
+    case invalidCredentials
+    case passwordMismatch
+    case weakPassword
+    case emailAlreadyExists
+    case networkError
+    case serverError
+    case invalidToken
+    case unknown
+
+    var errorDescription: String? {
+        switch self {
+        case .invalidCredentials:
+            return "Invalid email or password. Please try again."
+        case .passwordMismatch:
+            return "Passwords do not match."
+        case .weakPassword:
+            return "Password must be at least 6 characters long."
+        case .emailAlreadyExists:
+            return "An account with this email already exists."
+        case .networkError:
+            return "Network error. Please check your connection."
+        case .serverError:
+            return "Server error. Please try again later."
+        case .invalidToken:
+            return "Session expired. Please log in again."
+        case .unknown:
+            return "An unknown error occurred."
+        }
+    }
+}
+
 // MARK: - Mock User for Testing
 extension User {
     static let mock = User(
