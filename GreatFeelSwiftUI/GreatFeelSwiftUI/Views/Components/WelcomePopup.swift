@@ -24,7 +24,7 @@ struct WelcomePopup: View {
             // Popup card
             VStack(spacing: 24) {
                 // Animated character with Lottie animation
-                AnimatedWelcomeCharacterRemote()
+                AnimatedWelcomeCharacter()
                     .frame(height: 250)
 
                 // Welcome text

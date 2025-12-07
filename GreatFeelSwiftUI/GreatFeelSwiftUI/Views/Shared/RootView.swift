@@ -37,13 +37,22 @@ struct RootView: View {
             }
         }
         .onAppear {
-            // Show welcome popup on first launch
-            if !UserDefaultsService.shared.hasSeenWelcome {
-                // Delay slightly for better animation
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    showWelcomePopup = true
-                }
+            print("RootView appeared")
+            print("hasSeenWelcome: \(UserDefaultsService.shared.hasSeenWelcome)")
+
+            // TEMPORARY: Always show popup for testing
+            // TODO: Revert to check hasSeenWelcome after testing
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                print("Showing welcome popup...")
+                showWelcomePopup = true
             }
+
+            // Original code (currently disabled for testing):
+            // if !UserDefaultsService.shared.hasSeenWelcome {
+            //     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            //         showWelcomePopup = true
+            //     }
+            // }
         }
     }
 
