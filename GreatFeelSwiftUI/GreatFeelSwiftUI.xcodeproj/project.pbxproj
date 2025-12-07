@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		43BBF8C27B564B94A52E58E3 /* OnboardingQuestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 962735ECF0AD42B3AFE4F3B9 /* OnboardingQuestion.swift */; };
+		C613A0E1E8784A5EA8AA709D /* UserOnboardingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E4AF8D69544479E9E1796A8 /* UserOnboardingData.swift */; };
+		F9F652AB563642B9B80D413E /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17AC00383CCD45BB99256A95 /* OnboardingView.swift */; };
+		0259FDB1ACA7407C923C25BE /* PersonalizationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0528A0CB8302472FB642EEDF /* PersonalizationService.swift */; };
+		18F7E8F5058240F18D34568C /* PersonalizedWelcomeBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657FC703FA3A4560A5E396FB /* PersonalizedWelcomeBanner.swift */; };
 		002404CC8CC9DF534A3220A8 /* GoalsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFC2BF7663892E63806C6E4 /* GoalsScreen.swift */; };
 		229068DFC1B05C80D54A12B5 /* AudioPlayerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B868C4AE4637089398E8838A /* AudioPlayerService.swift */; };
 		2C292CC53ABF6FA9EAFE9DE2 /* Meditation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 118D2DEE77A5DE0BD95656FC /* Meditation.swift */; };
@@ -50,6 +55,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		962735ECF0AD42B3AFE4F3B9 /* OnboardingQuestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingQuestion.swift; sourceTree = "<group>"; };
+		0E4AF8D69544479E9E1796A8 /* UserOnboardingData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserOnboardingData.swift; sourceTree = "<group>"; };
+		17AC00383CCD45BB99256A95 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		0528A0CB8302472FB642EEDF /* PersonalizationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalizationService.swift; sourceTree = "<group>"; };
+		657FC703FA3A4560A5E396FB /* PersonalizedWelcomeBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalizedWelcomeBanner.swift; sourceTree = "<group>"; };
 		0246DC390DF1629D4AB84CBA /* ProfileScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileScreen.swift; sourceTree = "<group>"; };
 		075CB9FB2D3529D987C20C02 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		101829FA36EE2B1B415A00A0 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
