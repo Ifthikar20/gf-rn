@@ -12,17 +12,39 @@ struct RootView: View {
     @EnvironmentObject var themeViewModel: ThemeViewModel
     @Environment(\.colorScheme) var systemColorScheme
 
+    @State private var showWelcomePopup = false
+
     var body: some View {
-        Group {
-            if authViewModel.isAuthenticated {
-                // User is logged in - show main app
-                MainTabView()
-            } else {
-                // User is not logged in - show login screen
-                LoginScreen()
+        ZStack {
+            Group {
+                if authViewModel.isAuthenticated {
+                    // User is logged in - show main app
+                    MainTabView()
+                } else {
+                    // User is not logged in - show login screen
+                    LoginScreen()
+                }
+            }
+            .preferredColorScheme(preferredColorScheme)
+
+            // Welcome popup overlay
+            if showWelcomePopup {
+                WelcomePopup(isPresented: $showWelcomePopup)
+                    .onDisappear {
+                        // Mark as seen when dismissed
+                        UserDefaultsService.shared.hasSeenWelcome = true
+                    }
             }
         }
-        .preferredColorScheme(preferredColorScheme)
+        .onAppear {
+            // Show welcome popup on first launch
+            if !UserDefaultsService.shared.hasSeenWelcome {
+                // Delay slightly for better animation
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    showWelcomePopup = true
+                }
+            }
+        }
     }
 
     private var preferredColorScheme: ColorScheme? {
