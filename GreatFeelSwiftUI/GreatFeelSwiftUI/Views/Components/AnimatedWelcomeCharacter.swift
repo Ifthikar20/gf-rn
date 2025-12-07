@@ -15,6 +15,7 @@ struct AnimatedWelcomeCharacter: View {
         ZStack {
             // Try to load the welcome character image
             if let image = UIImage(named: "welcome-character") {
+                print("✅ Found welcome-character image!")
                 Image(uiImage: image)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -22,20 +23,29 @@ struct AnimatedWelcomeCharacter: View {
                     .scaleEffect(scale)
                     .opacity(opacity)
             } else {
-                // Fallback icon if image not found
-                VStack(spacing: 12) {
-                    Image(systemName: "figure.mind.and.body")
-                        .font(.system(size: 80))
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [Color(hex: "#6366F1"), Color(hex: "#8B5CF6")],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
+                print("⚠️ welcome-character image NOT found - showing fallback")
+                // Fallback icon if image not found - MORE VISIBLE
+                ZStack {
+                    // Background circle to make it stand out
+                    Circle()
+                        .fill(Color.white)
+                        .frame(width: 220, height: 220)
+                        .shadow(color: .black.opacity(0.2), radius: 10)
 
-                    Text("👋")
-                        .font(.system(size: 40))
+                    VStack(spacing: 16) {
+                        Image(systemName: "figure.mind.and.body")
+                            .font(.system(size: 100))
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [Color(hex: "#6366F1"), Color(hex: "#8B5CF6")],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+
+                        Text("👋")
+                            .font(.system(size: 50))
+                    }
                 }
                 .frame(width: 200, height: 200)
                 .scaleEffect(scale)
