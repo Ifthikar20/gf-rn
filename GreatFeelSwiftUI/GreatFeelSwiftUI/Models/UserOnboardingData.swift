@@ -167,25 +167,3 @@ enum ActivityType: String, Codable, CaseIterable {
         }
     }
 }
-
-// MARK: - UserDefaults Extension
-extension UserDefaultsService {
-    private static let onboardingDataKey = "userOnboardingData"
-
-    var onboardingData: UserOnboardingData? {
-        get {
-            guard let data = UserDefaults.standard.data(forKey: Self.onboardingDataKey) else {
-                return nil
-            }
-            return try? JSONDecoder().decode(UserOnboardingData.self, from: data)
-        }
-        set {
-            if let newValue = newValue {
-                let data = try? JSONEncoder().encode(newValue)
-                UserDefaults.standard.set(data, forKey: Self.onboardingDataKey)
-            } else {
-                UserDefaults.standard.removeObject(forKey: Self.onboardingDataKey)
-            }
-        }
-    }
-}
