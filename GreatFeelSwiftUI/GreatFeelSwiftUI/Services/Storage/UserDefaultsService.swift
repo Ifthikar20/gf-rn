@@ -19,6 +19,7 @@ class UserDefaultsService {
         static let user = "user"
         static let hasSeenWelcome = "hasSeenWelcome"
         static let hasCompletedOnboarding = "hasCompletedOnboarding"
+        static let onboardingData = "onboardingData"
     }
 
     private init() {}
@@ -99,6 +100,23 @@ class UserDefaultsService {
         }
     }
 
+    var onboardingData: UserOnboardingData? {
+        get {
+            guard let data = defaults.data(forKey: Keys.onboardingData) else {
+                return nil
+            }
+            return try? JSONDecoder().decode(UserOnboardingData.self, from: data)
+        }
+        set {
+            if let data = newValue {
+                let encoded = try? JSONEncoder().encode(data)
+                defaults.set(encoded, forKey: Keys.onboardingData)
+            } else {
+                defaults.removeObject(forKey: Keys.onboardingData)
+            }
+        }
+    }
+
     // MARK: - Clear All
     func clearAll() {
         defaults.removeObject(forKey: Keys.themeMode)
@@ -107,5 +125,13 @@ class UserDefaultsService {
         defaults.removeObject(forKey: Keys.user)
         defaults.removeObject(forKey: Keys.hasSeenWelcome)
         defaults.removeObject(forKey: Keys.hasCompletedOnboarding)
+        defaults.removeObject(forKey: Keys.onboardingData)
+    }
+
+    // MARK: - Reset Onboarding
+    func resetOnboarding() {
+        defaults.removeObject(forKey: Keys.hasCompletedOnboarding)
+        defaults.removeObject(forKey: Keys.onboardingData)
+        defaults.removeObject(forKey: Keys.hasSeenWelcome)
     }
 }
