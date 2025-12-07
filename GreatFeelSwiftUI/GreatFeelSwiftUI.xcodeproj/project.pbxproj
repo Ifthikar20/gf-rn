@@ -287,6 +287,9 @@
 			dependencies = (
 			);
 			name = GreatFeelSwiftUI;
+			packageProductDependencies = (
+				LOTTIE1234567890ABCDEF002 /* Lottie */,
+			);
 			productName = GreatFeelSwiftUI;
 			productReference = 1F1234567890ABCDEF000005 /* $(TARGET_NAME).app */;
 			productType = "com.apple.product-type.application";
@@ -315,6 +318,9 @@
 				Base,
 			);
 			mainGroup = 1F1234567890ABCDEF000004;
+			packageReferences = (
+				LOTTIE1234567890ABCDEF001 /* XCRemoteSwiftPackageReference "lottie-ios" */,
+			);
 			productRefGroup = 1F1234567890ABCDEF000003 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -586,6 +592,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		LOTTIE1234567890ABCDEF001 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		LOTTIE1234567890ABCDEF002 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = LOTTIE1234567890ABCDEF001 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1F1234567890ABCDEF000001 /* Project object */;
 }
