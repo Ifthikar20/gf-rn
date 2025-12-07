@@ -45,6 +45,8 @@
 	8A2BBCCDEFF35280BFBDBDA7 /* EnhancedMoodBackgrounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F3EEFACD0215391CFCDBE68 /* EnhancedMoodBackgrounds.swift */; };
 	B3C4D5E6F7A8B9C0D1E2F3A4 /* VideoPlayerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F3E2D1C0B9A8F7E6D5C4B3 /* VideoPlayerScreen.swift */; };
 		FDA36BC6F46F67A2DED7632E /* ThemedBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F98BF5F6AEDF4322B42B5AB /* ThemedBackground.swift */; };
+		AA11BB22CC33DD44EE55FF66 /* AnimatedWelcomeCharacter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11AA22BB33CC44DD55EE66FF /* AnimatedWelcomeCharacter.swift */; };
+		BB22CC33DD44EE55FF66AA77 /* WelcomePopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BB33CC44DD55EE66FF77AA /* WelcomePopup.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -65,6 +67,8 @@
 	7E1CCDAFE9F24179AEACAEF5 /* MoodBackgrounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodBackgrounds.swift; sourceTree = "<group>"; };
 	9F3EEFACD0215391CFCDBE68 /* EnhancedMoodBackgrounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnhancedMoodBackgrounds.swift; sourceTree = "<group>"; };
 	A4F3E2D1C0B9A8F7E6D5C4B3 /* VideoPlayerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerScreen.swift; sourceTree = "<group>"; };
+		11AA22BB33CC44DD55EE66FF /* AnimatedWelcomeCharacter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedWelcomeCharacter.swift; sourceTree = "<group>"; };
+		22BB33CC44DD55EE66FF77AA /* WelcomePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomePopup.swift; sourceTree = "<group>"; };
 		57CAC786CCFC7A1FFEDD733D /* GoalsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsViewModel.swift; sourceTree = "<group>"; };
 		5F443F39CFF6FC321DCA906A /* GreatFeelSwiftUIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreatFeelSwiftUIApp.swift; sourceTree = "<group>"; };
 		831A8E9656AF9AD444656656 /* MeditateScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeditateScreen.swift; sourceTree = "<group>"; };
@@ -151,6 +155,7 @@
 		2ADD9EF7A71A247BE63E5F97 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				11AA22BB33CC44DD55EE66FF /* AnimatedWelcomeCharacter.swift */,
 				4D229321A769139BD82B0AE2 /* GoalCard.swift */,
 				7E1CCDAFE9F24179AEACAEF5 /* MoodBackgrounds.swift */,
 				9F3EEFACD0215391CFCDBE68 /* EnhancedMoodBackgrounds.swift */,
@@ -158,6 +163,7 @@
 				90A192A3BBAF6394E7E704A8 /* PrimaryButton.swift */,
 				1095C62D692F927E1AAC4081 /* PrimaryInput.swift */,
 				1F98BF5F6AEDF4322B42B5AB /* ThemedBackground.swift */,
+				22BB33CC44DD55EE66FF77AA /* WelcomePopup.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -281,6 +287,9 @@
 			dependencies = (
 			);
 			name = GreatFeelSwiftUI;
+			packageProductDependencies = (
+				LOTTIE1234567890ABCDEF002 /* Lottie */,
+			);
 			productName = GreatFeelSwiftUI;
 			productReference = 1F1234567890ABCDEF000005 /* $(TARGET_NAME).app */;
 			productType = "com.apple.product-type.application";
@@ -309,6 +318,9 @@
 				Base,
 			);
 			mainGroup = 1F1234567890ABCDEF000004;
+			packageReferences = (
+				LOTTIE1234567890ABCDEF001 /* XCRemoteSwiftPackageReference "lottie-ios" */,
+			);
 			productRefGroup = 1F1234567890ABCDEF000003 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -358,11 +370,13 @@
 			59FE927DDE2B4386B5BC9316 /* MoodBackgrounds.swift in Sources */,
 			8A2BBCCDEFF35280BFBDBDA7 /* EnhancedMoodBackgrounds.swift in Sources */,
 			B3C4D5E6F7A8B9C0D1E2F3A4 /* VideoPlayerScreen.swift in Sources */,
+				AA11BB22CC33DD44EE55FF66 /* AnimatedWelcomeCharacter.swift in Sources */,
 				55FA631B8F733C971B5C04B7 /* GoalCard.swift in Sources */,
 				FD364A527563C675B0B71A1A /* MoodSelector.swift in Sources */,
 				76400918AA14BE7DF1D90243 /* PrimaryButton.swift in Sources */,
 				E8A576425AE011EBACEEF126 /* PrimaryInput.swift in Sources */,
 				FDA36BC6F46F67A2DED7632E /* ThemedBackground.swift in Sources */,
+				BB22CC33DD44EE55FF66AA77 /* WelcomePopup.swift in Sources */,
 				347D25646DB8E037DE4C6CE8 /* DiscoverScreen.swift in Sources */,
 				002404CC8CC9DF534A3220A8 /* GoalsScreen.swift in Sources */,
 				C40639247D920BDC635BDD67 /* LibraryScreen.swift in Sources */,
@@ -578,6 +592,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		LOTTIE1234567890ABCDEF001 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		LOTTIE1234567890ABCDEF002 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = LOTTIE1234567890ABCDEF001 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1F1234567890ABCDEF000001 /* Project object */;
 }

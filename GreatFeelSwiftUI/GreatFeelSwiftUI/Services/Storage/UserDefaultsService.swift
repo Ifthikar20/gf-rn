@@ -17,6 +17,8 @@ class UserDefaultsService {
         static let selectedMood = "selectedMood"
         static let isAudioMuted = "isAudioMuted"
         static let user = "user"
+        static let hasSeenWelcome = "hasSeenWelcome"
+        static let hasCompletedOnboarding = "hasCompletedOnboarding"
     }
 
     private init() {}
@@ -77,11 +79,33 @@ class UserDefaultsService {
         }
     }
 
+    // MARK: - Welcome Screen
+    var hasSeenWelcome: Bool {
+        get {
+            defaults.bool(forKey: Keys.hasSeenWelcome)
+        }
+        set {
+            defaults.set(newValue, forKey: Keys.hasSeenWelcome)
+        }
+    }
+
+    // MARK: - Onboarding
+    var hasCompletedOnboarding: Bool {
+        get {
+            defaults.bool(forKey: Keys.hasCompletedOnboarding)
+        }
+        set {
+            defaults.set(newValue, forKey: Keys.hasCompletedOnboarding)
+        }
+    }
+
     // MARK: - Clear All
     func clearAll() {
         defaults.removeObject(forKey: Keys.themeMode)
         defaults.removeObject(forKey: Keys.selectedMood)
         defaults.removeObject(forKey: Keys.isAudioMuted)
         defaults.removeObject(forKey: Keys.user)
+        defaults.removeObject(forKey: Keys.hasSeenWelcome)
+        defaults.removeObject(forKey: Keys.hasCompletedOnboarding)
     }
 }
