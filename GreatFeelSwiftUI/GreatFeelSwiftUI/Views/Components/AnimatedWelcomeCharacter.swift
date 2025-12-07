@@ -6,58 +6,37 @@
 //
 
 import SwiftUI
-import Lottie
+import AVKit
 
 struct AnimatedWelcomeCharacter: View {
     @State private var scale: CGFloat = 0.5
     @State private var opacity: Double = 0
-    @State private var animation: LottieAnimation?
-    @State private var isLoading = true
+    @State private var player: AVPlayer?
 
     var body: some View {
         ZStack {
-            if let animation = animation {
-                // Show Lottie animation when loaded
-                LottieView(animation: animation)
-                    .playing(loopMode: .loop)
-                    .animationSpeed(1.0)
+            if let player = player {
+                VideoPlayer(player: player)
                     .frame(width: 200, height: 200)
+                    .cornerRadius(16)
                     .scaleEffect(scale)
                     .opacity(opacity)
-            } else if isLoading {
-                // Show loading indicator while animation loads
-                VStack(spacing: 16) {
+                    .disabled(true) // Disable interaction with video controls
+            } else {
+                // Fallback while loading
+                VStack(spacing: 12) {
                     ProgressView()
                         .scaleEffect(1.5)
-                    Text("Loading animation...")
+                    Text("Loading...")
                         .font(.caption)
                         .foregroundColor(.gray)
                 }
                 .frame(width: 200, height: 200)
-            } else {
-                // Fallback if animation fails to load
-                VStack(spacing: 12) {
-                    Image(systemName: "figure.mind.and.body")
-                        .font(.system(size: 80))
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [Color(hex: "#6366F1"), Color(hex: "#8B5CF6")],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-
-                    Text("👋")
-                        .font(.system(size: 40))
-                }
-                .frame(width: 200, height: 200)
-                .scaleEffect(scale)
-                .opacity(opacity)
             }
         }
         .onAppear {
-            print("AnimatedWelcomeCharacter appeared - loading animation...")
-            loadAnimation()
+            print("AnimatedWelcomeCharacter appeared - loading video...")
+            setupVideoPlayer()
 
             // Zoom in animation
             withAnimation(.spring(response: 0.8, dampingFraction: 0.6)) {
@@ -65,50 +44,163 @@ struct AnimatedWelcomeCharacter: View {
                 opacity = 1.0
             }
         }
+        .onDisappear {
+            // Clean up player
+            player?.pause()
+            player = nil
+        }
     }
 
-    private func loadAnimation() {
-        // The Lottie file URL
-        let urlString = "https://lottie.host/4c06608c-2993-47d3-b53c-fc19682d98a6/bEHya1jQoO.json"
+    private func setupVideoPlayer() {
+        // Try to find the welcome video in the bundle
+        // First try "video-iamge.mp4", then fall back to "night-sky.mp4"
+        var videoURL: URL?
 
-        print("Loading Lottie animation from: \(urlString)")
-
-        guard let url = URL(string: urlString) else {
-            print("Invalid URL")
-            isLoading = false
+        if let url = Bundle.main.url(forResource: "video-iamge", withExtension: "mp4") {
+            videoURL = url
+            print("Found video-iamge.mp4")
+        } else if let url = Bundle.main.url(forResource: "night-sky", withExtension: "mp4") {
+            videoURL = url
+            print("Using fallback video: night-sky.mp4")
+        } else {
+            print("No video file found in bundle")
             return
         }
 
-        Task {
-            do {
-                print("Fetching animation data...")
-                let (data, response) = try await URLSession.shared.data(from: url)
+        guard let url = videoURL else { return }
 
-                if let httpResponse = response as? HTTPURLResponse {
-                    print("HTTP Status: \(httpResponse.statusCode)")
-                }
+        let playerItem = AVPlayerItem(url: url)
+        let videoPlayer = AVPlayer(playerItem: playerItem)
 
-                print("Data received: \(data.count) bytes")
+        // Configure for autoplay and looping
+        videoPlayer.isMuted = true // Mute by default for autoplay
 
-                if let loadedAnimation = try? LottieAnimation.from(data: data) {
-                    await MainActor.run {
-                        print("Animation loaded successfully!")
-                        self.animation = loadedAnimation
-                        self.isLoading = false
-                    }
-                } else {
-                    print("Failed to parse Lottie animation from data")
-                    await MainActor.run {
-                        self.isLoading = false
-                    }
+        // Add observer for looping
+        NotificationCenter.default.addObserver(
+            forName: .AVPlayerItemDidPlayToEndTime,
+            object: playerItem,
+            queue: .main
+        ) { _ in
+            videoPlayer.seek(to: .zero)
+            videoPlayer.play()
+        }
+
+        self.player = videoPlayer
+
+        // Start playing
+        videoPlayer.play()
+        print("Video player started")
+    }
+}
+
+// Alternative version without controls for cleaner look
+struct WelcomeVideoPlayer: View {
+    @State private var scale: CGFloat = 0.5
+    @State private var opacity: Double = 0
+    @State private var player: AVPlayer?
+
+    var body: some View {
+        ZStack {
+            if let player = player {
+                // Custom video player without controls
+                VideoPlayerView(player: player)
+                    .frame(width: 200, height: 200)
+                    .cornerRadius(16)
+                    .scaleEffect(scale)
+                    .opacity(opacity)
+            } else {
+                // Fallback
+                VStack(spacing: 12) {
+                    ProgressView()
+                        .scaleEffect(1.5)
+                    Text("Loading...")
+                        .font(.caption)
+                        .foregroundColor(.gray)
                 }
-            } catch {
-                print("Failed to load Lottie animation: \(error.localizedDescription)")
-                await MainActor.run {
-                    self.isLoading = false
-                }
+                .frame(width: 200, height: 200)
             }
         }
+        .onAppear {
+            print("WelcomeVideoPlayer appeared - loading video...")
+            setupVideoPlayer()
+
+            // Zoom in animation
+            withAnimation(.spring(response: 0.8, dampingFraction: 0.6)) {
+                scale = 1.0
+                opacity = 1.0
+            }
+        }
+        .onDisappear {
+            player?.pause()
+            player = nil
+        }
+    }
+
+    private func setupVideoPlayer() {
+        var videoURL: URL?
+
+        if let url = Bundle.main.url(forResource: "video-iamge", withExtension: "mp4") {
+            videoURL = url
+            print("Found video-iamge.mp4")
+        } else if let url = Bundle.main.url(forResource: "night-sky", withExtension: "mp4") {
+            videoURL = url
+            print("Using fallback video: night-sky.mp4")
+        }
+
+        guard let url = videoURL else {
+            print("No video file found")
+            return
+        }
+
+        let playerItem = AVPlayerItem(url: url)
+        let videoPlayer = AVPlayer(playerItem: playerItem)
+        videoPlayer.isMuted = true
+
+        NotificationCenter.default.addObserver(
+            forName: .AVPlayerItemDidPlayToEndTime,
+            object: playerItem,
+            queue: .main
+        ) { _ in
+            videoPlayer.seek(to: .zero)
+            videoPlayer.play()
+        }
+
+        self.player = videoPlayer
+        videoPlayer.play()
+        print("Video player started")
+    }
+}
+
+// UIKit wrapper for cleaner video playback without controls
+struct VideoPlayerView: UIViewRepresentable {
+    let player: AVPlayer
+
+    func makeUIView(context: Context) -> UIView {
+        let view = UIView()
+        view.backgroundColor = .clear
+
+        let playerLayer = AVPlayerLayer(player: player)
+        playerLayer.videoGravity = .resizeAspectFill
+        playerLayer.frame = view.bounds
+        view.layer.addSublayer(playerLayer)
+
+        context.coordinator.playerLayer = playerLayer
+
+        return view
+    }
+
+    func updateUIView(_ uiView: UIView, context: Context) {
+        if let playerLayer = context.coordinator.playerLayer {
+            playerLayer.frame = uiView.bounds
+        }
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+
+    class Coordinator {
+        var playerLayer: AVPlayerLayer?
     }
 }
 
