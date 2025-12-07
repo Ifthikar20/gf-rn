@@ -13,13 +13,20 @@ struct RootView: View {
     @Environment(\.colorScheme) var systemColorScheme
 
     @State private var showWelcomePopup = false
+    @State private var showOnboarding = false
 
     var body: some View {
         ZStack {
             Group {
                 if authViewModel.isAuthenticated {
-                    // User is logged in - show main app
-                    MainTabView()
+                    // Check if user completed onboarding
+                    if UserDefaultsService.shared.hasCompletedOnboarding {
+                        // User is logged in and completed onboarding - show main app
+                        MainTabView()
+                    } else {
+                        // Show onboarding before main app
+                        Color.clear
+                    }
                 } else {
                     // User is not logged in - show login screen
                     LoginScreen()
@@ -27,12 +34,28 @@ struct RootView: View {
             }
             .preferredColorScheme(preferredColorScheme)
 
-            // Welcome popup overlay
+            // Onboarding overlay (shows after welcome popup)
+            if showOnboarding && authViewModel.isAuthenticated {
+                OnboardingView(isPresented: $showOnboarding)
+                    .transition(.opacity)
+            }
+
+            // Welcome popup overlay (shows first)
             if showWelcomePopup {
                 WelcomePopup(isPresented: $showWelcomePopup)
                     .onDisappear {
                         // Mark as seen when dismissed
                         UserDefaultsService.shared.hasSeenWelcome = true
+
+                        // Show onboarding if not completed
+                        if authViewModel.isAuthenticated &&
+                           !UserDefaultsService.shared.hasCompletedOnboarding {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                withAnimation {
+                                    showOnboarding = true
+                                }
+                            }
+                        }
                     }
             }
         }

@@ -18,6 +18,7 @@ class UserDefaultsService {
         static let isAudioMuted = "isAudioMuted"
         static let user = "user"
         static let hasSeenWelcome = "hasSeenWelcome"
+        static let hasCompletedOnboarding = "hasCompletedOnboarding"
     }
 
     private init() {}
@@ -88,6 +89,16 @@ class UserDefaultsService {
         }
     }
 
+    // MARK: - Onboarding
+    var hasCompletedOnboarding: Bool {
+        get {
+            defaults.bool(forKey: Keys.hasCompletedOnboarding)
+        }
+        set {
+            defaults.set(newValue, forKey: Keys.hasCompletedOnboarding)
+        }
+    }
+
     // MARK: - Clear All
     func clearAll() {
         defaults.removeObject(forKey: Keys.themeMode)
@@ -95,5 +106,6 @@ class UserDefaultsService {
         defaults.removeObject(forKey: Keys.isAudioMuted)
         defaults.removeObject(forKey: Keys.user)
         defaults.removeObject(forKey: Keys.hasSeenWelcome)
+        defaults.removeObject(forKey: Keys.hasCompletedOnboarding)
     }
 }
