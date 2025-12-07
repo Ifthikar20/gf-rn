@@ -10,12 +10,12 @@ import SwiftUI
 struct AnimatedWelcomeCharacter: View {
     @State private var scale: CGFloat = 0.5
     @State private var opacity: Double = 0
+    @State private var hasImage: Bool = false
 
     var body: some View {
         ZStack {
             // Try to load the welcome character image
-            if let image = UIImage(named: "welcome-character") {
-                print("✅ Found welcome-character image!")
+            if hasImage, let image = UIImage(named: "welcome-character") {
                 Image(uiImage: image)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -23,7 +23,6 @@ struct AnimatedWelcomeCharacter: View {
                     .scaleEffect(scale)
                     .opacity(opacity)
             } else {
-                print("⚠️ welcome-character image NOT found - showing fallback")
                 // Fallback icon if image not found - MORE VISIBLE
                 ZStack {
                     // Background circle to make it stand out
@@ -53,7 +52,16 @@ struct AnimatedWelcomeCharacter: View {
             }
         }
         .onAppear {
-            print("AnimatedWelcomeCharacter appeared - loading image...")
+            print("AnimatedWelcomeCharacter appeared - checking for image...")
+
+            // Check if image exists
+            if UIImage(named: "welcome-character") != nil {
+                print("✅ Found welcome-character image!")
+                hasImage = true
+            } else {
+                print("⚠️ welcome-character image NOT found - showing fallback")
+                hasImage = false
+            }
 
             // Zoom in animation
             withAnimation(.spring(response: 0.8, dampingFraction: 0.6)) {
