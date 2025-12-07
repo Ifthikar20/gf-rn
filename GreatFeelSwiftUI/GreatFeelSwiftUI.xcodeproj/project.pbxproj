@@ -393,6 +393,11 @@
 				B1F141B9FE4D9CDC260462D9 /* ProfileScreen.swift in Sources */,
 				3F65F8B46DC9464365985BC1 /* MainTabView.swift in Sources */,
 				D3F412A197F857C325C3B992 /* RootView.swift in Sources */,
+				43BBF8C27B564B94A52E58E3 /* OnboardingQuestion.swift in Sources */,
+				C613A0E1E8784A5EA8AA709D /* UserOnboardingData.swift in Sources */,
+				F9F652AB563642B9B80D413E /* OnboardingView.swift in Sources */,
+				0259FDB1ACA7407C923C25BE /* PersonalizationService.swift in Sources */,
+				18F7E8F5058240F18D34568C /* PersonalizedWelcomeBanner.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
