@@ -12,6 +12,7 @@ struct OnboardingView: View {
     @State private var currentQuestionIndex = 0
     @State private var selectedAnswers: [String] = []
     @State private var selectedOption: String? = nil
+    @State private var selectedMultipleOptions: Set<String> = []
     @State private var characterBounce: CGFloat = 0
     @State private var showCompletion = false
 
@@ -21,6 +22,14 @@ struct OnboardingView: View {
 
     var isLastQuestion: Bool {
         currentQuestionIndex == OnboardingQuestion.allQuestions.count - 1
+    }
+
+    var canProceed: Bool {
+        if currentQuestion.allowsMultipleSelection {
+            return !selectedMultipleOptions.isEmpty
+        } else {
+            return selectedOption != nil
+        }
     }
 
     var body: some View {
@@ -120,10 +129,23 @@ struct OnboardingView: View {
                         ForEach(currentQuestion.options, id: \.self) { option in
                             OptionButton(
                                 title: option,
-                                isSelected: selectedOption == option,
+                                isSelected: currentQuestion.allowsMultipleSelection ?
+                                    selectedMultipleOptions.contains(option) :
+                                    selectedOption == option,
                                 action: {
                                     withAnimation(.spring(response: 0.3)) {
-                                        selectedOption = option
+                                        if currentQuestion.allowsMultipleSelection {
+                                            // Toggle selection for multiple choice
+                                            if selectedMultipleOptions.contains(option) {
+                                                selectedMultipleOptions.remove(option)
+                                            } else {
+                                                selectedMultipleOptions.insert(option)
+                                            }
+                                        } else {
+                                            // Single selection
+                                            selectedOption = option
+                                        }
+
                                         // Character bounce on selection
                                         withAnimation(
                                             .easeInOut(duration: 0.4)
@@ -141,6 +163,14 @@ struct OnboardingView: View {
                     }
                     .padding(.horizontal, 32)
 
+                    // Multiple selection hint
+                    if currentQuestion.allowsMultipleSelection {
+                        Text("Select all that apply")
+                            .font(.system(size: 14))
+                            .foregroundColor(Color(hex: "#6B7280"))
+                            .padding(.top, 8)
+                    }
+
                     Spacer()
 
                     // Next Button
@@ -157,18 +187,18 @@ struct OnboardingView: View {
                         .padding(.vertical, 18)
                         .background(
                             LinearGradient(
-                                colors: selectedOption == nil ?
-                                    [Color.gray, Color.gray] :
-                                    [Color(hex: "#6366F1"), Color(hex: "#8B5CF6")],
+                                colors: canProceed ?
+                                    [Color(hex: "#6366F1"), Color(hex: "#8B5CF6")] :
+                                    [Color.gray, Color.gray],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
                         )
                         .cornerRadius(20)
-                        .shadow(color: (selectedOption != nil ? Color(hex: "#8B5CF6") : Color.gray).opacity(0.3),
+                        .shadow(color: (canProceed ? Color(hex: "#8B5CF6") : Color.gray).opacity(0.3),
                                 radius: 10, x: 0, y: 5)
                     }
-                    .disabled(selectedOption == nil)
+                    .disabled(!canProceed)
                     .padding(.horizontal, 32)
                     .padding(.bottom, 40)
                 }
@@ -186,12 +216,20 @@ struct OnboardingView: View {
     }
 
     private func handleNext() {
-        guard let answer = selectedOption else { return }
-
-        // Save answer
-        selectedAnswers.append(answer)
+        // Save answer(s)
+        if currentQuestion.allowsMultipleSelection {
+            // Save all selected options as comma-separated string
+            let answer = selectedMultipleOptions.sorted().joined(separator: ", ")
+            selectedAnswers.append(answer)
+        } else {
+            guard let answer = selectedOption else { return }
+            selectedAnswers.append(answer)
+        }
 
         if isLastQuestion {
+            // Save all responses to UserDefaults
+            saveOnboardingData()
+
             // Show completion
             withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
                 showCompletion = true
@@ -201,8 +239,51 @@ struct OnboardingView: View {
             withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
                 currentQuestionIndex += 1
                 selectedOption = nil
+                selectedMultipleOptions.removeAll()
             }
         }
+    }
+
+    private func saveOnboardingData() {
+        guard selectedAnswers.count == 5 else { return }
+
+        var onboardingData = UserOnboardingData()
+
+        // Question 1: Emotional State
+        if let emotionalState = EmotionalState.allCases.first(where: { $0.rawValue == selectedAnswers[0] }) {
+            onboardingData.emotionalState = emotionalState
+        }
+
+        // Question 2: Primary Goal
+        if let primaryGoal = PrimaryGoal.allCases.first(where: { $0.rawValue == selectedAnswers[1] }) {
+            onboardingData.primaryGoal = primaryGoal
+        }
+
+        // Question 3: Time Commitment
+        if let timeCommitment = TimeCommitment.allCases.first(where: { $0.rawValue == selectedAnswers[2] }) {
+            onboardingData.timeCommitment = timeCommitment
+        }
+
+        // Question 4: Experience Level
+        if let experienceLevel = ExperienceLevel.allCases.first(where: { $0.rawValue == selectedAnswers[3] }) {
+            onboardingData.experienceLevel = experienceLevel
+        }
+
+        // Question 5: Preferred Activities
+        let activities = selectedAnswers[4].components(separatedBy: ", ")
+        onboardingData.preferredActivities = activities.compactMap { activityString in
+            ActivityType.allCases.first(where: { $0.rawValue == activityString })
+        }
+
+        // Save to UserDefaults
+        UserDefaultsService.shared.onboardingData = onboardingData
+
+        print("✅ Onboarding data saved successfully:")
+        print("   Emotional State: \(onboardingData.emotionalState?.rawValue ?? "N/A")")
+        print("   Primary Goal: \(onboardingData.primaryGoal?.rawValue ?? "N/A")")
+        print("   Time Commitment: \(onboardingData.timeCommitment?.rawValue ?? "N/A")")
+        print("   Experience Level: \(onboardingData.experienceLevel?.rawValue ?? "N/A")")
+        print("   Preferred Activities: \(onboardingData.preferredActivities.map { $0.rawValue })")
     }
 }
 

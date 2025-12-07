@@ -13,11 +13,20 @@ struct OnboardingQuestion: Identifiable {
     let question: String
     let options: [String]
     let icon: String
+    let allowsMultipleSelection: Bool
+
+    init(question: String, options: [String], icon: String, allowsMultipleSelection: Bool = false) {
+        self.question = question
+        self.options = options
+        self.icon = icon
+        self.allowsMultipleSelection = allowsMultipleSelection
+    }
 }
 
 // MARK: - Onboarding Questions Data
 extension OnboardingQuestion {
     static let allQuestions: [OnboardingQuestion] = [
+        // Question 1: Emotional State
         OnboardingQuestion(
             question: "How have you been feeling lately?",
             options: [
@@ -27,6 +36,8 @@ extension OnboardingQuestion {
             ],
             icon: "heart.fill"
         ),
+
+        // Question 2: Primary Goal
         OnboardingQuestion(
             question: "What brings you here today?",
             options: [
@@ -37,6 +48,8 @@ extension OnboardingQuestion {
             ],
             icon: "star.fill"
         ),
+
+        // Question 3: Time Commitment
         OnboardingQuestion(
             question: "How much time can you dedicate daily?",
             options: [
@@ -46,6 +59,33 @@ extension OnboardingQuestion {
                 "Flexible timing"
             ],
             icon: "clock.fill"
+        ),
+
+        // Question 4: Experience Level
+        OnboardingQuestion(
+            question: "What's your experience with mindfulness?",
+            options: [
+                "New to mindfulness & meditation",
+                "I've tried it a few times",
+                "I practice regularly",
+                "Very experienced"
+            ],
+            icon: "lightbulb.fill"
+        ),
+
+        // Question 5: Preferred Activities (Multiple selection)
+        OnboardingQuestion(
+            question: "What activities interest you most?",
+            options: [
+                "Guided meditation",
+                "Breathing exercises",
+                "Relaxing sounds & music",
+                "Journaling & reflection",
+                "Mindful movement",
+                "Reading articles"
+            ],
+            icon: "sparkles",
+            allowsMultipleSelection: true
         )
     ]
 }
