@@ -13,8 +13,8 @@ struct AnimatedWelcomeCharacter: View {
 
     var body: some View {
         ZStack {
-            // Try to load the SVG image from assets
-            if let image = loadSVGImage() {
+            // Try to load the welcome character image
+            if let image = UIImage(named: "welcome-character") {
                 Image(uiImage: image)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -22,7 +22,7 @@ struct AnimatedWelcomeCharacter: View {
                     .scaleEffect(scale)
                     .opacity(opacity)
             } else {
-                // Fallback icon if SVG not found
+                // Fallback icon if image not found
                 VStack(spacing: 12) {
                     Image(systemName: "figure.mind.and.body")
                         .font(.system(size: 80))
@@ -43,7 +43,7 @@ struct AnimatedWelcomeCharacter: View {
             }
         }
         .onAppear {
-            print("AnimatedWelcomeCharacter appeared - loading SVG...")
+            print("AnimatedWelcomeCharacter appeared - loading image...")
 
             // Zoom in animation
             withAnimation(.spring(response: 0.8, dampingFraction: 0.6)) {
@@ -51,26 +51,6 @@ struct AnimatedWelcomeCharacter: View {
                 opacity = 1.0
             }
         }
-    }
-
-    private func loadSVGImage() -> UIImage? {
-        // Try to load preview.svg from the bundle
-        if let url = Bundle.main.url(forResource: "preview", withExtension: "svg") {
-            print("Found preview.svg at: \(url.path)")
-
-            // For iOS 13+, we can use UIImage with SVG support
-            if let data = try? Data(contentsOf: url),
-               let image = UIImage(data: data) {
-                print("Successfully loaded SVG image")
-                return image
-            } else {
-                print("Failed to create UIImage from SVG data")
-            }
-        } else {
-            print("preview.svg not found in bundle")
-        }
-
-        return nil
     }
 }
 
